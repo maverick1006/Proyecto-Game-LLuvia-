@@ -1,0 +1,5 @@
+pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+rootProject.name = 'GameLluvia'
+include 'core', 'lwjgl3'
+// Desktop también se puede compilar en equipos sin el SDK de Android.
+if (providers.gradleProperty('android').orNull == 'true') include 'android'
