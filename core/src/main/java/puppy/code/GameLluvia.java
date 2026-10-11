@@ -6,254 +6,291 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import java.util.List;
 
 public class GameLluvia extends ApplicationAdapter {
-    private enum Estado { MENU, JUGANDO, PAUSA, DERROTA, VICTORIA }
+    private enum Estado { MENU, DIFICULTAD, TIENDA, PUNTUACIONES, AYUDA, JUGANDO, PAUSA, DERROTA }
     private Estado estado = Estado.MENU;
     private final FitViewport viewport = new FitViewport(960, 600, new OrthographicCamera());
-    private final Vector2 toque = new Vector2();
-    private final GlyphLayout texto = new GlyphLayout();
-    private final Lluvia lluvia = new Lluvia();
-    private final Nivel[] niveles = {
-        new Nivel.Builder("Brisa").objetivo(100).construir(),
-        new Nivel.Builder("Aguacero").objetivo(220).velocidad(280).intervalo(0.5f).probabilidadMala(0.28f).construir(),
-        new Nivel.Builder("Tormenta").objetivo(360).velocidad(340).intervalo(0.38f).probabilidadMala(0.35f).construir()
-    };
-    private SpriteBatch batch;
-    private ShapeRenderer formas;
-    private BitmapFont fuente;
+    private VistaJuego vista;
+    private ConfiguracionJuego configuracion;
+    private PerfilJugador perfil;
+    private Partida partida;
+    private Dificultad dificultad = Dificultad.NOOB;
     private Music musica;
     private Sound recoger, golpe;
-    private ConfiguracionJuego configuracion;
-    private Tarro tarro;
-    private int nivelActual;
-    private float reloj;
-    private float avisoNivel;
-    private boolean tactil;
+    private boolean tactil, resultadoGuardado, nuevoRecord;
+    private float reloj, tiempoRecord, tiempoMensaje;
+    private String mensaje = "";
+    private int paginaTienda;
 
     @Override public void create() {
-        batch = new SpriteBatch();
-        formas = new ShapeRenderer();
-        fuente = new BitmapFont();
-        fuente.getRegion().getTexture().setFilter(com.badlogic.gdx.graphics.Texture.TextureFilter.Linear,
-                com.badlogic.gdx.graphics.Texture.TextureFilter.Linear);
+        vista = new VistaJuego();
         configuracion = ConfiguracionJuego.getInstancia();
+        perfil = configuracion.getPerfil();
         tactil = Gdx.app.getType() == Application.ApplicationType.Android;
         musica = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
-        musica.setLooping(true);
-        musica.setVolume(0.25f);
+        musica.setLooping(true); musica.setVolume(0.25f);
         recoger = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
         golpe = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
         Gdx.input.setCatchKey(Input.Keys.BACK, true);
     }
-
     private void iniciar() {
-        tarro = new Tarro(tactil ? new ControlTactil(viewport) : new ControlTeclado());
-        lluvia.limpiar();
-        nivelActual = 0;
-        avisoNivel = 2;
+        partida = new Partida(tactil ? new ControlTactil(viewport) : new ControlTeclado(), dificultad);
+        resultadoGuardado = false;
+        nuevoRecord = false;
+        mensaje = "";
         cambiarEstado(Estado.JUGANDO);
     }
-
     private void cambiarEstado(Estado nuevo) {
         estado = nuevo;
         if (nuevo == Estado.JUGANDO && configuracion.tieneSonido()) musica.play();
         else musica.pause();
     }
-
+    private void avisar(String texto) { mensaje = texto; tiempoMensaje = 4; }
+    private void guardarResultado(boolean completa) {
+        if (partida == null || resultadoGuardado) return;
+        Personaje jugador = partida.getPersonaje();
+        perfil.registrarNivel(partida.getDificultad(), partida.getNumeroNivel());
+        nuevoRecord = perfil.guardarResultado(partida.getDificultad(), jugador.getPuntos(), jugador.getMonedas(), completa);
+        resultadoGuardado = true;
+        tiempoRecord = 0;
+    }
+    private void abandonar() {
+        guardarResultado(false);
+        cambiarEstado(Estado.MENU);
+    }
+    private void entrada() {
+        boolean aceptar = Gdx.input.isKeyJustPressed(Input.Keys.ENTER);
+        boolean volver = Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            configuracion.alternarSonido(); cambiarEstado(estado);
+        }
+        switch (estado) {
+            case MENU:
+                if (aceptar) cambiarEstado(Estado.DIFICULTAD);
+                if (Gdx.input.isKeyJustPressed(Input.Keys.T)) tactil = !tactil;
+                break;
+            case DIFICULTAD:
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) dificultad = Dificultad.NOOB;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) dificultad = Dificultad.PRO;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) dificultad = Dificultad.HACKER;
+                if (aceptar) iniciar();
+                else if (volver) cambiarEstado(Estado.MENU);
+                break;
+            case JUGANDO:
+                if (volver || Gdx.input.isKeyJustPressed(Input.Keys.P)) cambiarEstado(Estado.PAUSA);
+                break;
+            case PAUSA:
+                if (aceptar || volver || Gdx.input.isKeyJustPressed(Input.Keys.P)) cambiarEstado(Estado.JUGANDO);
+                break;
+            case DERROTA:
+                if (aceptar) iniciar();
+                else if (volver) cambiarEstado(Estado.MENU);
+                break;
+            default:
+                if (volver) cambiarEstado(Estado.MENU);
+        }
+    }
     @Override public void render() {
         float delta = Math.min(Gdx.graphics.getDeltaTime(), 0.05f);
         reloj += delta;
-        procesarEntrada();
+        tiempoMensaje = Math.max(0, tiempoMensaje - delta);
+        entrada();
         if (estado == Estado.JUGANDO) actualizar(delta);
-        ScreenUtils.clear(0.025f, 0.045f, 0.09f, 1);
-        viewport.apply();
-        formas.setProjectionMatrix(viewport.getCamera().combined);
-        batch.setProjectionMatrix(viewport.getCamera().combined);
-        dibujarFondo();
-        if (estado != Estado.MENU) dibujarPartida();
-        if (estado != Estado.JUGANDO) dibujarPanel();
-        dibujarTextos();
-    }
-
-    private void procesarEntrada() {
-        boolean pulsado = Gdx.input.justTouched();
-        viewport.unproject(toque.set(Gdx.input.getX(), Gdx.input.getY()));
-        boolean aceptar = Gdx.input.isKeyJustPressed(Input.Keys.ENTER);
-        boolean pausar = Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)
-                || Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.BACK);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.M) || (pulsado && dentro(704, 546, 120, 36))) {
-            configuracion.alternarSonido();
-            cambiarEstado(estado);
-            return;
+        if (estado == Estado.DERROTA) tiempoRecord += delta;
+        ScreenUtils.clear(0.025f, 0.04f, 0.07f, 1);
+        vista.preparar(viewport);
+        vista.fondo(reloj, partida != null && partida.esSecreto() && estado == Estado.JUGANDO);
+        switch (estado) {
+            case MENU: menu(); break;
+            case DIFICULTAD: dificultades(); break;
+            case TIENDA: tienda(); break;
+            case PUNTUACIONES: puntuaciones(); break;
+            case AYUDA: ayuda(); break;
+            case JUGANDO: dibujarPartida(); break;
+            case PAUSA: pausa(); break;
+            case DERROTA: derrota(); break;
         }
-        if (estado == Estado.JUGANDO) {
-            if (pausar || (pulsado && dentro(838, 546, 98, 36))) cambiarEstado(Estado.PAUSA);
-        } else if (estado == Estado.PAUSA) {
-            if (aceptar || pausar || (pulsado && dentro(330, 235, 300, 52))) cambiarEstado(Estado.JUGANDO);
-            else if (pulsado && dentro(330, 167, 300, 48)) cambiarEstado(Estado.MENU);
-        } else if (aceptar || (pulsado && dentro(330, 235, 300, 52))) {
-            iniciar();
-        } else if (estado != Estado.MENU && (pausar || (pulsado && dentro(330, 167, 300, 48)))) {
-            cambiarEstado(Estado.MENU);
-        } else if (estado == Estado.MENU && (Gdx.input.isKeyJustPressed(Input.Keys.T)
-                || (pulsado && dentro(330, 167, 300, 48)))) {
-            tactil = !tactil;
+        if (tiempoMensaje > 0) {
+            vista.panel(120, 6, 720, 30, "23354E");
+            vista.centrar(mensaje, 120, 720, 27, 1, "FFE1A1");
         }
     }
-
-    private boolean dentro(float x, float y, float ancho, float alto) {
-        return toque.x >= x && toque.x <= x + ancho && toque.y >= y && toque.y <= y + alto;
-    }
-
     private void actualizar(float delta) {
-        int puntosAntes = tarro.getPuntos();
-        int vidasAntes = tarro.getVidas();
-        tarro.actualizar(delta);
-        lluvia.actualizar(delta, tarro, niveles[nivelActual]);
-        avisoNivel = Math.max(0, avisoNivel - delta);
+        Personaje jugador = partida.getPersonaje();
+        int puntos = jugador.getPuntos(), vidas = jugador.getVidas(), monedas = jugador.getMonedas();
+        int nivel = partida.getNumeroNivel();
+        partida.actualizar(delta);
         if (configuracion.tieneSonido()) {
-            if (tarro.getPuntos() > puntosAntes) recoger.play(0.5f);
-            if (tarro.getVidas() < vidasAntes) golpe.play(0.6f);
+            if (jugador.getPuntos() > puntos || jugador.getMonedas() > monedas) recoger.play(0.4f);
+            if (jugador.getVidas() < vidas) golpe.play(0.6f);
         }
-        if (tarro.getVidas() == 0) {
-            configuracion.registrarPuntos(tarro.getPuntos());
-            cambiarEstado(Estado.DERROTA);
-        } else if (tarro.getPuntos() >= niveles[nivelActual].getObjetivo()) {
-            if (nivelActual == niveles.length - 1) {
-                configuracion.registrarPuntos(tarro.getPuntos());
-                cambiarEstado(Estado.VICTORIA);
-            } else {
-                nivelActual++;
-                lluvia.limpiar();
-                avisoNivel = 2;
+        if (partida.getNumeroNivel() != nivel) {
+            List<Aspecto> nuevos = perfil.registrarNivel(partida.getDificultad(), partida.getNumeroNivel());
+            if (!nuevos.isEmpty()) avisar("Personaje desbloqueado: " + nuevos.get(0).getNombre());
+        }
+        if (partida.terminada()) { guardarResultado(true); cambiarEstado(Estado.DERROTA); }
+    }
+    private void cabecera(String titulo, String subtitulo) {
+        vista.panel(0, 530, 960, 70, "0A1526");
+        vista.texto(titulo, 32, 579, 1.55f, "E4EDF5");
+        vista.texto(subtitulo, 32, 551, 0.95f, "8FA8BC");
+        vista.texto("MONEDAS  " + perfil.getMonedas(), 734, 574, 1.1f, "FFD36A");
+    }
+    private void menu() {
+        cabecera("GAME / LLUVIA", "ARCADE DE SUPERVIVENCIA");
+        vista.panel(40, 65, 420, 430, "0C192C");
+        vista.texto("UNA GOTA.", 75, 466, 2.2f, "E4EDF5");
+        vista.texto("OTRA OPORTUNIDAD.", 75, 426, 1.6f, "67DCCE");
+        vista.texto("Recoge. Sobrevive. Desbloquea.", 75, 388, 1, "9BB0C2");
+        if (vista.boton("COMENZAR PARTIDA", 75, 308, 350, 54, true)) { cambiarEstado(Estado.DIFICULTAD); return; }
+        if (vista.boton("TIENDA Y PERSONAJES", 75, 240, 350, 52, false)) { cambiarEstado(Estado.TIENDA); return; }
+        if (vista.boton("MEJORES PUNTUACIONES", 75, 174, 350, 52, false)) { cambiarEstado(Estado.PUNTUACIONES); return; }
+        if (vista.boton("GUIA DE OBJETOS", 75, 108, 350, 48, false)) { cambiarEstado(Estado.AYUDA); return; }
+        vista.panel(500, 160, 420, 335, "16273C");
+        vista.centrar("TU PERSONAJE", 500, 420, 466, 1, "91A9BC");
+        vista.personaje(perfil.getEquipado(), 660, 252, 6, reloj, true, false);
+        vista.centrar(perfil.getEquipado().getNombre(), 500, 420, 221, 1.3f, "E4EDF5");
+        vista.centrar("Aspectos cosmeticos, mismas habilidades", 500, 420, 189, 0.95f, "91A9BC");
+        if (vista.boton(tactil ? "CONTROL: TACTIL / RATON" : "CONTROL: TECLADO", 500, 95, 420, 45, false)) tactil = !tactil;
+        if (vista.boton(configuracion.tieneSonido() ? "SONIDO: SI" : "SONIDO: NO", 630, 43, 160, 36, false)) configuracion.alternarSonido();
+    }
+    private void dificultades() {
+        cabecera("ELIGE TU DIFICULTAD", "El nivel aumenta cada 25 segundos de supervivencia.");
+        for (Dificultad opcion : Dificultad.values()) {
+            int i = opcion.ordinal(); float x = 42 + i * 300;
+            vista.panel(x, 218, 276, 252, opcion == dificultad ? "21473F" : "13253A");
+            vista.texto("0" + (i + 1), x + 24, 444, 1.2f, "67DCCE");
+            vista.texto(opcion.name(), x + 24, 404, 2, "E4EDF5");
+            vista.texto(i == 0 ? "Ritmo suave" : i == 1 ? "Lluvia rapida" : "Peligro constante", x + 24, 359, 1.1f, "A3B8C8");
+            vista.texto("Mejor nivel: " + perfil.getNivelMaximo(opcion), x + 24, 321, 1, "A3B8C8");
+            if (vista.boton(opcion == dificultad ? "SELECCIONADO" : "ELEGIR", x + 20, 242, 236, 48, opcion == dificultad)) dificultad = opcion;
+        }
+        vista.centrar("Tres vidas. Niveles sin limite. Cada dificultad tiene su propio ranking.", 0, 960, 184, 1.05f, "A3B8C8");
+        if (vista.boton("JUGAR " + dificultad, 330, 103, 300, 54, true)) { iniciar(); return; }
+        if (vista.boton("VOLVER", 42, 43, 160, 40, false)) cambiarEstado(Estado.MENU);
+    }
+    private void tienda() {
+        cabecera("TIENDA / VESTUARIO", "Compra con monedas o desbloquea llegando a niveles altos.");
+        vista.panel(24, 93, 204, 415, "0C192C");
+        vista.centrar("EQUIPADO", 24, 204, 482, 1, "91A9BC");
+        vista.personaje(perfil.getEquipado(), 83, 318, 5, reloj, false, false);
+        vista.centrar(perfil.getEquipado().getNombre(), 24, 204, 280, 0.95f, "E4EDF5");
+        vista.centrar("Solo cambia la apariencia.", 24, 204, 241, 0.85f, "91A9BC");
+        vista.centrar("Todos tienen tres vidas.", 24, 204, 219, 0.85f, "91A9BC");
+        vista.centrar("Tus compras se guardan", 24, 204, 158, 0.85f, "91A9BC");
+        vista.centrar("en este dispositivo.", 24, 204, 138, 0.85f, "91A9BC");
+        Aspecto[] catalogo = Aspecto.values();
+        for (int casilla = 0; casilla < 6; casilla++) {
+            int indice = paginaTienda * 6 + casilla;
+            if (indice >= catalogo.length) break;
+            Aspecto aspecto = catalogo[indice];
+            float x = 246 + (casilla % 3) * 234, y = 302 - (casilla / 3) * 218;
+            vista.panel(x, y, 218, 206, perfil.getEquipado() == aspecto ? "21473F" : "172A40");
+            vista.centrar(aspecto.getNombre(), x, 218, y + 187, 1, "E4EDF5");
+            vista.personaje(aspecto, x + 86, y + 77, 3.6f, reloj, false, false);
+            boolean tiene = perfil.tiene(aspecto);
+            vista.centrar(tiene ? "EN TU COLECCION" : aspecto.getRequisito(), x, 218, y + 62, 0.95f, "FFD36A");
+            String accion = perfil.getEquipado() == aspecto ? "EQUIPADO" : tiene ? "EQUIPAR" : aspecto.getDificultad() == null ? "COMPRAR" : "VER OBJETIVO";
+            if (vista.boton(accion, x + 12, y + 10, 194, 37, tiene)) {
+                if (tiene) { perfil.equipar(aspecto); avisar("Equipado: " + aspecto.getNombre()); }
+                else if (aspecto.getDificultad() != null) avisar("Alcanza " + aspecto.getRequisito() + " para desbloquearlo gratis.");
+                else if (perfil.comprar(aspecto)) { perfil.equipar(aspecto); avisar("Compra lista. Equipaste " + aspecto.getNombre()); }
+                else avisar("Necesitas " + (aspecto.getPrecio() - perfil.getMonedas()) + " monedas mas.");
+                return;
             }
         }
+        if (vista.boton("VOLVER", 24, 40, 170, 38, false)) { cambiarEstado(Estado.MENU); return; }
+        if (vista.boton("<", 440, 40, 70, 36, false)) paginaTienda = Math.max(0, paginaTienda - 1);
+        vista.centrar((paginaTienda + 1) + " / 3", 520, 90, 65, 1, "E4EDF5");
+        if (vista.boton(">", 625, 40, 70, 36, false)) paginaTienda = Math.min(2, paginaTienda + 1);
     }
-
-    private void rect(float x, float y, float w, float h, String color) {
-        formas.setColor(Color.valueOf(color));
-        formas.rect(x, y, w, h);
-    }
-
-    private void dibujarFondo() {
-        formas.begin(ShapeRenderer.ShapeType.Filled);
-        rect(0, 0, 960, 600, "0D1C33");
-        formas.setColor(Color.valueOf("17344B"));
-        formas.circle(780, 408, 155);
-        formas.setColor(Color.valueOf("254B60"));
-        formas.circle(785, 435, 53);
-        formas.setColor(Color.valueOf("10283E"));
-        formas.triangle(0, 70, 215, 370, 475, 70);
-        formas.triangle(270, 70, 605, 320, 960, 70);
-        formas.setColor(Color.valueOf("31526A"));
-        for (int i = 0; i < 45; i++) {
-            float x = (i * 137) % 960;
-            float y = 80 + ((i * 71 + 520 - reloj * 35 % 520) % 520);
-            formas.rectLine(x, y, x - 3, y - 12, 1);
+    private void puntuaciones() {
+        cabecera("MEJORES PUNTUACIONES", "Top 5 local por dificultad. Solo cuentan las partidas terminadas.");
+        for (Dificultad opcion : Dificultad.values()) {
+            if (vista.boton(opcion.name(), 150 + opcion.ordinal() * 225, 448, 210, 46, dificultad == opcion)) dificultad = opcion;
         }
-        rect(0, 0, 960, 42, "183E49");
-        rect(0, 38, 960, 4, "3C8791");
-        rect(0, 532, 960, 68, "091629");
-        rect(704, 546, 120, 36, "20394C");
-        if (estado == Estado.JUGANDO) rect(838, 546, 98, 36, "20394C");
-        formas.end();
+        vista.panel(150, 125, 660, 300, "0C192C");
+        vista.texto("POSICION", 185, 398, 1, "91A9BC");
+        vista.texto("PUNTUACION", 602, 398, 1, "91A9BC");
+        int[] top = perfil.getPuntuaciones(dificultad);
+        for (int i = 0; i < top.length; i++) {
+            float y = 357 - i * 45;
+            vista.panel(170, y - 28, 620, 37, i == 0 ? "294334" : "172A40");
+            vista.texto("0" + (i + 1), 185, y, 1.2f, "FFD36A");
+            vista.texto(top[i] == 0 ? "Sin partida registrada" : "Superviviente / " + dificultad, 250, y, 1, "D6E4ED");
+            vista.texto(top[i] == 0 ? "---" : String.valueOf(top[i]), 664, y, 1.2f, "E4EDF5");
+        }
+        vista.centrar("Mayor nivel alcanzado: " + perfil.getNivelMaximo(dificultad), 150, 660, 98, 1.1f, "A3B8C8");
+        if (vista.boton("VOLVER", 32, 40, 170, 40, false)) cambiarEstado(Estado.MENU);
     }
-
+    private void ayuda() {
+        cabecera("GUIA DE SUPERVIVENCIA", "A / D o flechas: mover. P: pausa. Tambien puedes usar raton o pantalla tactil.");
+        vista.texto("Agua celeste: +10 puntos. Gota rosa con X: pierde una vida.", 42, 499, 1.05f, "D6E4ED");
+        int i = 0;
+        for (TipoObjeto tipo : TipoObjeto.values()) {
+            float y = 451 - i * 39;
+            vista.panel(42, y - 24, 45, 30, tipo.getColor());
+            vista.centrar(tipo.getSimbolo(), 42, 45, y - 3, 1, "102234");
+            vista.texto(tipo.getNombre(), 108, y, 1.05f, tipo.getColor());
+            vista.texto(tipo.getDescripcion(), 288, y, 1, "D6E4ED");
+            i++;
+        }
+        vista.texto("Los efectos iguales renuevan su tiempo. Cafe y veneno se combinan.", 42, 80, 1, "91A9BC");
+        if (vista.boton("VOLVER", 42, 30, 170, 36, false)) cambiarEstado(Estado.MENU);
+    }
     private void dibujarPartida() {
-        formas.begin(ShapeRenderer.ShapeType.Filled);
-        for (Gota gota : lluvia.getGotas()) {
-            formas.setColor(Color.valueOf(gota.esBuena() ? "61E0E8" : "FF7F91"));
-            formas.circle(gota.getX() + 14, gota.getY() + 13, 13);
-            formas.triangle(gota.getX() + 1, gota.getY() + 17, gota.getX() + 14,
-                    gota.getY() + 38, gota.getX() + 27, gota.getY() + 17);
-            if (!gota.esBuena()) {
-                formas.setColor(Color.valueOf("712F54"));
-                formas.rectLine(gota.getX() + 8, gota.getY() + 7, gota.getX() + 20, gota.getY() + 19, 3);
-                formas.rectLine(gota.getX() + 8, gota.getY() + 19, gota.getX() + 20, gota.getY() + 7, 3);
-            }
+        Personaje jugador = partida.getPersonaje();
+        for (Gota gota : partida.getLluvia().getGotas()) vista.gota(gota);
+        vista.personaje(perfil.getEquipado(), jugador.getX(), jugador.getY(), 3.4f, reloj, jugador.estaMoviendo(), jugador.estaHerido() && (int) (reloj * 10) % 2 == 0);
+        vista.panel(0, 532, 960, 68, "0A1526");
+        vista.texto(partida.getDificultad() + " / NIVEL " + partida.getNumeroNivel(), 24, 578, 1.2f, "67DCCE");
+        vista.texto("PUNTOS " + jugador.getPuntos(), 275, 578, 1.15f, "E4EDF5");
+        vista.texto("VIDAS " + jugador.getVidas(), 495, 578, 1.15f, "FF9BA6");
+        vista.texto("MONEDAS " + jugador.getMonedas(), 650, 578, 1.1f, "FFD36A");
+        if (vista.boton("PAUSA", 825, 545, 110, 40, false)) { cambiarEstado(Estado.PAUSA); return; }
+        vista.panel(24, 514, 912, 5, "23354E");
+        vista.panel(24, 514, 912 * partida.getProgreso(), 5, "67DCCE");
+        vista.texto("Record " + perfil.getPuntuaciones(partida.getDificultad())[0], 24, 550, 0.95f, "91A9BC");
+        if (partida.esSecreto()) {
+            vista.centrar("RONDA SECRETA / SOLO MONEDAS / " + (int) Math.ceil(partida.getTiempoSecreto()) + " s", 0, 960, 466, 1.3f, "FFD36A");
+        } else if (partida.getAvisoNivel() > 0) vista.centrar("NIVEL " + partida.getNumeroNivel(), 0, 960, 375, 2, "E4EDF5");
+        int fila = 0;
+        for (TipoObjeto tipo : TipoObjeto.values()) if (jugador.activo(tipo)) {
+            vista.texto(tipo.getNombre() + "  " + (int) Math.ceil(jugador.tiempoRestante(tipo)) + "s", 24, 490 - fila * 22, 1, tipo.getColor());
+            fila++;
         }
-        float x = tarro.getX(), y = tarro.getY();
-        boolean parpadeo = tarro.estaHerido() && (int) (reloj * 10) % 2 == 0;
-        rect(x + 4, y, 56, 44, parpadeo ? "F5A0AC" : "E5BA75");
-        rect(x, y + 39, 64, 9, "FFE0A6");
-        rect(x + 13, y + 8, 38, 23, "398D9F");
-        rect(24, 507, 912, 6, "20394C");
-        int anterior = nivelActual == 0 ? 0 : niveles[nivelActual - 1].getObjetivo();
-        float avance = (tarro.getPuntos() - anterior) / (float) (niveles[nivelActual].getObjetivo() - anterior);
-        rect(24, 507, 912 * Math.min(1, avance), 6, "61E0E8");
-        formas.end();
+        vista.centrar(jugador.getAviso().isEmpty() ? "Recoge agua y monedas. Evita los peligros." : jugador.getAviso(), 0, 960, 25, 1, "D6E4ED");
     }
-
-    private void dibujarPanel() {
-        formas.begin(ShapeRenderer.ShapeType.Filled);
-        rect(193, 100, 574, 392, "081526");
-        rect(193, 488, 574, 4, "61E0E8");
-        rect(330, 235, 300, 52, "61E0E8");
-        rect(330, 167, 300, 48, "20394C");
-        formas.end();
+    private void pausa() {
+        vista.panel(230, 120, 500, 370, "0C192C");
+        vista.centrar("UN RESPIRO", 230, 500, 446, 2, "E4EDF5");
+        vista.centrar("El tiempo y los efectos estan detenidos.", 230, 500, 399, 1, "91A9BC");
+        if (vista.boton("CONTINUAR", 300, 305, 360, 54, true)) { cambiarEstado(Estado.JUGANDO); return; }
+        if (vista.boton("GUARDAR MONEDAS Y SALIR", 300, 237, 360, 50, false)) { abandonar(); return; }
+        if (vista.boton(configuracion.tieneSonido() ? "SONIDO: SI" : "SONIDO: NO", 300, 169, 360, 48, false)) configuracion.alternarSonido();
+        vista.centrar("Salir no registra puntuacion en el ranking.", 230, 500, 145, 0.9f, "91A9BC");
     }
-
-    private void escribir(String valor, float x, float y, float escala, Color color) {
-        fuente.getData().setScale(escala);
-        fuente.setColor(color);
-        fuente.draw(batch, valor, x, y);
+    private void derrota() {
+        if (nuevoRecord && tiempoRecord < 6) vista.confeti(tiempoRecord);
+        vista.panel(230, 115, 500, 380, "0C192C");
+        float escala = nuevoRecord && tiempoRecord < 6 ? 1.8f + 0.1f * (float) Math.sin(tiempoRecord * 6) : 1.8f;
+        vista.centrar(nuevoRecord ? "NUEVO RECORD" : "FIN DE LA PARTIDA", 230, 500, 451, escala, nuevoRecord ? "FFD36A" : "E4EDF5");
+        Personaje jugador = partida.getPersonaje();
+        vista.centrar(partida.getDificultad() + " / NIVEL " + partida.getNumeroNivel(), 230, 500, 405, 1.2f, "67DCCE");
+        vista.centrar(jugador.getPuntos() + " puntos", 230, 500, 366, 1.5f, "E4EDF5");
+        vista.centrar("+" + jugador.getMonedas() + " monedas guardadas", 230, 500, 326, 1.1f, "FFD36A");
+        if (vista.boton("OTRA PARTIDA", 300, 240, 360, 52, true)) { iniciar(); return; }
+        if (vista.boton("VOLVER AL MENU", 300, 173, 360, 48, false)) cambiarEstado(Estado.MENU);
     }
-    private void centrado(String valor, float y, float escala, Color color) {
-        fuente.getData().setScale(escala);
-        texto.setText(fuente, valor);
-        escribir(valor, (960 - texto.width) / 2, y, escala, color);
-    }
-
-    private void dibujarTextos() {
-        batch.begin();
-        escribir("GAME / LLUVIA", 24, 577, 1.4f, Color.WHITE);
-        escribir(configuracion.tieneSonido() ? "SONIDO: SI" : "SONIDO: NO", 717, 569, 1, Color.WHITE);
-        if (estado != Estado.MENU) {
-            escribir("AGUA " + tarro.getPuntos() + " / " + niveles[nivelActual].getObjetivo(), 248, 573, 1.1f, Color.CYAN);
-            escribir("VIDAS " + tarro.getVidas(), 480, 573, 1.1f, Color.WHITE);
-            escribir("0" + (nivelActual + 1) + " / " + niveles[nivelActual].getNombre(), 24, 492, 1, Color.LIGHT_GRAY);
-        }
-        if (estado == Estado.JUGANDO) {
-            escribir("PAUSA", 855, 569, 1, Color.WHITE);
-            if (avisoNivel > 0) centrado(niveles[nivelActual].getNombre(), 375, 2, Color.WHITE);
-            centrado(tactil ? "Arrastra en la zona de juego para moverte" : "A / D o flechas: mover    P: pausa    M: sonido", 25, 1, Color.LIGHT_GRAY);
-        } else {
-            String titulo = estado == Estado.MENU ? "GUARDIAN DE LA LLUVIA"
-                    : estado == Estado.PAUSA ? "UN RESPIRO"
-                    : estado == Estado.VICTORIA ? "AGUA PARA TODOS" : "FIN DE LA TORMENTA";
-            centrado(titulo, 442, 2, Color.WHITE);
-            if (estado == Estado.MENU) {
-                centrado("El pueblo necesita agua. Cada gota cuenta.", 385, 1.15f, Color.LIGHT_GRAY);
-                centrado("Recoge las gotas celestes y evita las rosas con X.", 352, 1, Color.LIGHT_GRAY);
-                centrado("Supera 3 niveles y llega a 360 puntos con vida.", 326, 1, Color.LIGHT_GRAY);
-            } else if (estado == Estado.PAUSA) {
-                centrado("La partida esta detenida.", 371, 1.2f, Color.LIGHT_GRAY);
-                centrado("Puedes continuar cuando quieras.", 337, 1, Color.LIGHT_GRAY);
-            } else {
-                centrado("Agua recolectada: " + tarro.getPuntos() + " puntos", 375, 1.3f, Color.CYAN);
-                centrado(estado == Estado.VICTORIA ? "Completaste los tres niveles." : "Evita las gotas contaminadas e intentalo otra vez.", 337, 1, Color.LIGHT_GRAY);
-            }
-            centrado(estado == Estado.PAUSA ? "CONTINUAR" : estado == Estado.MENU ? "JUGAR" : "VOLVER A JUGAR", 267, 1.35f, Color.valueOf("081526"));
-            centrado(estado == Estado.MENU ? "CONTROL: " + (tactil ? "TACTIL / RATON" : "TECLADO") : "VOLVER AL MENU", 197, 1.1f, Color.WHITE);
-            centrado("Mejor puntuacion: " + configuracion.getRecord(), 134, 1, Color.LIGHT_GRAY);
-        }
-        batch.end();
-    }
-
     @Override public void resize(int width, int height) { viewport.update(width, height, true); }
     @Override public void pause() { if (estado == Estado.JUGANDO) cambiarEstado(Estado.PAUSA); }
     @Override public void dispose() {
-        musica.dispose(); recoger.dispose(); golpe.dispose();
-        batch.dispose(); fuente.dispose(); formas.dispose();
+        guardarResultado(false);
+        musica.dispose(); recoger.dispose(); golpe.dispose(); vista.dispose();
     }
 }

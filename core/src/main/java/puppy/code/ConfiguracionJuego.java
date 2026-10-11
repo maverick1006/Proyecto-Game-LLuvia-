@@ -8,9 +8,11 @@ public final class ConfiguracionJuego {
     private final Preferences preferencias;
     private boolean sonido;
     private int record;
+    private final PerfilJugador perfil;
 
     private ConfiguracionJuego() {
-        preferencias = Gdx.app.getPreferences("gamelluvia");
+        preferencias = Gdx.app.getPreferences(System.getProperty("gamelluvia.perfil", "gamelluvia"));
+        perfil = new PerfilJugador(preferencias);
         sonido = preferencias.getBoolean("sonido", true);
         record = preferencias.getInteger("record", 0);
     }
@@ -19,6 +21,7 @@ public final class ConfiguracionJuego {
         return instancia;
     }
     public boolean tieneSonido() { return sonido; }
+    public PerfilJugador getPerfil() { return perfil; }
     public int getRecord() { return record; }
     public void alternarSonido() {
         sonido = !sonido;

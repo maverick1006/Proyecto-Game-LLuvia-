@@ -11,12 +11,12 @@ public class ControlTactil implements ControlMovimiento {
     public ControlTactil(Viewport viewport) { this.viewport = viewport; }
 
     @Override
-    public void actualizar(Tarro tarro, float delta) {
+    public void actualizar(Personaje personaje, float delta) {
         if (!Gdx.input.isTouched()) return;
         viewport.unproject(toque.set(Gdx.input.getX(), Gdx.input.getY()));
         // La franja superior queda reservada para los botones.
         if (toque.y >= 0 && toque.y < 480 && toque.x >= 0 && toque.x <= 960) {
-            tarro.colocar(toque.x - Tarro.ANCHO / 2);
+            personaje.moverHacia(toque.x - Personaje.ANCHO / 2, delta);
         }
     }
 }

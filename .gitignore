@@ -8,3 +8,4 @@
 .project
 local.properties
 *.log
+**/guardado/

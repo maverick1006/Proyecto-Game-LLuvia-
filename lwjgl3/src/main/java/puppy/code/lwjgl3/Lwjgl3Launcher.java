@@ -11,6 +11,7 @@ public class Lwjgl3Launcher {
         config.setWindowedMode(960, 600);
         config.useVsync(true);
         config.setForegroundFPS(60);
+        config.setPreferencesConfig("../guardado", com.badlogic.gdx.Files.FileType.Local);
         new Lwjgl3Application(new GameLluvia(), config);
     }
 }

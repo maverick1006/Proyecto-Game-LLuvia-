@@ -4,10 +4,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ReglasJuegoTest {
-    private Tarro tarro() { return new Tarro((jugador, delta) -> { }); }
+    private Personaje personaje() { return new Personaje((jugador, delta) -> { }); }
 
     @Test public void unaGotaSoloSeRecogeUnaVez() {
-        Tarro jugador = tarro();
+        Personaje jugador = personaje();
         Gota gota = new GotaBuena(jugador.getX(), jugador.getY(), 200);
         gota.actualizar(0, jugador);
         gota.actualizar(0, jugador);
@@ -16,14 +16,14 @@ public class ReglasJuegoTest {
     }
 
     @Test public void variasGotasMalasNoQuitanTodasLasVidasEnUnFotograma() {
-        Tarro jugador = tarro();
+        Personaje jugador = personaje();
         new GotaMala(jugador.getX(), jugador.getY(), 200).actualizar(0, jugador);
         new GotaMala(jugador.getX(), jugador.getY(), 200).actualizar(0, jugador);
         assertEquals(2, jugador.getVidas());
     }
 
     @Test public void elDanioSeRecuperaPorTiempoYLasVidasNoSonNegativas() {
-        Tarro jugador = tarro();
+        Personaje jugador = personaje();
         assertTrue(jugador.recibirDanio());
         jugador.actualizar(0.6f);
         assertFalse(jugador.recibirDanio());
@@ -39,23 +39,23 @@ public class ReglasJuegoTest {
     }
 
     @Test public void unaGotaFueraDePantallaTerminaSinDarPuntos() {
-        Tarro jugador = tarro();
+        Personaje jugador = personaje();
         Gota gota = new GotaBuena(100, -40, 200);
         gota.actualizar(0, jugador);
         assertTrue(gota.estaTerminada());
         assertEquals(0, jugador.getPuntos());
     }
 
-    @Test public void elTarroRespetaAmbosBordes() {
-        Tarro jugador = tarro();
+    @Test public void elPersonajeRespetaAmbosBordes() {
+        Personaje jugador = personaje();
         jugador.colocar(-100);
         assertEquals(0, jugador.getX(), 0);
         jugador.colocar(2000);
-        assertEquals(896, jugador.getX(), 0);
+        assertEquals(912, jugador.getX(), 0);
     }
 
     @Test public void seActualizanTodasLasGotasAunqueSeEliminenVarias() {
-        Tarro jugador = tarro();
+        Personaje jugador = personaje();
         jugador.colocar(0);
         Lluvia lluvia = new Lluvia();
         Nivel nivel = new Nivel.Builder("Prueba").intervalo(0.5f).velocidad(10000).construir();
@@ -64,10 +64,10 @@ public class ReglasJuegoTest {
         assertEquals(3, jugador.getVidas());
     }
 
-    @Test public void elControlSePuedeSustituirSinModificarElTarro() {
-        Tarro jugador = new Tarro((t, delta) -> t.mover(100 * delta));
+    @Test public void elControlSePuedeSustituirSinModificarElPersonaje() {
+        Personaje jugador = new Personaje((t, delta) -> t.mover(100 * delta));
         jugador.actualizar(0.5f);
-        assertEquals(498, jugador.getX(), 0.001f);
+        assertEquals(506, jugador.getX(), 0.001f);
     }
 
     @Test(expected = IllegalArgumentException.class)

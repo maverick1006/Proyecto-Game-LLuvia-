@@ -13,18 +13,18 @@ public abstract class Gota {
     }
 
     // Todas siguen estos pasos; cada hija decide qué pasa al recogerla.
-    public final void actualizar(float delta, Tarro tarro) {
+    public final void actualizar(float delta, Personaje personaje) {
         if (terminada) return;
         area.y -= velocidad * delta;
         if (area.y + area.height < 0) {
             terminada = true;
-        } else if (tarro.choca(area)) {
-            aplicarEfecto(tarro);
+        } else if (personaje.choca(area)) {
+            aplicarEfecto(personaje);
             terminada = true;
         }
     }
 
-    protected abstract void aplicarEfecto(Tarro tarro);
+    protected abstract void aplicarEfecto(Personaje personaje);
     public abstract boolean esBuena();
     public boolean estaTerminada() { return terminada; }
     public float getX() { return area.x; }
