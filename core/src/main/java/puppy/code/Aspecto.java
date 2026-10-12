@@ -2,20 +2,20 @@ package puppy.code;
 
 public enum Aspecto {
     EXPLORADOR("Explorador", "61D7D4", "243F61", 0, null, 0, 0),
-    FONTANERO("Salta-tuberias", "EF6869", "435EB7", 20, null, 0, 1),
-    VELOCISTA("Rayo azul", "568EFA", "E85F64", 35, null, 0, 2),
-    CONSTRUCTOR("Minero cubico", "67CABB", "64719B", 35, null, 0, 3),
-    ARACNIDO("Centinela arana", "D95170", "454DA0", 50, null, 0, 8),
-    ACERO("Armadura solar", "C66A5B", "F0BE69", 70, null, 0, 11),
-    NINJA("Ninja del alba", "F4A353", "353D60", 0, Dificultad.NOOB, 4, 5),
-    PIRATA("Capitan del viento", "DB6860", "436CB1", 0, Dificultad.NOOB, 8, 6),
-    GUERRERO("Guerrero astral", "F5A04F", "587DE0", 0, Dificultad.NOOB, 12, 4),
-    HECHICERO("Hechicero nocturno", "8F84E7", "333E66", 0, Dificultad.PRO, 4, 12),
-    ESCUDO("Guardian del escudo", "568DCB", "D06B77", 0, Dificultad.PRO, 8, 9),
-    TRUENO("Forjador del trueno", "8CAFC6", "C36778", 0, Dificultad.PRO, 12, 10),
-    MARINE("Marine infernal", "90A964", "4D685B", 0, Dificultad.HACKER, 4, 7),
-    SOMBRA("Sombra digital", "5CF0C4", "3B4A60", 0, Dificultad.HACKER, 8, 12),
-    COSMICO("Campeon cosmico", "EBD283", "9981D6", 0, Dificultad.HACKER, 12, 4);
+    FONTANERO("Mario", "EF6869", "435EB7", 150, null, 0, 1),
+    VELOCISTA("Sonic", "568EFA", "E85F64", 220, null, 0, 2),
+    CONSTRUCTOR("Steve", "67CABB", "64719B", 220, null, 0, 3),
+    ARACNIDO("Spiderman", "D95170", "454DA0", 320, null, 0, 8),
+    ACERO("Iron Man", "C66A5B", "F0BE69", 450, null, 0, 11),
+    NINJA("Naruto", "F4A353", "353D60", 0, Dificultad.NOOB, 10, 5),
+    PIRATA("Monkey D. Luffy", "DB6860", "436CB1", 0, Dificultad.NOOB, 20, 6),
+    GUERRERO("Goku", "F5A04F", "587DE0", 0, Dificultad.NOOB, 30, 4),
+    HECHICERO("Satoru Gojo", "8F84E7", "333E66", 0, Dificultad.PRO, 10, 12),
+    ESCUDO("Capitan America", "568DCB", "D06B77", 0, Dificultad.PRO, 20, 9),
+    TRUENO("Thor", "8CAFC6", "C36778", 0, Dificultad.PRO, 30, 10),
+    MARINE("Doom Slayer", "90A964", "4D685B", 0, Dificultad.HACKER, 10, 7),
+    SOMBRA("Megumi Fushiguro", "5CF0C4", "3B4A60", 0, Dificultad.HACKER, 20, 12),
+    COSMICO("Vegeta", "EBD283", "9981D6", 0, Dificultad.HACKER, 30, 4);
 
     private final String nombre, color, secundario;
     private final int precio, nivel, estilo;

@@ -26,9 +26,9 @@ public class ProgresoTest {
         assertEquals(1020, p.getVelocidad(), 0);
         p.atrapar(TipoObjeto.VENENO);
         assertEquals(510, p.getVelocidad(), 0);
-        p.actualizar(5.1f);
+        p.actualizar(5.1f, false);
         assertEquals(1020, p.getVelocidad(), 0);
-        p.actualizar(2);
+        p.actualizar(2, false);
         assertEquals(680, p.getVelocidad(), 0);
     }
     @Test public void inmovilizacionTambienBloqueaControlTactil() {
@@ -70,26 +70,26 @@ public class ProgresoTest {
         Preferences datos = memoria();
         PerfilJugador perfil = new PerfilJugador(datos);
         assertFalse(perfil.comprar(Aspecto.FONTANERO));
-        perfil.guardarResultado(Dificultad.NOOB, 0, 40, false);
+        perfil.guardarResultado(Dificultad.NOOB, 0, 300, false);
         assertTrue(perfil.comprar(Aspecto.FONTANERO));
         assertFalse(perfil.comprar(Aspecto.FONTANERO));
-        assertEquals(20, perfil.getMonedas());
+        assertEquals(150, perfil.getMonedas());
         assertTrue(perfil.equipar(Aspecto.FONTANERO));
         PerfilJugador recargado = new PerfilJugador(datos);
         assertEquals(Aspecto.FONTANERO, recargado.getEquipado());
-        assertEquals(20, recargado.getMonedas());
+        assertEquals(150, recargado.getMonedas());
         assertFalse(perfil.equipar(Aspecto.MARINE));
     }
     @Test public void desbloqueosExigenDificultadYNivelCorrectos() {
         PerfilJugador perfil = new PerfilJugador(memoria());
-        perfil.registrarNivel(Dificultad.NOOB, 3);
+        perfil.registrarNivel(Dificultad.NOOB, 9);
         assertFalse(perfil.tiene(Aspecto.NINJA));
-        assertEquals(1, perfil.registrarNivel(Dificultad.NOOB, 4).size());
+        assertEquals(1, perfil.registrarNivel(Dificultad.NOOB, 10).size());
         assertTrue(perfil.tiene(Aspecto.NINJA));
         assertFalse(perfil.tiene(Aspecto.MARINE));
-        assertTrue(perfil.registrarNivel(Dificultad.NOOB, 4).isEmpty());
+        assertTrue(perfil.registrarNivel(Dificultad.NOOB, 10).isEmpty());
         perfil.registrarNivel(Dificultad.NOOB, 2);
-        assertEquals(4, perfil.getNivelMaximo(Dificultad.NOOB));
+        assertEquals(10, perfil.getNivelMaximo(Dificultad.NOOB));
         perfil.guardarResultado(Dificultad.NOOB, 0, 500, false);
         assertFalse(perfil.comprar(Aspecto.MARINE));
     }
@@ -124,11 +124,11 @@ public class ProgresoTest {
     }
     @Test public void nivelSecretoSeActivaYVuelveSinSaltarseUnNivel() {
         Partida partida = new Partida((p, delta) -> { }, Dificultad.NOOB);
-        // Se retiran las gotas para aislar el reloj de la progresion.
-        for (int i = 0; i < 1000; i++) { partida.actualizar(0.1f); partida.getLluvia().limpiar(); }
+        partida.getPersonaje().recogerAgua(400);
+        partida.actualizar(0.01f);
         assertEquals(5, partida.getNumeroNivel());
         assertTrue(partida.esSecreto());
-        for (int i = 0; i < 121; i++) { partida.actualizar(0.1f); partida.getLluvia().limpiar(); }
+        for (int i = 0; i < 32; i++) { partida.actualizar(0.25f); partida.getLluvia().limpiar(); }
         assertFalse(partida.esSecreto());
         assertEquals(5, partida.getNumeroNivel());
         assertFalse(partida.terminada());

@@ -18,12 +18,14 @@ public class VistaJuego {
     private final DibujoPersonaje dibujo = new DibujoPersonaje(formas);
     private final Vector2 puntero = new Vector2();
     private boolean click;
+    private final com.badlogic.gdx.math.Matrix4 proyeccion = new com.badlogic.gdx.math.Matrix4();
 
     public VistaJuego() {
         fuente.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
     }
     public void preparar(Viewport viewport) {
         viewport.apply();
+        proyeccion.set(viewport.getCamera().combined);
         formas.setProjectionMatrix(viewport.getCamera().combined);
         batch.setProjectionMatrix(viewport.getCamera().combined);
         viewport.unproject(puntero.set(Gdx.input.getX(), Gdx.input.getY()));
@@ -57,53 +59,37 @@ public class VistaJuego {
         dibujo.dibujar(aspecto, x, y, escala, reloj, moviendo, herido);
         formas.end();
     }
-    public void fondo(float reloj, boolean secreto) {
+    public void fondo(float reloj, boolean secreto) { fondo(reloj, secreto, Zona.LLANURA, 960); }
+    public void fondo(float reloj, boolean secreto, Zona zona, float ancho) {
         formas.begin(ShapeRenderer.ShapeType.Filled);
-        formas.setColor(Color.valueOf(secreto ? "30273E" : "101E32"));
-        formas.rect(0, 0, 960, 600);
-        formas.setColor(Color.valueOf(secreto ? "735C46" : "19374C"));
-        formas.circle(775, 390, 150);
-        formas.setColor(Color.valueOf(secreto ? "E5C56D" : "456C80"));
-        formas.circle(780, 415, 48);
-        formas.setColor(Color.valueOf("152A40"));
-        formas.triangle(0, 40, 180, 340, 480, 40);
-        formas.triangle(300, 40, 620, 300, 960, 40);
-        if (!secreto) {
-            formas.setColor(Color.valueOf("2C465B"));
-            for (int i = 0; i < 36; i++) {
-                float x = (i * 137) % 960;
-                float y = 42 + ((i * 71 + 550 - reloj * 35 % 550) % 550);
-                formas.rectLine(x, y, x - 3, y - 12, 1);
-            }
-        }
-        formas.setColor(Color.valueOf("345D65")); formas.rect(0, 38, 960, 4);
-        formas.setColor(Color.valueOf("122D37")); formas.rect(0, 0, 960, 38);
+        new DibujoEscenario(formas).fondo(zona, ancho, reloj, secreto);
         formas.end();
     }
     public void gota(Gota gota) {
-        TipoObjeto tipo = gota instanceof ObjetoEspecial ? ((ObjetoEspecial) gota).getTipo() : null;
-        String color = tipo != null ? tipo.getColor() : gota.esBuena() ? "61E0E8" : "FF7F91";
-        float x = gota.getX(), y = gota.getY();
+        TipoObjeto tipo = gota instanceof ObjetoEspecial ? ((ObjetoEspecial) gota).getTipo() : gota.esBuena() ? null : TipoObjeto.SANGRE;
+        objeto(tipo, gota.getX(), gota.getY());
+    }
+    public void objeto(TipoObjeto tipo, float x, float y) {
         formas.begin(ShapeRenderer.ShapeType.Filled);
-        formas.setColor(Color.valueOf(color));
-        if (tipo == TipoObjeto.MONEDA || tipo == TipoObjeto.MONEDAS_DOBLES) {
-            formas.circle(x + 14, y + 18, 14);
-            formas.setColor(Color.valueOf("B78537")); formas.circle(x + 14, y + 18, 10);
-        } else if (tipo == TipoObjeto.CAFE) {
-            formas.rect(x + 2, y + 2, 22, 25);
-            formas.rect(x + 23, y + 8, 6, 14);
-            formas.setColor(Color.valueOf("F5E6D1")); formas.rect(x + 2, y + 26, 22, 4);
-        } else if (tipo == TipoObjeto.PAJARO) {
-            formas.circle(x + 14, y + 12, 14);
-            formas.circle(x + 14, y + 22, 9);
-            formas.circle(x + 14, y + 30, 5);
-        } else {
-            formas.circle(x + 14, y + 13, 13);
-            formas.triangle(x + 1, y + 17, x + 14, y + 38, x + 27, y + 17);
-        }
+        new DibujoObjetos(formas).dibujar(x, y, tipo);
         formas.end();
-        if (tipo != null) centrar(tipo.getSimbolo(), x, 28, y + 22, 0.95f, "102234");
-        else if (!gota.esBuena()) centrar("X", x, 28, y + 20, 1, "702C4D");
+        if (tipo == TipoObjeto.AGUA_DOBLE || tipo == TipoObjeto.PUNTOS_DOBLES || tipo == TipoObjeto.MONEDAS_DOBLES)
+            centrar("x2", x, 28, y + 20, 0.85f, "102234");
+    }
+    public void ovni(float x, float y, float reloj) {
+        formas.begin(ShapeRenderer.ShapeType.Filled);
+        new DibujoEscenario(formas).ovni(x, y, reloj);
+        formas.end();
+    }
+    public void rayo(float centro, float avance) {
+        formas.begin(ShapeRenderer.ShapeType.Filled);
+        formas.setColor(Color.valueOf("A2DCD3"));
+        formas.triangle(centro, 437, centro - 42, 42 + avance * 300, centro + 42, 42 + avance * 300);
+        formas.end();
+    }
+    public void origen(float x) {
+        com.badlogic.gdx.math.Matrix4 matriz = new com.badlogic.gdx.math.Matrix4(proyeccion).translate(x, 0, 0);
+        formas.setProjectionMatrix(matriz); batch.setProjectionMatrix(matriz);
     }
     public void confeti(float reloj) {
         formas.begin(ShapeRenderer.ShapeType.Filled);
