@@ -25,7 +25,7 @@ public class PerfilJugador {
         } catch (IllegalArgumentException error) { return Aspecto.EXPLORADOR; }
     }
     public boolean comprar(Aspecto aspecto) {
-        if (tiene(aspecto) || aspecto.getDificultad() != null || getMonedas() < aspecto.getPrecio()) return false;
+        if (tiene(aspecto) || !aspecto.esComprable() || getMonedas() < aspecto.getPrecio()) return false;
         datos.putInteger("monedas", getMonedas() - aspecto.getPrecio());
         datos.putBoolean("aspecto." + aspecto, true);
         datos.flush();
@@ -41,13 +41,26 @@ public class PerfilJugador {
         datos.putInteger("nivel." + dificultad, Math.max(nivel, getNivelMaximo(dificultad)));
         List<Aspecto> nuevos = new ArrayList<>();
         for (Aspecto aspecto : Aspecto.values()) {
-            if (aspecto.getDificultad() == dificultad && aspecto.getNivel() <= nivel && !tiene(aspecto)) {
+            if (!aspecto.requiereVictoria() && aspecto.getDificultad() == dificultad && aspecto.getNivel() <= nivel && !tiene(aspecto)) {
                 datos.putBoolean("aspecto." + aspecto, true);
                 nuevos.add(aspecto);
             }
         }
         datos.flush();
         return nuevos;
+    }
+    public Aspecto registrarVictoria(Dificultad dificultad) {
+        for (Aspecto aspecto : Aspecto.values()) {
+            if (aspecto.requiereVictoria() && aspecto.getDificultad() == dificultad) {
+                datos.putBoolean("aspecto." + aspecto, true); datos.flush(); return aspecto;
+            }
+        }
+        return null;
+    }
+    public void registrarDesafioOculto(Partida partida) {
+        if (partida.esDesafioOculto() && partida.gano()) {
+            datos.putBoolean("aspecto." + Aspecto.ALIEN, true); datos.flush();
+        }
     }
     public boolean guardarResultado(Dificultad dificultad, int puntos, int monedas, boolean completa) {
         datos.putInteger("monedas", getMonedas() + Math.max(0, monedas));

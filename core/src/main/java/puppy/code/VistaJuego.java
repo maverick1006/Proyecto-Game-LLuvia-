@@ -47,6 +47,12 @@ public class VistaJuego {
         medida.setText(fuente, valor);
         texto(valor, x + (w - medida.width) / 2, y, escala, color);
     }
+    public boolean botonOculto(float x, float y) {
+        boolean encima = puntero.x >= x && puntero.x <= x + 24 && puntero.y >= y && puntero.y <= y + 24;
+        panel(x + 8, y + 10, 8, 3, encima ? "53647A" : "1B2B40");
+        if (click && encima) { click = false; return true; }
+        return false;
+    }
     public boolean boton(String titulo, float x, float y, float w, float h, boolean destacado) {
         boolean encima = puntero.x >= x && puntero.x <= x + w && puntero.y >= y && puntero.y <= y + h;
         panel(x, y, w, h, destacado ? (encima ? "9AEEE0" : "67DCCE") : (encima ? "344B68" : "23354E"));

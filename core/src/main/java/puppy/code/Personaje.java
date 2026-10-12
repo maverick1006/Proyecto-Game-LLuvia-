@@ -21,7 +21,9 @@ public class Personaje {
     private final float anchoMundo;
 
     public Personaje(ControlMovimiento control) { this(control, 960); }
-    public Personaje(ControlMovimiento control, float anchoMundo) {
+    public Personaje(ControlMovimiento control, float anchoMundo) { this(control, anchoMundo, 3); }
+    public Personaje(ControlMovimiento control, float anchoMundo, int vidas) {
+        this.vidas = vidas;
         this.control = control;
         this.anchoMundo = anchoMundo;
         area.x = (anchoMundo - ANCHO) / 2;
@@ -60,6 +62,7 @@ public class Personaje {
         sinAgua = 0;
     }
     public void quitarPuntos(int cantidad) { puntos = Math.max(0, puntos - Math.max(0, cantidad)); }
+    public void cargarAgua(int cantidad) { agua += Math.max(0, cantidad); }
     public boolean gastarAgua() { if (agua == 0 || vidas == 0) return false; agua--; return true; }
     public int getAgua() { return agua; }
     public float getSinAgua() { return sinAgua; }

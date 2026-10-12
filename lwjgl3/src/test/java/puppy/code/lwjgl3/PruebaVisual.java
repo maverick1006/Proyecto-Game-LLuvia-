@@ -18,6 +18,7 @@ public class PruebaVisual extends GameLluvia {
     private Input entradaSimulada;
     private final String carpeta;
     private float sedPausada;
+    private int monedasAntesSecreto, puntosAntesSecreto, nivelAntesSecreto;
     public PruebaVisual(String carpeta) { this.carpeta = carpeta; }
     @Override public void create() {
         Preferences datos = Gdx.app.getPreferences(System.getProperty("gamelluvia.perfil"));
@@ -31,7 +32,7 @@ public class PruebaVisual extends GameLluvia {
                         int tecla = (Integer) argumentos[0];
                         return ((cuadro == 210 || cuadro == 230) && tecla == Input.Keys.P)
                                 || ((cuadro == 460 || cuadro == 490 || cuadro == 570 || cuadro == 640) && tecla == Input.Keys.ESCAPE)
-                                || (cuadro == 510 && tecla == Input.Keys.ENTER);
+                                || ((cuadro == 510 || cuadro == 730) && tecla == Input.Keys.ENTER);
                     }
                     if (nombre.equals("isKeyPressed")) {
                         int tecla = (Integer) argumentos[0];
@@ -63,6 +64,10 @@ public class PruebaVisual extends GameLluvia {
             case 580: return new float[]{200, 130};
             case 600: return new float[]{350, 485};
             case 620: return new float[]{590, 485};
+            case 680: return new float[]{15, 580};
+            case 775: return new float[]{480, 190};
+            case 780: return new float[]{200, 265};
+            case 790: case 800: case 810: return new float[]{655, 58};
             default: return null;
         }
     }
@@ -76,19 +81,33 @@ public class PruebaVisual extends GameLluvia {
         if (cuadro == 360) poner(partida(), "tiempoAscenso", 3f);
         if (cuadro == 440) {
             JefeOvni jefe = partida().getJefe();
-            poner(jefe, "vida", 1);
+            poner(jefe, "vida", 1); poner(jefe, "reloj", 0f);
             @SuppressWarnings("unchecked") List<ChorroAgua> tiros = (List<ChorroAgua>) leer(jefe, "chorros");
-            tiros.add(new ChorroAgua(jefe.getX() + 40, jefe.getY()));
+            tiros.add(new ChorroAgua(465, jefe.getY()));
             partida().getLluvia().limpiar();
         }
         if (cuadro == 550) {
             Personaje p = versus().getUno().getPersonaje();
             for (int i = 0; i < 3; i++) { p.actualizar(1.3f); p.recibirDanio(); }
         }
+        if (cuadro == 680) {
+            monedasAntesSecreto = perfil().getMonedas();
+            puntosAntesSecreto = perfil().getPuntuaciones(Dificultad.PRO)[0];
+            nivelAntesSecreto = perfil().getNivelMaximo(Dificultad.PRO);
+        }
+        if (cuadro == 710) {
+            Personaje p = partida().getPersonaje();
+            for (int i = 0; i < 3; i++) { p.actualizar(1.3f); p.recibirDanio(); }
+        }
+        if (cuadro == 750) {
+            JefeOvni jefe = partida().getJefe(); poner(jefe, "vida", 1); poner(jefe, "reloj", 0f);
+            @SuppressWarnings("unchecked") List<ChorroAgua> tiros = (List<ChorroAgua>) leer(jefe, "chorros");
+            tiros.add(new ChorroAgua(465, jefe.getY()));
+        }
         super.render();
         if (cuadro == 20) capturar("01-menu", "MENU");
         if (cuadro == 40) capturar("05-tienda", "TIENDA");
-        if (cuadro == 60) comprobar(perfil().getMonedas() == 850 && perfil().getEquipado() == Aspecto.FONTANERO, "Compra y equipamiento");
+        if (cuadro == 60) comprobar(perfil().getMonedas() == 820 && perfil().getEquipado() == Aspecto.FONTANERO, "Compra y equipamiento");
         if (cuadro == 80) capturar("06-desbloqueos", "TIENDA");
         if (cuadro == 110) capturar("07-dificultad", "DIFICULTAD");
         if (cuadro == 170) comprobar(partida().getPersonaje().getX() > 456, "Movimiento con teclado");
@@ -101,10 +120,10 @@ public class PruebaVisual extends GameLluvia {
         if (cuadro == 350) capturar("14-ascenso", "JUGANDO");
         if (cuadro == 400) { comprobar(partida().getJefe().getDisparos() > 0, "Espacio dispara agua"); capturar("15-jefe", "JUGANDO"); }
         if (cuadro == 450) {
-            comprobar(partida().gano(), "Jefe vencido"); comprobar(perfil().getMonedas() == 850 + partida().getMonedasFinales(), "Premio de victoria");
+            comprobar(partida().gano(), "Jefe vencido"); comprobar(perfil().getMonedas() == 820 + partida().getMonedasFinales(), "Premio de victoria");
             capturar("16-victoria", "VICTORIA");
         }
-        if (cuadro == 480) { comprobar(perfil().getMonedas() == 850 + partida().getMonedasFinales(), "Deposito unico"); capturar("10-puntuaciones", "PUNTUACIONES"); }
+        if (cuadro == 480) { comprobar(perfil().getMonedas() == 820 + partida().getMonedasFinales(), "Deposito unico"); capturar("10-puntuaciones", "PUNTUACIONES"); }
         if (cuadro == 540) {
             comprobar(versus().getUno().getPersonaje().getX() < 216 && versus().getDos().getPersonaje().getX() > 216, "Controles independientes");
             capturar("17-versus", "JUGANDO");
@@ -115,7 +134,24 @@ public class PruebaVisual extends GameLluvia {
         if (cuadro == 630) capturar("20-guia-desierto", "AYUDA");
         if (cuadro == 650) Gdx.graphics.setWindowedMode(800, 700);
         if (cuadro == 670) capturar("04-redimensionado", "MENU");
-        if (cuadro == 680) Gdx.app.exit();
+        if (cuadro == 690) {
+            comprobar(partida().esDesafioOculto() && partida().enJefe(), "Boton oculto con ventana redimensionada");
+            capturar("21-desafio-oculto", "JUGANDO");
+        }
+        if (cuadro == 720) {
+            comprobar(!perfil().tiene(Aspecto.ALIEN), "Perder no entrega alien");
+            capturar("22-secreto-derrota", "DERROTA");
+        }
+        if (cuadro == 760) {
+            comprobar(partida().gano() && perfil().tiene(Aspecto.ALIEN), "Victoria secreta entrega alien");
+            comprobar(perfil().getMonedas() == monedasAntesSecreto, "Secreto no altera dinero");
+            comprobar(perfil().getPuntuaciones(Dificultad.PRO)[0] == puntosAntesSecreto, "Secreto no altera ranking");
+            comprobar(perfil().getNivelMaximo(Dificultad.PRO) == nivelAntesSecreto, "Secreto no altera niveles");
+            capturar("23-alien-desbloqueado", "VICTORIA");
+        }
+        if (cuadro == 805) capturar("24-personajes-nuevos", "TIENDA");
+        if (cuadro == 820) capturar("25-recompensas-alien", "TIENDA");
+        if (cuadro == 830) Gdx.app.exit();
     }
     private void puntos(int puntos) {
         Personaje p = partida().getPersonaje(); p.actualizar(10, false); p.quitarPuntos(p.getPuntos()); p.recogerAgua(puntos);

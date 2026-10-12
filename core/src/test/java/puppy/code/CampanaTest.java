@@ -4,6 +4,20 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class CampanaTest {
+    @Test public void vidasDependenDeLaDificultadEnCampanaYVersus() {
+        int[] vidas = {5, 3, 1};
+        for (Dificultad dificultad : Dificultad.values()) {
+            Partida juego = new Partida((p, dt) -> { }, dificultad);
+            assertEquals(vidas[dificultad.ordinal()], juego.getPersonaje().getVidas());
+            PartidaVersus versus = new PartidaVersus((p, dt) -> { }, (p, dt) -> { }, dificultad, 1);
+            assertEquals(vidas[dificultad.ordinal()], versus.getUno().getPersonaje().getVidas());
+            assertEquals(vidas[dificultad.ordinal()], versus.getDos().getPersonaje().getVidas());
+            for (int i = 0; i < vidas[dificultad.ordinal()]; i++) {
+                juego.getPersonaje().actualizar(1.3f); juego.getPersonaje().recibirDanio();
+            }
+            assertTrue(juego.terminada());
+        }
+    }
     private Partida partida() { return new Partida((p, dt) -> { }, Dificultad.NOOB, 12, 960); }
     @Test public void esperarNoSubeDeNivel() {
         Partida juego = partida();
@@ -62,7 +76,7 @@ public class CampanaTest {
         Personaje p = partida().getPersonaje();
         p.recogerAgua(100); p.atrapar(TipoObjeto.TERMO); p.atrapar(TipoObjeto.HIELO);
         assertEquals(100, p.getPuntos()); assertFalse(p.activo(TipoObjeto.HIELO));
-        p.atrapar(TipoObjeto.FUEGO); assertEquals(60, p.getPuntos()); assertEquals(2, p.getVidas());
+        p.atrapar(TipoObjeto.FUEGO); assertEquals(60, p.getPuntos()); assertEquals(4, p.getVidas());
     }
     @Test public void ovniConsumeAguaYRespetaLaCadencia() {
         Personaje p = partida().getPersonaje(); JefeOvni jefe = new JefeOvni(Dificultad.NOOB, 960, 1);
@@ -102,7 +116,7 @@ public class CampanaTest {
     @Test public void ambosMuertosEsEmpate() {
         PartidaVersus versus = new PartidaVersus((p, dt) -> { }, (p, dt) -> { }, Dificultad.NOOB, 1);
         for (Partida p : new Partida[]{versus.getUno(), versus.getDos()})
-            for (int i = 0; i < 3; i++) { p.getPersonaje().actualizar(1.3f); p.getPersonaje().recibirDanio(); }
+            for (int i = 0; i < 5; i++) { p.getPersonaje().actualizar(1.3f); p.getPersonaje().recibirDanio(); }
         assertEquals(0, versus.getGanador());
     }
 }

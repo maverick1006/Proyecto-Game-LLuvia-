@@ -20,7 +20,7 @@ public class GameLluvia extends ApplicationAdapter {
     private PerfilJugador perfil;
     private Partida partida;
     private PartidaVersus versus;
-    private boolean modoVersus;
+    private boolean modoVersus, modoOculto;
     private Dificultad dificultad = Dificultad.NOOB;
     private Music musica;
     private Music musicaJefe;
@@ -48,7 +48,10 @@ public class GameLluvia extends ApplicationAdapter {
         Gdx.input.setCatchKey(Input.Keys.BACK, true);
     }
     private void iniciar() {
-        if (modoVersus) {
+        if (modoOculto) {
+            versus = null;
+            partida = Partida.crearDesafioOculto(tactil ? new ControlTactil(viewport) : new ControlTeclado());
+        } else if (modoVersus) {
             versus = new PartidaVersus(new ControlTeclado(Input.Keys.A, Input.Keys.D),
                     new ControlTeclado(Input.Keys.LEFT, Input.Keys.RIGHT), dificultad, System.nanoTime());
             partida = versus.getUno();
@@ -76,6 +79,15 @@ public class GameLluvia extends ApplicationAdapter {
     private void avisar(String texto) { mensaje = texto; tiempoMensaje = 4; }
     private void guardarResultado(boolean completa) {
         if (partida == null || resultadoGuardado || versus != null) return;
+        if (partida.esDesafioOculto()) {
+            perfil.registrarDesafioOculto(partida);
+            resultadoGuardado = true;
+            return;
+        }
+        if (partida.gano()) {
+            Aspecto premio = perfil.registrarVictoria(partida.getDificultad());
+            avisar("Recompensa de campana: " + premio.getNombre());
+        }
         Personaje jugador = partida.getPersonaje();
         perfil.registrarNivel(partida.getDificultad(), partida.getMaximoNivel());
         nuevoRecord = perfil.guardarResultado(partida.getDificultad(), jugador.getPuntos(), partida.getMonedasFinales(), completa);
@@ -94,7 +106,7 @@ public class GameLluvia extends ApplicationAdapter {
         }
         switch (estado) {
             case MENU:
-                if (aceptar) { modoVersus = false; cambiarEstado(Estado.DIFICULTAD); }
+                if (aceptar) { modoOculto = false; modoVersus = false; cambiarEstado(Estado.DIFICULTAD); }
                 if (Gdx.input.isKeyJustPressed(Input.Keys.T)) tactil = !tactil;
                 break;
             case DIFICULTAD:
@@ -178,7 +190,7 @@ public class GameLluvia extends ApplicationAdapter {
             if (jugador.getPuntos() > puntos || jugador.getMonedas() > monedas) recoger.play(0.4f);
             if (jugador.getVidas() < vidas) golpe.play(0.6f);
         }
-        if (partida.getNumeroNivel() != nivel) {
+        if (!partida.esDesafioOculto() && partida.getNumeroNivel() != nivel) {
             List<Aspecto> nuevos = perfil.registrarNivel(partida.getDificultad(), partida.getMaximoNivel());
             if (!nuevos.isEmpty()) avisar("Personaje desbloqueado: " + nuevos.get(0).getNombre());
         }
@@ -196,15 +208,18 @@ public class GameLluvia extends ApplicationAdapter {
     }
     private void menu() {
         cabecera("GAME / LLUVIA", "ARCADE DE SUPERVIVENCIA");
+        if (vista.botonOculto(3, 570)) {
+            modoVersus = false; modoOculto = true; iniciar(); return;
+        }
         vista.panel(40, 65, 420, 430, "0C192C");
         vista.texto("UNA GOTA.", 75, 466, 2.2f, "E4EDF5");
         vista.texto("OTRA OPORTUNIDAD.", 75, 426, 1.6f, "67DCCE");
         vista.texto("Recoge. Sobrevive. Desbloquea.", 75, 388, 1, "9BB0C2");
-        if (vista.boton("COMENZAR PARTIDA", 75, 308, 350, 54, true)) { modoVersus = false; cambiarEstado(Estado.DIFICULTAD); return; }
+        if (vista.boton("COMENZAR PARTIDA", 75, 308, 350, 54, true)) { modoOculto = false; modoVersus = false; cambiarEstado(Estado.DIFICULTAD); return; }
         if (vista.boton("TIENDA Y PERSONAJES", 75, 240, 350, 52, false)) { cambiarEstado(Estado.TIENDA); return; }
         if (vista.boton("MEJORES PUNTUACIONES", 75, 174, 350, 52, false)) { cambiarEstado(Estado.PUNTUACIONES); return; }
         if (vista.boton("GUIA DE OBJETOS", 75, 108, 350, 48, false)) { cambiarEstado(Estado.AYUDA); return; }
-        if (vista.boton("VERSUS LOCAL / 2 JUGADORES", 500, 107, 420, 40, true)) { modoVersus = true; cambiarEstado(Estado.DIFICULTAD); return; }
+        if (vista.boton("VERSUS LOCAL / 2 JUGADORES", 500, 107, 420, 40, true)) { modoOculto = false; modoVersus = true; cambiarEstado(Estado.DIFICULTAD); return; }
         vista.panel(500, 160, 420, 335, "16273C");
         vista.centrar("TU PERSONAJE", 500, 420, 466, 1, "91A9BC");
         vista.personaje(perfil.getEquipado(), 660, 252, 6, reloj, true, false);
@@ -221,7 +236,7 @@ public class GameLluvia extends ApplicationAdapter {
             vista.texto("0" + (i + 1), x + 24, 444, 1.2f, "67DCCE");
             vista.texto(opcion.name(), x + 24, 404, 2, "E4EDF5");
             vista.texto(i == 0 ? "Ritmo suave" : i == 1 ? "Lluvia rapida" : "Peligro constante", x + 24, 359, 1.1f, "A3B8C8");
-            vista.texto("Mejor nivel: " + perfil.getNivelMaximo(opcion), x + 24, 321, 1, "A3B8C8");
+            vista.texto(opcion.getVidas() + " vidas / Mejor nivel: " + perfil.getNivelMaximo(opcion), x + 24, 321, 1, "A3B8C8");
             if (vista.boton(opcion == dificultad ? "SELECCIONADO" : "ELEGIR", x + 20, 242, 236, 48, opcion == dificultad)) dificultad = opcion;
         }
         vista.centrar(modoVersus ? "Gana quien sobreviva al rival o venza primero al OVNI. J1: A/D + W. J2: flechas + arriba." : "30 niveles / Llanura, hielo y Atacama / Jefe OVNI al completar 3000 puntos.", 0, 960, 184, 0.95f, "A3B8C8");
@@ -235,10 +250,12 @@ public class GameLluvia extends ApplicationAdapter {
         vista.personaje(perfil.getEquipado(), 83, 318, 5, reloj, false, false);
         vista.centrar(perfil.getEquipado().getNombre(), 24, 204, 280, 0.95f, "E4EDF5");
         vista.centrar("Solo cambia la apariencia.", 24, 204, 241, 0.85f, "91A9BC");
-        vista.centrar("Todos tienen tres vidas.", 24, 204, 219, 0.85f, "91A9BC");
+        vista.centrar("Vidas segun dificultad.", 24, 204, 219, 0.85f, "91A9BC");
         vista.centrar("Tus compras se guardan", 24, 204, 158, 0.85f, "91A9BC");
         vista.centrar("en este dispositivo.", 24, 204, 138, 0.85f, "91A9BC");
-        Aspecto[] catalogo = Aspecto.values();
+        Aspecto[] catalogo = java.util.Arrays.stream(Aspecto.values())
+                .filter(a -> !a.esOculto() || perfil.tiene(a)).toArray(Aspecto[]::new);
+        int paginas = (catalogo.length + 5) / 6;
         for (int casilla = 0; casilla < 6; casilla++) {
             int indice = paginaTienda * 6 + casilla;
             if (indice >= catalogo.length) break;
@@ -249,10 +266,10 @@ public class GameLluvia extends ApplicationAdapter {
             vista.personaje(aspecto, x + 86, y + 77, 3.6f, reloj, false, false);
             boolean tiene = perfil.tiene(aspecto);
             vista.centrar(tiene ? "EN TU COLECCION" : aspecto.getRequisito(), x, 218, y + 62, 0.95f, "FFD36A");
-            String accion = perfil.getEquipado() == aspecto ? "EQUIPADO" : tiene ? "EQUIPAR" : aspecto.getDificultad() == null ? "COMPRAR" : "VER OBJETIVO";
+            String accion = perfil.getEquipado() == aspecto ? "EQUIPADO" : tiene ? "EQUIPAR" : aspecto.esComprable() ? "COMPRAR" : "VER OBJETIVO";
             if (vista.boton(accion, x + 12, y + 10, 194, 37, tiene)) {
                 if (tiene) { perfil.equipar(aspecto); avisar("Equipado: " + aspecto.getNombre()); }
-                else if (aspecto.getDificultad() != null) avisar("Alcanza " + aspecto.getRequisito() + " para desbloquearlo gratis.");
+                else if (!aspecto.esComprable()) avisar(aspecto.getRequisito() + " para desbloquearlo.");
                 else if (perfil.comprar(aspecto)) { perfil.equipar(aspecto); avisar("Compra lista. Equipaste " + aspecto.getNombre()); }
                 else avisar("Necesitas " + (aspecto.getPrecio() - perfil.getMonedas()) + " monedas mas.");
                 return;
@@ -260,8 +277,8 @@ public class GameLluvia extends ApplicationAdapter {
         }
         if (vista.boton("VOLVER", 24, 40, 170, 38, false)) { cambiarEstado(Estado.MENU); return; }
         if (vista.boton("<", 440, 40, 70, 36, false)) paginaTienda = Math.max(0, paginaTienda - 1);
-        vista.centrar((paginaTienda + 1) + " / 3", 520, 90, 65, 1, "E4EDF5");
-        if (vista.boton(">", 625, 40, 70, 36, false)) paginaTienda = Math.min(2, paginaTienda + 1);
+        vista.centrar((paginaTienda + 1) + " / " + paginas, 520, 90, 65, 1, "E4EDF5");
+        if (vista.boton(">", 625, 40, 70, 36, false)) paginaTienda = Math.min(paginas - 1, paginaTienda + 1);
     }
     private void puntuaciones() {
         cabecera("MEJORES PUNTUACIONES", "Top 5 local por dificultad. Solo cuentan las partidas terminadas.");
@@ -348,7 +365,7 @@ public class GameLluvia extends ApplicationAdapter {
         vista.personaje(aspecto, jugador.getX(), altura, 3.4f, reloj, jugador.estaMoviendo(), jugador.estaHerido() && (int) (reloj * 10) % 2 == 0);
         vista.panel(0, 528, ancho, 72, "0A1526");
         vista.texto(etiqueta + " " + juego.getDificultad() + " / " + juego.getZona().getNombre(), 16, 583, mini ? 1 : 1.25f, "67DCCE");
-        vista.texto("NIVEL " + juego.getNumeroNivel() + "/30    " + jugador.getPuntos() + "/" + juego.getObjetivo() + " pts    VIDAS " + jugador.getVidas(), 16, 559, mini ? 0.94f : 1.05f, "E4EDF5");
+        vista.texto(juego.esDesafioOculto() ? "DESAFIO OCULTO / VIDAS " + jugador.getVidas() : "NIVEL " + juego.getNumeroNivel() + "/30    " + jugador.getPuntos() + "/" + juego.getObjetivo() + " pts    VIDAS " + jugador.getVidas(), 16, 559, mini ? 0.94f : 1.05f, "E4EDF5");
         vista.texto("MONEDAS " + jugador.getMonedas() + "    AGUA " + jugador.getAgua() + (jugador.getSinAgua() > 4 ? "    SED: recoge agua!" : ""), 16, 539, mini ? 0.85f : 0.95f, jugador.getSinAgua() > 4 ? "FFB77C" : "FFD36A");
         vista.panel(16, 516, ancho - 32, 5, "23354E");
         vista.panel(16, 516, (ancho - 32) * juego.getProgreso(), 5, "67DCCE");
@@ -385,9 +402,9 @@ public class GameLluvia extends ApplicationAdapter {
         vista.centrar("UN RESPIRO", 230, 500, 446, 2, "E4EDF5");
         vista.centrar("El tiempo y los efectos estan detenidos.", 230, 500, 399, 1, "91A9BC");
         if (vista.boton("CONTINUAR", 300, 305, 360, 54, true)) { cambiarEstado(Estado.JUGANDO); return; }
-        if (vista.boton(modoVersus ? "ABANDONAR VERSUS" : "GUARDAR MONEDAS Y SALIR", 300, 237, 360, 50, false)) { abandonar(); return; }
+        if (vista.boton(modoOculto ? "SALIR DEL DESAFIO" : modoVersus ? "ABANDONAR VERSUS" : "GUARDAR MONEDAS Y SALIR", 300, 237, 360, 50, false)) { abandonar(); return; }
         if (vista.boton(configuracion.tieneSonido() ? "SONIDO: SI" : "SONIDO: NO", 300, 169, 360, 48, false)) configuracion.alternarSonido();
-        vista.centrar(modoVersus ? "Versus no modifica monedas ni ranking de campana." : "Salir no registra puntuacion en el ranking.", 230, 500, 145, 0.9f, "91A9BC");
+        vista.centrar(modoOculto ? "El desafio solo desbloquea un aspecto al ganar." : modoVersus ? "Versus no modifica monedas ni ranking de campana." : "Salir no registra puntuacion en el ranking.", 230, 500, 145, 0.9f, "91A9BC");
     }
     private void derrota() {
         if (nuevoRecord && tiempoRecord < 6) vista.confeti(tiempoRecord);
@@ -395,10 +412,10 @@ public class GameLluvia extends ApplicationAdapter {
         float escala = nuevoRecord && tiempoRecord < 6 ? 1.8f + 0.1f * (float) Math.sin(tiempoRecord * 6) : 1.8f;
         vista.centrar(partida.gano() ? "VICTORIA / OVNI DERROTADO" : nuevoRecord ? "NUEVO RECORD" : "FIN DE LA PARTIDA", 230, 500, 451, partida.gano() ? 1.5f : escala, nuevoRecord ? "FFD36A" : "E4EDF5");
         Personaje jugador = partida.getPersonaje();
-        vista.centrar(partida.getDificultad() + " / NIVEL " + partida.getNumeroNivel(), 230, 500, 405, 1.2f, "67DCCE");
+        vista.centrar(partida.esDesafioOculto() ? "ENCUENTRO SECRETO" : partida.getDificultad() + " / NIVEL " + partida.getNumeroNivel(), 230, 500, 405, 1.2f, "67DCCE");
         vista.centrar(jugador.getPuntos() + " puntos", 230, 500, 366, 1.5f, "E4EDF5");
-        vista.centrar("+" + partida.getMonedasFinales() + " monedas guardadas", 230, 500, 326, 1.1f, "FFD36A");
-        if (partida.gano()) vista.centrar("Bolsa del jefe: " + partida.getPremio() + " monedas", 230, 500, 309, 0.9f, "FFD36A");
+        vista.centrar(partida.esDesafioOculto() ? (partida.gano() ? "ALIEN DESBLOQUEADO EN LA TIENDA" : "Vence al OVNI para revelar su secreto") : "+" + partida.getMonedasFinales() + " monedas guardadas", 230, 500, 326, 1.1f, "FFD36A");
+        if (partida.gano() && !partida.esDesafioOculto()) vista.centrar("Bolsa del jefe: " + partida.getPremio() + " monedas", 230, 500, 309, 0.9f, "FFD36A");
         if (vista.boton("OTRA PARTIDA", 300, 240, 360, 52, true)) { iniciar(); return; }
         if (vista.boton("VOLVER AL MENU", 300, 173, 360, 48, false)) cambiarEstado(Estado.MENU);
     }

@@ -8,6 +8,58 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ProgresoTest {
+    @Test public void recompensasEspecialesNoSeCompranNiSeDanPorLlegarAlNivelTreinta() {
+        Preferences datos = memoria();
+        PerfilJugador perfil = new PerfilJugador(datos);
+        perfil.guardarResultado(Dificultad.NOOB, 0, 10000, false);
+        for (Dificultad dificultad : Dificultad.values()) {
+            perfil.registrarNivel(dificultad, 30);
+            for (Aspecto aspecto : Aspecto.values()) if (aspecto.requiereVictoria()) {
+                assertFalse(perfil.comprar(aspecto));
+                if (aspecto.getDificultad() == dificultad) assertFalse(perfil.tiene(aspecto));
+            }
+            Aspecto premio = perfil.registrarVictoria(dificultad);
+            assertTrue(new PerfilJugador(datos).tiene(premio));
+        }
+        assertFalse(perfil.comprar(Aspecto.ALIEN));
+        assertFalse(perfil.tiene(Aspecto.ALIEN));
+        assertEquals(10000, perfil.getMonedas());
+    }
+    @Test public void desafioOcultoSoloEntregaAlienAlGanar() {
+        Preferences datos = memoria();
+        PerfilJugador perfil = new PerfilJugador(datos);
+        perfil.guardarResultado(Dificultad.PRO, 1200, 700, true);
+        Partida juego = Partida.crearDesafioOculto((p, dt) -> { });
+        assertTrue(juego.enJefe());
+        assertEquals(40, juego.getPersonaje().getAgua());
+        assertEquals(0, juego.getPersonaje().getPuntos());
+        perfil.registrarDesafioOculto(juego);
+        assertFalse(perfil.tiene(Aspecto.ALIEN));
+        for (int i = 0; i < 20000 && !juego.terminada(); i++) {
+            juego.getPersonaje().colocar(juego.getJefe().getX() + 40);
+            juego.getPersonaje().cargarAgua(1);
+            juego.disparar(); juego.actualizar(0.01f); juego.getLluvia().limpiar();
+        }
+        assertTrue(juego.gano());
+        assertEquals(0, juego.getPremio());
+        assertEquals(0, juego.getMonedasFinales());
+        perfil.registrarDesafioOculto(juego);
+        perfil.registrarDesafioOculto(juego);
+        assertTrue(new PerfilJugador(datos).tiene(Aspecto.ALIEN));
+        assertEquals(700, perfil.getMonedas());
+        assertEquals(1200, perfil.getPuntuaciones(Dificultad.PRO)[0]);
+        assertEquals(0, perfil.getNivelMaximo(Dificultad.PRO));
+    }
+    @Test public void preciosSubenVeintePorCientoYNuevosSonMasCaros() {
+        assertEquals(180, Aspecto.FONTANERO.getPrecio());
+        assertEquals(264, Aspecto.VELOCISTA.getPrecio());
+        assertEquals(264, Aspecto.CONSTRUCTOR.getPrecio());
+        assertEquals(384, Aspecto.ARACNIDO.getPrecio());
+        assertEquals(540, Aspecto.ACERO.getPrecio());
+        for (Aspecto aspecto : new Aspecto[]{Aspecto.LUIGI, Aspecto.SHADOW, Aspecto.ALEX,
+                Aspecto.SASUKE, Aspecto.ZORO, Aspecto.YUJI, Aspecto.GOHAN, Aspecto.ARTHUR,
+                Aspecto.PIKACHU, Aspecto.TRIPULANTE}) assertTrue(aspecto.getPrecio() > 540);
+    }
     private Personaje jugador() { return new Personaje((p, delta) -> { }); }
     private Preferences memoria() {
         Map<String, Object> valores = new HashMap<>();
@@ -73,11 +125,11 @@ public class ProgresoTest {
         perfil.guardarResultado(Dificultad.NOOB, 0, 300, false);
         assertTrue(perfil.comprar(Aspecto.FONTANERO));
         assertFalse(perfil.comprar(Aspecto.FONTANERO));
-        assertEquals(150, perfil.getMonedas());
+        assertEquals(120, perfil.getMonedas());
         assertTrue(perfil.equipar(Aspecto.FONTANERO));
         PerfilJugador recargado = new PerfilJugador(datos);
         assertEquals(Aspecto.FONTANERO, recargado.getEquipado());
-        assertEquals(150, recargado.getMonedas());
+        assertEquals(120, recargado.getMonedas());
         assertFalse(perfil.equipar(Aspecto.MARINE));
     }
     @Test public void desbloqueosExigenDificultadYNivelCorrectos() {

@@ -17,12 +17,22 @@ public class Partida {
     private float tiempoSecreto, avisoNivel = 2, tiempoAscenso;
     private Fase fase = Fase.CAMPANA;
     private JefeOvni jefe;
+    private boolean desafioOculto;
     public Partida(ControlMovimiento control, Dificultad dificultad) { this(control, dificultad, System.nanoTime(), 960); }
     public Partida(ControlMovimiento control, Dificultad dificultad, long semilla, float ancho) {
-        personaje = new Personaje(control, ancho); lluvia = new Lluvia(semilla, ancho);
+        personaje = new Personaje(control, ancho, dificultad.getVidas()); lluvia = new Lluvia(semilla, ancho);
         this.dificultad = dificultad; this.semilla = semilla; this.ancho = ancho;
         nivel = dificultad.crearNivel(1);
     }
+    public static Partida crearDesafioOculto(ControlMovimiento control) {
+        Partida juego = new Partida(control, Dificultad.PRO);
+        juego.desafioOculto = true;
+        juego.fase = Fase.JEFE;
+        juego.jefe = new JefeOvni(Dificultad.PRO, juego.ancho, juego.semilla);
+        juego.personaje.cargarAgua(40);
+        return juego;
+    }
+    public boolean esDesafioOculto() { return desafioOculto; }
     public void actualizar(float delta) {
         if (terminada()) return;
         avisoNivel = Math.max(0, avisoNivel - delta);
@@ -62,8 +72,8 @@ public class Partida {
     public void disparar() { if (fase == Fase.JEFE) jefe.disparar(personaje); }
     public boolean terminada() { return fase == Fase.VICTORIA || fase == Fase.DERROTA || personaje.getVidas() == 0; }
     public boolean gano() { return fase == Fase.VICTORIA; }
-    public int getPremio() { return gano() ? 250 + dificultad.ordinal() * 150 : 0; }
-    public int getMonedasFinales() { return personaje.getMonedas() + getPremio(); }
+    public int getPremio() { return gano() && !desafioOculto ? 250 + dificultad.ordinal() * 150 : 0; }
+    public int getMonedasFinales() { return desafioOculto ? 0 : personaje.getMonedas() + getPremio(); }
     public boolean esSecreto() { return tiempoSecreto > 0 && fase == Fase.CAMPANA; }
     public boolean enJefe() { return fase == Fase.JEFE; }
     public float getTiempoSecreto() { return tiempoSecreto; }
