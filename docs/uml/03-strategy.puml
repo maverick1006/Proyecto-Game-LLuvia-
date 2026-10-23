@@ -3,26 +3,59 @@
 skinparam backgroundColor white
 skinparam shadowing false
 skinparam classAttributeIconSize 0
-skinparam defaultFontName SansSerif
-skinparam defaultFontSize 13
-hide empty members
-interface ControlMovimiento {
- + actualizar(personaje : Personaje, delta : float) : void
-}
+skinparam defaultFontName Courier New
+skinparam defaultFontSize 12
+skinparam dpi 180
+skinparam roundcorner 3
+skinparam ArrowColor #292929
+skinparam classBorderColor #292929
+skinparam classBackgroundColor #F3F0FC
+skinparam classBackgroundColor<<abstracta>> #FFFCEB
+skinparam classBackgroundColor<<interfaz>> #F0FAF0
+skinparam classBackgroundColor<<LibGDX>> #EAF3FB
+hide circle
 class Personaje {
+ - area : Rectangle
  - control : ControlMovimiento
+ - vidas : int
+ - puntos : int
+ - agua : int
+ - sinAgua : float
  + actualizar(delta : float, necesitaAgua : boolean) : void
  + mover(distancia : float) : void
+ + recogerAgua(cantidad : int) : void
+ + recibirDanio() : boolean
+ + atrapar(tipo : TipoObjeto) : void
 }
-class ControlTeclado
-class ControlTactil
-class GameLluvia
-class Viewport <<LibGDX>>
+interface ControlMovimiento <<interfaz>> {
+ + actualizar(personaje : Personaje, delta : float) : void
+}
+class ControlTeclado {
+ - izquierda : int
+ - derecha : int
+ + actualizar(personaje : Personaje, delta : float) : void
+}
+class ControlTactil {
+ - viewport : Viewport
+ - toque : Vector2
+ + actualizar(personaje : Personaje, delta : float) : void
+}
 ControlMovimiento <|.. ControlTeclado
 ControlMovimiento <|.. ControlTactil
-Personaje --> ControlMovimiento : delega
+class GameLluvia {
+ - tactil : boolean
+ - iniciar() : void
+}
+abstract class Viewport <<LibGDX>> {
+ + unproject(screenCoords : Vector2) : Vector2
+}
+Personaje --> ControlMovimiento : delega en
 GameLluvia ..> ControlTeclado : selecciona
 GameLluvia ..> ControlTactil : selecciona
-GameLluvia ..> Personaje : mediante Partida
 ControlTactil --> Viewport
+note bottom of Personaje
+El control se recibe por constructor.
+La seleccion ocurre al iniciar la partida.
+end note
+
 @enduml

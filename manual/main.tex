@@ -757,7 +757,7 @@ Al superar los \textbf{3.000 puntos} en el nivel 30, el recolector es elevado po
 \section{Tienda de Aspectos, Personalización y Desbloqueos}
 \label{sec:tienda}
 
-El juego cuenta con un armario de \textbf{29 aspectos cosméticos (skins)} inspirados en icónicos personajes de la cultura pop, videojuegos y anime. Todos los aspectos respetan estrictamente la misma física y área de colisión para mantener la equidad competitiva.
+La tienda incluye \textbf{29 aspectos cosméticos (skins)} inspirados en personajes de videojuegos y anime. Las skins cambian la apariencia del personaje; todas utilizan la misma velocidad base y área de colisión.
 
 \begin{center}
     \begin{tikzpicture}
@@ -833,7 +833,7 @@ El juego cuenta con un armario de \textbf{29 aspectos cosméticos (skins)} inspi
 \vspace{0.4cm}
 
 \begin{tarjetaitem}{La ventana del juego se ve con bandas negras laterales al maximizar.}{Ajuste de Relación de Aspecto}
-    Es el comportamiento previsto por el diseño mediante \textbf{FitViewport}. Para garantizar que el área de visión y el tiempo de caída de las gotas sean exactamente iguales en monitores cuadrados, panorámicos o ultrawide, el motor preserva la relación $16:10$ sin distorsionar ni estirar los gráficos.
+    Es el comportamiento previsto por el diseño mediante \textbf{FitViewport}. FitViewport mantiene el área lógica de $960 \times 600$ y la relación $16:10$, añadiendo barras cuando la pantalla tiene otra proporción. Así se evita estirar los gráficos.
 \end{tarjetaitem}
 
 \vspace{0.4cm}

@@ -1,6 +1,11 @@
-eccd0ff | matis | Crea primera version jugable con niveles, patrones y pruebas
-86acf62 | matis | Agrega tienda, personajes, dificultades y efectos de lluvia
-d52952e | matis | Agrega campana de 30 niveles, jefe OVNI y versus local
-af75f64 | matis | Amplia skins, ajusta vidas y agrega desafio secreto del alien
-cbd0d0f | matis | Empaqueta JAR ejecutable con dependencias y verifica sus assets
-El cierre documental se registra en el commit que contiene este archivo. Consultar git log para su hash definitivo; verificar la publicacion en GitHub.
+Historial publicado comprobado hasta bb9b721, anterior a esta revisión documental.
+
+eccd0ff Crea primera version jugable con niveles, patrones y pruebas
+86acf62 Agrega tienda, personajes, dificultades y efectos de lluvia
+d52952e Agrega campana de 30 niveles, jefe OVNI y versus local
+af75f64 Amplia skins, ajusta vidas y agrega desafio secreto del alien
+cbd0d0f Empaqueta JAR ejecutable con dependencias y verifica sus assets
+dd95078 Actualiza reporte GM, UML, README y guias de entrega del equipo
+1356d4d Confirma historial publicado y entrega informe y manual finales en PDF
+02d8e5d Prepara entrega portable Eclipse y valida compilacion Android
+bb9b721 Incluye entrega completa descargable con Eclipse JAR APK e instrucciones

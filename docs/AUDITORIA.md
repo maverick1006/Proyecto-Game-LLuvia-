@@ -1,6 +1,6 @@
 # Auditoría de código frente a la pauta
 
-Revisión de cierre: 23 de octubre de 2026. Base de juego: `af75f64`; cambios finales de empaquetado y documentación en `codex/entrega-final`.
+Revisión de cierre: 23 de octubre de 2026. Base de juego: `af75f64`; cambios finales de empaquetado y documentación en `entrega-final`.
 
 | Ítem | Diagnóstico del código | Evidencia principal | Acción de cierre |
 |---|---|---|---|

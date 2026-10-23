@@ -42,4 +42,4 @@ Fuentes: [manual](https://prism.openai.com/?u=c4b37500-1d80-4174-8390-60e74c8c74
 
 El reporte completo está en REPORTE.md. Se prepararon cinco UML con fuentes PlantUML y PNG. Junto a la carpeta del juego están Informe_GameLluvia (documento independiente), Informe_Institucional_GameLluvia (plantilla recibida y capítulos corregidos) y Manual_GameLluvia (diseño conservado y reglas corregidas).
 
-Consultar VALIDACION.md para distinguir lo ejecutado de lo pendiente. La publicación del historial, el export real desde Eclipse y el PDF final integrado en Prism se deben verificar antes del envío.
+Se volvieron a consultar los originales compartidos en Prism el 23/10/2026. La versión de entrega conserva la plantilla y el diseño del manual, corrige los datos del juego y amplía los UML con atributos y operaciones. Eclipse y la compilación APK están comprobados; el teléfono sigue pendiente. Consultar VALIDACION.md y REVISION_FINAL.md.

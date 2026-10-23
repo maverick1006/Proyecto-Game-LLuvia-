@@ -38,9 +38,9 @@ Total: **36 pruebas de lógica**, sin fallos ni errores. `smokeJar` abrió una v
 
 Se importaron copias corregidas en Prism y se descargó el informe PDF final. Se revisaron las páginas renderizadas del informe y del manual; se corrigió el desborde de una ruta larga del JAR en el manual antes de su exportación final.
 
-Informe Prism: https://prism.openai.com/?u=9cffbd15-7e1e-4f86-81dd-667650e2bb7b&pg=1&m=main.tex
+Informe Prism: https://prism.openai.com/?u=7d8354d9-4f9f-4736-b841-d3b6fb137117&pg=1&m=main.tex
 
-Manual Prism: https://prism.openai.com/?u=691d9a75-6762-47ec-8d3d-bc24c2985be6&pg=1&m=main.tex
+Manual Prism: https://prism.openai.com/?u=207e1ac9-64ff-41bf-85aa-501e48b756a3&pg=1&m=main.tex
 
 El historial remoto de entrega se verificó con seis commits hasta dd95078, en la rama entrega-final. Los ajustes posteriores de documentación se registran aparte.
 
@@ -55,3 +55,9 @@ El historial remoto de entrega se verificó con seis commits hasta dd95078, en l
 ## Archivo completo de la rama
 
 La carpeta `entrega` incluye el ZIP exportado desde Eclipse, el JAR Desktop, el APK debug y sus SHA-256. Estos archivos no se regeneran al descargar GitHub: están incluidos en la rama para facilitar la evaluación. El código editable principal está en la raíz Gradle; `informe` y `manual` contienen los documentos finales. La exportación real desde Eclipse se comparó archivo por archivo con el paquete portátil: coincidencia completa.
+
+## Revisión del informe y UML
+
+Se contrastaron las clases y miembros mostrados con los archivos Java. Los diagramas presentan atributos, operaciones y visibilidad; se dividió el dominio en dos vistas y cada patrón conserva su explicación y evidencia. Se revisaron las copias originales compartidas del informe y manual; se conservaron la portada institucional y el diseño del manual. Las 36 pruebas se volvieron a ejecutar y finalizaron sin fallos ni errores. La revisión completa por GM está en REVISION_FINAL.md.
+
+El paquete Eclipse se regeneró después de la revisión de UML y documentos. Las fuentes Java del juego no cambiaron respecto de la apertura comprobada en el IDE. Los PDF incluidos corresponden a las fuentes actuales y a las copias revisadas en Prism.

@@ -62,6 +62,25 @@ La raíz descargada conserva el proyecto Gradle; la carpeta `entrega` contiene l
 
 Para regenerar el paquete Eclipse: `.\gradlew.bat -Pandroid=false exportarEclipse`. Resultado: `build/distributions/GameLluvia-Eclipse.zip`. [Exportación desde el IDE](docs/ENTREGA_ECLIPSE.md).
 
+### Si Eclipse no abre el proyecto
+
+Puedes ejecutar la copia ya compilada desde la raíz descargada:
+
+```powershell
+java -jar .\entrega\GameLluvia.jar
+```
+
+En Windows también puedes usar `entrega/JUGAR_JAR.bat`. Requiere Java compatible; el entorno probado usa JDK 17. Esta alternativa no necesita Gradle ni Android SDK.
+
+Para comprobar y compilar las fuentes de Desktop sin configurar Android:
+
+```powershell
+.\gradlew.bat -Pandroid=false :core:test :lwjgl3:dist
+.\gradlew.bat -Pandroid=false :lwjgl3:run
+```
+
+Si falta un recurso, comprueba que descomprimiste la carpeta completa y revisa [la guía de Eclipse](ABRIR_EN_ECLIPSE.md). El proyecto Gradle debe importarse desde la raíz, no desde `core` ni `assets`.
+
 ## Android Studio
 
 Abre la raíz con **File > Open**, configura SDK Platform 35 y Build-Tools 34.0.0, elige **Gradle JDK 17** y sincroniza. Android Studio escribe `sdk.dir` en `local.properties`; esto habilita el módulo Android automáticamente. No publiques ese archivo personal.
@@ -186,6 +205,7 @@ Android Studio, VS Code y NetBeans pueden trabajar sobre la misma raíz Gradle. 
 - [Manual final PDF](manual/Manual-GameLluvia-final.pdf).
 - [Revisión de los aportes del equipo](docs/REVISION_APORTES.md).
 - [Auditoría de código y rúbrica](docs/AUDITORIA.md).
+- [Revisión final por requisito y guía para la defensa](docs/REVISION_FINAL.md).
 - [Exportación Eclipse y Aula Virtual](docs/ENTREGA_ECLIPSE.md).
 - [Pruebas y limitaciones](docs/VALIDACION.md).
 - [Diagramas UML editables e imágenes](docs/uml/).

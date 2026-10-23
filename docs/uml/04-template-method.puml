@@ -3,32 +3,54 @@
 skinparam backgroundColor white
 skinparam shadowing false
 skinparam classAttributeIconSize 0
-skinparam defaultFontName SansSerif
-skinparam defaultFontSize 13
-hide empty members
-abstract class Gota {
+skinparam defaultFontName Courier New
+skinparam defaultFontSize 12
+skinparam dpi 180
+skinparam roundcorner 3
+skinparam ArrowColor #292929
+skinparam classBorderColor #292929
+skinparam classBackgroundColor #F3F0FC
+skinparam classBackgroundColor<<abstracta>> #FFFCEB
+skinparam classBackgroundColor<<interfaz>> #F0FAF0
+skinparam classBackgroundColor<<LibGDX>> #EAF3FB
+hide circle
+abstract class Gota <<abstracta>> {
  - area : Rectangle
  - velocidad : float
  - terminada : boolean
  + actualizar(delta : float, personaje : Personaje) : void {final}
  # {abstract} aplicarEfecto(personaje : Personaje) : void
+ + {abstract} esBuena() : boolean
+ + estaTerminada() : boolean
 }
 class GotaBuena {
  # aplicarEfecto(personaje : Personaje) : void
+ + esBuena() : boolean
 }
 class ObjetoEspecial {
  - tipo : TipoObjeto
  # aplicarEfecto(personaje : Personaje) : void
+ + esBuena() : boolean
+ + getTipo() : TipoObjeto
 }
-class Lluvia
-class Personaje
 Gota <|-- GotaBuena
 Gota <|-- ObjetoEspecial
-Lluvia o-- Gota
-Gota ..> Personaje
+class Lluvia {
+ - gotas : List<Gota>
+ + mover(delta : float, personaje : Personaje) : void
+}
+class Personaje {
+ + choca(otra : Rectangle) : boolean
+ + recogerAgua(cantidad : int) : void
+ + atrapar(tipo : TipoObjeto) : void
+}
+Lluvia *-- "0..*" Gota
+Gota ..> Personaje : colision y efecto
 note right of Gota
-Secuencia fija:
-caer -> salida -> colision -> efecto -> terminar
-El efecto cambia segun la subclase.
+actualizar() fija el orden:
+caida, salida de pantalla,
+colision, efecto y fin.
+Las hijas definen el efecto.
 end note
+
 @enduml

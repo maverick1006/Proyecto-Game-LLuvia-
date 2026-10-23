@@ -1,0 +1,95 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Courier New
+skinparam defaultFontSize 12
+skinparam dpi 180
+skinparam roundcorner 3
+skinparam ArrowColor #292929
+skinparam classBorderColor #292929
+skinparam classBackgroundColor #F3F0FC
+skinparam classBackgroundColor<<abstracta>> #FFFCEB
+skinparam classBackgroundColor<<interfaz>> #F0FAF0
+skinparam classBackgroundColor<<LibGDX>> #EAF3FB
+hide circle
+class GameLluvia {
+ - vista : VistaJuego
+ - perfil : PerfilJugador
+ - partida : Partida
+ - versus : PartidaVersus
+ + create() : void
+ + render() : void
+ - guardarResultado(completa : boolean) : void
+}
+class VistaJuego {
+ - batch : SpriteBatch
+ - formas : ShapeRenderer
+ - fuente : BitmapFont
+ + preparar(viewport : Viewport) : void
+ + dispose() : void
+}
+class PartidaVersus {
+ - uno : Partida
+ - dos : Partida
+ + actualizar(delta : float) : void
+ + terminada() : boolean
+ + getGanador() : int
+}
+class Partida {
+ - personaje : Personaje
+ - lluvia : Lluvia
+ - jefe : JefeOvni
+ + actualizar(delta : float) : void
+ + disparar() : void
+}
+class JefeOvni {
+ - area : Rectangle
+ - chorros : List<ChorroAgua>
+ - vida : int
+ + actualizar(delta : float, jugador : Personaje, lluvia : Lluvia) : void
+ + disparar(jugador : Personaje) : boolean
+ + derrotado() : boolean
+}
+class ChorroAgua {
+ - area : Rectangle
+ + actualizar(delta : float) : void
+ + choca(otra : Rectangle) : boolean
+ + fuera() : boolean
+}
+class PerfilJugador {
+ - datos : Preferences
+ + getMonedas() : int
+ + comprar(aspecto : Aspecto) : boolean
+ + getPuntuaciones(dificultad : Dificultad) : int[]
+}
+class Rectangle <<LibGDX>> {
+ + x : float
+ + y : float
+ + width : float
+ + height : float
+ + overlaps(r : Rectangle) : boolean
+}
+interface Preferences <<LibGDX>> {
+ + getInteger(key : String, defValue : int) : int
+ + flush() : void
+}
+GameLluvia --> VistaJuego
+GameLluvia --> PerfilJugador
+GameLluvia --> Partida
+GameLluvia --> PartidaVersus
+PartidaVersus *-- "2" Partida
+Partida *-- "0..1" JefeOvni
+JefeOvni *-- "0..*" ChorroAgua
+JefeOvni *-- Rectangle
+ChorroAgua *-- Rectangle
+PerfilJugador --> Preferences
+note bottom of VistaJuego
+SpriteBatch, ShapeRenderer,
+BitmapFont y Viewport son LibGDX.
+La vista libera sus recursos
+mediante dispose().
+end note
+
+@enduml

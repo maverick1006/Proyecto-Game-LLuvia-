@@ -3,86 +3,114 @@
 skinparam backgroundColor white
 skinparam shadowing false
 skinparam classAttributeIconSize 0
-skinparam defaultFontName SansSerif
-skinparam defaultFontSize 13
-hide empty members
-class GameLluvia
-class ApplicationAdapter <<LibGDX>>
-class VistaJuego
-class Partida
-class PartidaVersus
-class Personaje
-class Lluvia
-abstract class Gota
-class GotaBuena
-class ObjetoEspecial
-interface ControlMovimiento
-class ControlTeclado
-class ControlTactil
-class Nivel
-class "Nivel.Builder" as Builder
-enum Dificultad
-enum Zona
-enum TipoObjeto
-enum Aspecto
-class PerfilJugador
-class ConfiguracionJuego
-class JefeOvni
-class ChorroAgua
-class Rectangle <<LibGDX>>
-class Preferences <<LibGDX>>
-class FitViewport <<LibGDX>>
-class SpriteBatch <<LibGDX>>
-class ShapeRenderer <<LibGDX>>
-class BitmapFont <<LibGDX>>
-ApplicationAdapter <|-- GameLluvia
-GameLluvia --> VistaJuego
-GameLluvia --> Partida
-GameLluvia --> PartidaVersus
-GameLluvia --> ConfiguracionJuego
-GameLluvia --> PerfilJugador
-GameLluvia --> FitViewport
-VistaJuego --> SpriteBatch
-VistaJuego --> ShapeRenderer
-VistaJuego --> BitmapFont
-VistaJuego ..> Aspecto
-PartidaVersus *-- "2" Partida
-Partida *-- Personaje
-Partida *-- Lluvia
-Partida *-- "0..1" JefeOvni
-Partida --> Dificultad
-Partida --> Nivel
-Partida ..> Zona
-Lluvia o-- "0..*" Gota
-Lluvia ..> Zona
-Lluvia ..> Nivel
+skinparam defaultFontName Courier New
+skinparam defaultFontSize 12
+skinparam dpi 180
+skinparam roundcorner 3
+skinparam ArrowColor #292929
+skinparam classBorderColor #292929
+skinparam classBackgroundColor #F3F0FC
+skinparam classBackgroundColor<<abstracta>> #FFFCEB
+skinparam classBackgroundColor<<interfaz>> #F0FAF0
+skinparam classBackgroundColor<<LibGDX>> #EAF3FB
+hide circle
+class GameLluvia {
+ - estado : Estado
+ - viewport : FitViewport
+ - vista : VistaJuego
+ - partida : Partida
+ - configuracion : ConfiguracionJuego
+ + create() : void
+ + render() : void
+ + dispose() : void
+ - entrada() : void
+ - actualizar(delta : float) : void
+}
+class Partida {
+ - personaje : Personaje
+ - lluvia : Lluvia
+ - jefe : JefeOvni
+ - nivel : Nivel
+ - numeroNivel : int
+ - fase : Fase
+ + actualizar(delta : float) : void
+ + disparar() : void
+ + terminada() : boolean
+ + gano() : boolean
+}
+class Personaje {
+ - area : Rectangle
+ - control : ControlMovimiento
+ - vidas : int
+ - puntos : int
+ - agua : int
+ - sinAgua : float
+ + actualizar(delta : float, necesitaAgua : boolean) : void
+ + mover(distancia : float) : void
+ + recogerAgua(cantidad : int) : void
+ + recibirDanio() : boolean
+ + atrapar(tipo : TipoObjeto) : void
+}
+class Lluvia {
+ - gotas : List<Gota>
+ - azar : Random
+ - tiempo : float
+ + actualizar(delta : float, personaje : Personaje, nivel : Nivel) : void
+ + mover(delta : float, personaje : Personaje) : void
+ + limpiar() : void
+ - crearGota(x : float, nivel : Nivel, secreto : boolean, zona : Zona) : Gota
+}
+abstract class Gota <<abstracta>> {
+ - area : Rectangle
+ - velocidad : float
+ - terminada : boolean
+ + actualizar(delta : float, personaje : Personaje) : void {final}
+ # {abstract} aplicarEfecto(personaje : Personaje) : void
+ + {abstract} esBuena() : boolean
+ + estaTerminada() : boolean
+}
+class GotaBuena {
+ # aplicarEfecto(personaje : Personaje) : void
+ + esBuena() : boolean
+}
+class ObjetoEspecial {
+ - tipo : TipoObjeto
+ # aplicarEfecto(personaje : Personaje) : void
+ + esBuena() : boolean
+ + getTipo() : TipoObjeto
+}
 Gota <|-- GotaBuena
 Gota <|-- ObjetoEspecial
-ObjetoEspecial --> TipoObjeto
-Personaje --> ControlMovimiento
-Personaje *-- Rectangle
-Gota *-- Rectangle
-Gota ..> Personaje
+interface ControlMovimiento <<interfaz>> {
+ + actualizar(personaje : Personaje, delta : float) : void
+}
+class ControlTeclado {
+ - izquierda : int
+ - derecha : int
+ + actualizar(personaje : Personaje, delta : float) : void
+}
+class ControlTactil {
+ - viewport : Viewport
+ - toque : Vector2
+ + actualizar(personaje : Personaje, delta : float) : void
+}
 ControlMovimiento <|.. ControlTeclado
 ControlMovimiento <|.. ControlTactil
-ControlTactil --> Viewport
-class Viewport <<LibGDX>>
-class ScalingViewport <<LibGDX>>
-Viewport <|-- ScalingViewport
-ScalingViewport <|-- FitViewport
-Dificultad ..> Builder : construye
-Builder ..> Nivel : crea
-JefeOvni o-- "0..*" ChorroAgua
-JefeOvni ..> Lluvia
-JefeOvni ..> Personaje
-ConfiguracionJuego --> Preferences
-ConfiguracionJuego *-- PerfilJugador
-PerfilJugador --> Preferences
-PerfilJugador ..> Aspecto
-PerfilJugador ..> Dificultad
-note bottom of GameLluvia
-Vista de las relaciones principales.
-Los ayudantes de dibujo y GotaMala
-se omiten para facilitar la lectura.
-end note
+class ApplicationAdapter <<LibGDX>> {
+ + create() : void
+ + render() : void
+ + dispose() : void
+}
+ApplicationAdapter <|-- GameLluvia
+GameLluvia -right-> Partida : coordina
+Partida *-down- Personaje
+Partida *-left- Lluvia
+Lluvia *-down- "0..*" Gota
+Personaje -down-> ControlMovimiento : delega en
+
+
+GameLluvia -[hidden]down- Lluvia
+Lluvia -[hidden]right- Personaje
+GotaBuena -[hidden]down- ObjetoEspecial
+ControlTeclado -[hidden]down- ControlTactil
 @enduml

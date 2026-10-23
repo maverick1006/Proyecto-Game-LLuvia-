@@ -94,7 +94,7 @@ La ampliación agrega campaña, perfil, variantes de objetos y un jefe. Sin un m
 El módulo `core` comparte el juego entre launchers. `GameLluvia` extiende `ApplicationAdapter`; `VistaJuego` utiliza los recursos gráficos y las reglas utilizan rectángulos para colisionar.
 
 ### Solución y aplicación
-El diagrama muestra las relaciones principales: una partida contiene personaje y lluvia; el versus contiene dos partidas; el perfil utiliza preferencias; los controles implementan una interfaz. Las flechas discontinuas indican dependencias de uso y no herencia. Los ayudantes gráficos y la clase heredada `GotaMala` se omiten para que la vista general sea legible; no es una enumeración exhaustiva de todos los campos.
+El diagrama muestra las relaciones principales: una partida contiene personaje y lluvia; el versus contiene dos partidas; el perfil utiliza preferencias; los controles implementan una interfaz. La línea discontinua sin triángulo representa dependencia; con triángulo hacia una interfaz representa implementación. La herencia de clases usa línea continua y triángulo. Los ayudantes gráficos y la clase heredada `GotaMala` se omiten para que la vista general sea legible; no es una enumeración exhaustiva de todos los campos.
 
 ### Evidencia
 - [GameLluvia.java, línea 14](../core/src/main/java/puppy/code/GameLluvia.java#L14) (`extends ApplicationAdapter`)
@@ -103,7 +103,9 @@ El diagrama muestra las relaciones principales: una partida contiene personaje y
 - [VistaJuego.java, línea 14](../core/src/main/java/puppy/code/VistaJuego.java#L14) (`private final SpriteBatch`)
 - [PerfilJugador.java, línea 9](../core/src/main/java/puppy/code/PerfilJugador.java#L9) (`private final Preferences`)
 
-![UML](uml/01-dominio.png)
+![Partida, gotas y controles](uml/01-dominio.png)
+
+![Perfil, vista, versus y jefe](uml/06-sistemas.png)
 
 Fuente editable: [PlantUML](uml/01-dominio.puml).
 
@@ -113,88 +115,116 @@ Fuente editable: [PlantUML](uml/01-dominio.puml).
 skinparam backgroundColor white
 skinparam shadowing false
 skinparam classAttributeIconSize 0
-skinparam defaultFontName SansSerif
-skinparam defaultFontSize 13
-hide empty members
-class GameLluvia
-class ApplicationAdapter <<LibGDX>>
-class VistaJuego
-class Partida
-class PartidaVersus
-class Personaje
-class Lluvia
-abstract class Gota
-class GotaBuena
-class ObjetoEspecial
-interface ControlMovimiento
-class ControlTeclado
-class ControlTactil
-class Nivel
-class "Nivel.Builder" as Builder
-enum Dificultad
-enum Zona
-enum TipoObjeto
-enum Aspecto
-class PerfilJugador
-class ConfiguracionJuego
-class JefeOvni
-class ChorroAgua
-class Rectangle <<LibGDX>>
-class Preferences <<LibGDX>>
-class FitViewport <<LibGDX>>
-class SpriteBatch <<LibGDX>>
-class ShapeRenderer <<LibGDX>>
-class BitmapFont <<LibGDX>>
-ApplicationAdapter <|-- GameLluvia
-GameLluvia --> VistaJuego
-GameLluvia --> Partida
-GameLluvia --> PartidaVersus
-GameLluvia --> ConfiguracionJuego
-GameLluvia --> PerfilJugador
-GameLluvia --> FitViewport
-VistaJuego --> SpriteBatch
-VistaJuego --> ShapeRenderer
-VistaJuego --> BitmapFont
-VistaJuego ..> Aspecto
-PartidaVersus *-- "2" Partida
-Partida *-- Personaje
-Partida *-- Lluvia
-Partida *-- "0..1" JefeOvni
-Partida --> Dificultad
-Partida --> Nivel
-Partida ..> Zona
-Lluvia o-- "0..*" Gota
-Lluvia ..> Zona
-Lluvia ..> Nivel
+skinparam defaultFontName Courier New
+skinparam defaultFontSize 12
+skinparam dpi 180
+skinparam roundcorner 3
+skinparam ArrowColor #292929
+skinparam classBorderColor #292929
+skinparam classBackgroundColor #F3F0FC
+skinparam classBackgroundColor<<abstracta>> #FFFCEB
+skinparam classBackgroundColor<<interfaz>> #F0FAF0
+skinparam classBackgroundColor<<LibGDX>> #EAF3FB
+hide circle
+class GameLluvia {
+ - estado : Estado
+ - viewport : FitViewport
+ - vista : VistaJuego
+ - partida : Partida
+ - configuracion : ConfiguracionJuego
+ + create() : void
+ + render() : void
+ + dispose() : void
+ - entrada() : void
+ - actualizar(delta : float) : void
+}
+class Partida {
+ - personaje : Personaje
+ - lluvia : Lluvia
+ - jefe : JefeOvni
+ - nivel : Nivel
+ - numeroNivel : int
+ - fase : Fase
+ + actualizar(delta : float) : void
+ + disparar() : void
+ + terminada() : boolean
+ + gano() : boolean
+}
+class Personaje {
+ - area : Rectangle
+ - control : ControlMovimiento
+ - vidas : int
+ - puntos : int
+ - agua : int
+ - sinAgua : float
+ + actualizar(delta : float, necesitaAgua : boolean) : void
+ + mover(distancia : float) : void
+ + recogerAgua(cantidad : int) : void
+ + recibirDanio() : boolean
+ + atrapar(tipo : TipoObjeto) : void
+}
+class Lluvia {
+ - gotas : List<Gota>
+ - azar : Random
+ - tiempo : float
+ + actualizar(delta : float, personaje : Personaje, nivel : Nivel) : void
+ + mover(delta : float, personaje : Personaje) : void
+ + limpiar() : void
+ - crearGota(x : float, nivel : Nivel, secreto : boolean, zona : Zona) : Gota
+}
+abstract class Gota <<abstracta>> {
+ - area : Rectangle
+ - velocidad : float
+ - terminada : boolean
+ + actualizar(delta : float, personaje : Personaje) : void {final}
+ # {abstract} aplicarEfecto(personaje : Personaje) : void
+ + {abstract} esBuena() : boolean
+ + estaTerminada() : boolean
+}
+class GotaBuena {
+ # aplicarEfecto(personaje : Personaje) : void
+ + esBuena() : boolean
+}
+class ObjetoEspecial {
+ - tipo : TipoObjeto
+ # aplicarEfecto(personaje : Personaje) : void
+ + esBuena() : boolean
+ + getTipo() : TipoObjeto
+}
 Gota <|-- GotaBuena
 Gota <|-- ObjetoEspecial
-ObjetoEspecial --> TipoObjeto
-Personaje --> ControlMovimiento
-Personaje *-- Rectangle
-Gota *-- Rectangle
-Gota ..> Personaje
+interface ControlMovimiento <<interfaz>> {
+ + actualizar(personaje : Personaje, delta : float) : void
+}
+class ControlTeclado {
+ - izquierda : int
+ - derecha : int
+ + actualizar(personaje : Personaje, delta : float) : void
+}
+class ControlTactil {
+ - viewport : Viewport
+ - toque : Vector2
+ + actualizar(personaje : Personaje, delta : float) : void
+}
 ControlMovimiento <|.. ControlTeclado
 ControlMovimiento <|.. ControlTactil
-ControlTactil --> Viewport
-class Viewport <<LibGDX>>
-class ScalingViewport <<LibGDX>>
-Viewport <|-- ScalingViewport
-ScalingViewport <|-- FitViewport
-Dificultad ..> Builder : construye
-Builder ..> Nivel : crea
-JefeOvni o-- "0..*" ChorroAgua
-JefeOvni ..> Lluvia
-JefeOvni ..> Personaje
-ConfiguracionJuego --> Preferences
-ConfiguracionJuego *-- PerfilJugador
-PerfilJugador --> Preferences
-PerfilJugador ..> Aspecto
-PerfilJugador ..> Dificultad
-note bottom of GameLluvia
-Vista de las relaciones principales.
-Los ayudantes de dibujo y GotaMala
-se omiten para facilitar la lectura.
-end note
+class ApplicationAdapter <<LibGDX>> {
+ + create() : void
+ + render() : void
+ + dispose() : void
+}
+ApplicationAdapter <|-- GameLluvia
+GameLluvia -right-> Partida : coordina
+Partida *-down- Personaje
+Partida *-left- Lluvia
+Lluvia *-down- "0..*" Gota
+Personaje -down-> ControlMovimiento : delega en
+
+
+GameLluvia -[hidden]down- Lluvia
+Lluvia -[hidden]right- Personaje
+GotaBuena -[hidden]down- ObjetoEspecial
+ControlTeclado -[hidden]down- ControlTactil
 @enduml
 ```
 
@@ -272,25 +302,50 @@ Fuente editable: [PlantUML](uml/02-singleton.puml).
 skinparam backgroundColor white
 skinparam shadowing false
 skinparam classAttributeIconSize 0
-skinparam defaultFontName SansSerif
-skinparam defaultFontSize 13
-hide empty members
+skinparam defaultFontName Courier New
+skinparam defaultFontSize 12
+skinparam dpi 180
+skinparam roundcorner 3
+skinparam ArrowColor #292929
+skinparam classBorderColor #292929
+skinparam classBackgroundColor #F3F0FC
+skinparam classBackgroundColor<<abstracta>> #FFFCEB
+skinparam classBackgroundColor<<interfaz>> #F0FAF0
+skinparam classBackgroundColor<<LibGDX>> #EAF3FB
+hide circle
 class ConfiguracionJuego {
  - {static} instancia : ConfiguracionJuego
  - preferencias : Preferences
+ - sonido : boolean
  - perfil : PerfilJugador
  - ConfiguracionJuego()
  + {static} getInstancia() : ConfiguracionJuego
+ + tieneSonido() : boolean
  + alternarSonido() : void
  + getPerfil() : PerfilJugador
 }
-class GameLluvia
-class Preferences <<LibGDX>>
-class PerfilJugador
+class PerfilJugador {
+ - datos : Preferences
+ + getMonedas() : int
+ + comprar(aspecto : Aspecto) : boolean
+ + equipar(aspecto : Aspecto) : boolean
+}
+class GameLluvia {
+ - configuracion : ConfiguracionJuego
+ - perfil : PerfilJugador
+ + create() : void
+}
+interface Preferences <<LibGDX>> {
+ + getBoolean(key : String, defValue : boolean) : boolean
+ + putBoolean(key : String, val : boolean) : Preferences
+ + flush() : void
+}
 GameLluvia --> ConfiguracionJuego : getInstancia()
+GameLluvia --> PerfilJugador : obtiene
 ConfiguracionJuego --> Preferences
 ConfiguracionJuego *-- PerfilJugador
 PerfilJugador --> Preferences
+
 @enduml
 ```
 
@@ -324,28 +379,61 @@ Fuente editable: [PlantUML](uml/03-strategy.puml).
 skinparam backgroundColor white
 skinparam shadowing false
 skinparam classAttributeIconSize 0
-skinparam defaultFontName SansSerif
-skinparam defaultFontSize 13
-hide empty members
-interface ControlMovimiento {
- + actualizar(personaje : Personaje, delta : float) : void
-}
+skinparam defaultFontName Courier New
+skinparam defaultFontSize 12
+skinparam dpi 180
+skinparam roundcorner 3
+skinparam ArrowColor #292929
+skinparam classBorderColor #292929
+skinparam classBackgroundColor #F3F0FC
+skinparam classBackgroundColor<<abstracta>> #FFFCEB
+skinparam classBackgroundColor<<interfaz>> #F0FAF0
+skinparam classBackgroundColor<<LibGDX>> #EAF3FB
+hide circle
 class Personaje {
+ - area : Rectangle
  - control : ControlMovimiento
+ - vidas : int
+ - puntos : int
+ - agua : int
+ - sinAgua : float
  + actualizar(delta : float, necesitaAgua : boolean) : void
  + mover(distancia : float) : void
+ + recogerAgua(cantidad : int) : void
+ + recibirDanio() : boolean
+ + atrapar(tipo : TipoObjeto) : void
 }
-class ControlTeclado
-class ControlTactil
-class GameLluvia
-class Viewport <<LibGDX>>
+interface ControlMovimiento <<interfaz>> {
+ + actualizar(personaje : Personaje, delta : float) : void
+}
+class ControlTeclado {
+ - izquierda : int
+ - derecha : int
+ + actualizar(personaje : Personaje, delta : float) : void
+}
+class ControlTactil {
+ - viewport : Viewport
+ - toque : Vector2
+ + actualizar(personaje : Personaje, delta : float) : void
+}
 ControlMovimiento <|.. ControlTeclado
 ControlMovimiento <|.. ControlTactil
-Personaje --> ControlMovimiento : delega
+class GameLluvia {
+ - tactil : boolean
+ - iniciar() : void
+}
+abstract class Viewport <<LibGDX>> {
+ + unproject(screenCoords : Vector2) : Vector2
+}
+Personaje --> ControlMovimiento : delega en
 GameLluvia ..> ControlTeclado : selecciona
 GameLluvia ..> ControlTactil : selecciona
-GameLluvia ..> Personaje : mediante Partida
 ControlTactil --> Viewport
+note bottom of Personaje
+El control se recibe por constructor.
+La seleccion ocurre al iniciar la partida.
+end note
+
 @enduml
 ```
 
@@ -379,34 +467,56 @@ Fuente editable: [PlantUML](uml/04-template-method.puml).
 skinparam backgroundColor white
 skinparam shadowing false
 skinparam classAttributeIconSize 0
-skinparam defaultFontName SansSerif
-skinparam defaultFontSize 13
-hide empty members
-abstract class Gota {
+skinparam defaultFontName Courier New
+skinparam defaultFontSize 12
+skinparam dpi 180
+skinparam roundcorner 3
+skinparam ArrowColor #292929
+skinparam classBorderColor #292929
+skinparam classBackgroundColor #F3F0FC
+skinparam classBackgroundColor<<abstracta>> #FFFCEB
+skinparam classBackgroundColor<<interfaz>> #F0FAF0
+skinparam classBackgroundColor<<LibGDX>> #EAF3FB
+hide circle
+abstract class Gota <<abstracta>> {
  - area : Rectangle
  - velocidad : float
  - terminada : boolean
  + actualizar(delta : float, personaje : Personaje) : void {final}
  # {abstract} aplicarEfecto(personaje : Personaje) : void
+ + {abstract} esBuena() : boolean
+ + estaTerminada() : boolean
 }
 class GotaBuena {
  # aplicarEfecto(personaje : Personaje) : void
+ + esBuena() : boolean
 }
 class ObjetoEspecial {
  - tipo : TipoObjeto
  # aplicarEfecto(personaje : Personaje) : void
+ + esBuena() : boolean
+ + getTipo() : TipoObjeto
 }
-class Lluvia
-class Personaje
 Gota <|-- GotaBuena
 Gota <|-- ObjetoEspecial
-Lluvia o-- Gota
-Gota ..> Personaje
+class Lluvia {
+ - gotas : List<Gota>
+ + mover(delta : float, personaje : Personaje) : void
+}
+class Personaje {
+ + choca(otra : Rectangle) : boolean
+ + recogerAgua(cantidad : int) : void
+ + atrapar(tipo : TipoObjeto) : void
+}
+Lluvia *-- "0..*" Gota
+Gota ..> Personaje : colision y efecto
 note right of Gota
-Secuencia fija:
-caer -> salida -> colision -> efecto -> terminar
-El efecto cambia segun la subclase.
+actualizar() fija el orden:
+caida, salida de pantalla,
+colision, efecto y fin.
+Las hijas definen el efecto.
 end note
+
 @enduml
 ```
 
@@ -439,9 +549,17 @@ Fuente editable: [PlantUML](uml/05-builder.puml).
 skinparam backgroundColor white
 skinparam shadowing false
 skinparam classAttributeIconSize 0
-skinparam defaultFontName SansSerif
-skinparam defaultFontSize 13
-hide empty members
+skinparam defaultFontName Courier New
+skinparam defaultFontSize 12
+skinparam dpi 180
+skinparam roundcorner 3
+skinparam ArrowColor #292929
+skinparam classBorderColor #292929
+skinparam classBackgroundColor #F3F0FC
+skinparam classBackgroundColor<<abstracta>> #FFFCEB
+skinparam classBackgroundColor<<interfaz>> #F0FAF0
+skinparam classBackgroundColor<<LibGDX>> #EAF3FB
+hide circle
 class Nivel {
  - nombre : String {readOnly}
  - objetivo : int {readOnly}
@@ -449,8 +567,17 @@ class Nivel {
  - intervalo : float {readOnly}
  - probabilidadMala : float {readOnly}
  - Nivel(b : Builder)
+ + getObjetivo() : int
+ + getVelocidad() : float
+ + getIntervalo() : float
+ + getProbabilidadMala() : float
 }
 class "Nivel.Builder" as Builder {
+ - nombre : String
+ - objetivo : int
+ - velocidad : float
+ - intervalo : float
+ - probabilidadMala : float
  + Builder(nombre : String)
  + objetivo(valor : int) : Builder
  + velocidad(valor : float) : Builder
@@ -462,14 +589,20 @@ enum Dificultad {
  NOOB
  PRO
  HACKER
+ - vidas : int
+ - velocidad : float
+ - intervalo : float
+ - peligro : float
+ + getVidas() : int
  + crearNivel(numero : int) : Nivel
 }
-Dificultad ..> Builder : cliente
+Dificultad ..> Builder : configura
 Builder ..> Nivel : valida y crea
 note bottom of Builder
 Clase estatica anidada en Nivel.
-No se requiere Director separado.
+Dificultad es el cliente del Builder.
 end note
+
 @enduml
 ```
 
