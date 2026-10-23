@@ -151,7 +151,7 @@ La campaña recorre llanura (1–10), hielo (11–20) y Atacama (21–30). El ag
 | Sonido | M o botón | M o botón |
 | Control alternativo | Botón del menú o T, ratón/táctil | Dos controles de teclado |
 
-Las monedas, skins y puntuaciones se guardan **localmente**, sin cuenta en línea. El launcher usa `../guardado` respecto al directorio de trabajo; si ejecutas desde otra carpeta, puede utilizar otro guardado. No incluyas guardados personales en la entrega.
+Las monedas, skins y puntuaciones se guardan **localmente**, sin cuenta en línea. El launcher usa `../guardado` respecto al directorio de trabajo, si ejecutas desde otra carpeta, puede utilizar otro guardado. No incluyas guardados personales en la entrega.
 
 
 ## Organización y patrones
