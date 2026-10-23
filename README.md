@@ -153,38 +153,6 @@ La campaña recorre llanura (1–10), hielo (11–20) y Atacama (21–30). El ag
 
 Las monedas, skins y puntuaciones se guardan **localmente**, sin cuenta en línea. El launcher usa `../guardado` respecto al directorio de trabajo, si ejecutas desde otra carpeta, puede utilizar otro guardado. No incluyas guardados personales en la entrega.
 
-
-## Organización y patrones
-
-| Carpeta | Contenido |
-|---|---|
-| `core` | Reglas, estados, dibujo, controles y perfil compartidos |
-| `lwjgl3` | Launcher Desktop y prueba visual |
-| `android` | Launcher Android y empaquetado APK, dispositivo pendiente |
-| `assets` | Recursos de audio e imágenes de la base |
-
-Los personajes y escenarios actuales se dibujan con formas de LibGDX.
-
-| Requisito | Implementación |
-|---|---|
-| Abstracta y polimorfismo | `Gota`, `GotaBuena`, `ObjetoEspecial` |
-| Interfaz | `ControlMovimiento`, `ControlTeclado`, `ControlTactil` |
-| Singleton | `ConfiguracionJuego` |
-| Strategy | Movimiento delegado por `Personaje` a `ControlMovimiento` |
-| Template Method | Secuencia fija de `Gota.actualizar()` y efecto variable |
-| Builder | `Nivel.Builder`, utilizado en `Dificultad.crearNivel()` |
-
-## Pruebas y plataformas
-
-```powershell
-.\gradlew.bat -Pandroid=false :core:test
-.\gradlew.bat -Pandroid=false :lwjgl3:smoke
-.\gradlew.bat -Pandroid=false :lwjgl3:smokeJar
-```
-
-Las pruebas de lógica cubren progresión, daño, efectos, compras, recompensas y versus. `smoke` abre una ventana y verifica escenarios con un perfil aislado. `smokeJar` verifica esos escenarios cargando el JAR completo desde una carpeta sin assets externos. No sustituyen una partida manual prolongada ni certifican audio percibido o ejecución Android en dispositivo. La importación y el arranque desde Eclipse se comprobaron aparte.
-
-
 ### Android e IDEs restantes
 
 Android no está verificado en dispositivo. Para habilitar su módulo se necesita SDK Platform 35, JDK 17 y `local.properties` con el `sdk.dir` del equipo:
