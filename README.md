@@ -218,9 +218,7 @@ Android Studio, VS Code y NetBeans pueden trabajar sobre la misma raíz Gradle. 
 - [Exportación Eclipse y Aula Virtual](docs/ENTREGA_ECLIPSE.md).
 - [Pruebas y limitaciones](docs/VALIDACION.md).
 - [Diagramas UML editables e imágenes](docs/uml/).
-
+  
 ## Referencias y créditos
 
-Base: GameLluvia2024 entregado por el profesor. Se conservan sus sonidos y recursos de partida. Los sonidos adicionales del OVNI, disparo y victoria son efectos sintetizados para este proyecto.
-
-La organización de instalación, ejecución, controles y créditos toma como referencia el [README de cars](https://github.com/Schiz0idCat/cars/blob/main/README.md); sus versiones y comandos no se copian porque corresponden a otro proyecto. El flujo de importación se contrastó con la [documentación de LibGDX](https://libgdx.com/wiki/start/import-and-running).
+Base: GameLluvia2024 entregado por el profesor. Se conservan sus sonidos y recursos de partida.
