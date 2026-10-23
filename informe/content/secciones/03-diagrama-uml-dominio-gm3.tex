@@ -1,0 +1,29 @@
+\section{GM-3. Diseño UML del dominio y relación con LibGDX}
+
+\subsection*{Problema}
+La ampliación agrega campaña, perfil, variantes de objetos y un jefe. Sin un mapa de responsabilidades sería difícil identificar qué clase contiene cada regla.
+
+\subsection*{Contexto}
+El módulo \texttt{core} comparte el juego entre launchers. \texttt{GameLluvia} extiende \texttt{ApplicationAdapter}; \texttt{VistaJuego} utiliza los recursos gráficos y las reglas utilizan rectángulos para colisionar.
+
+\subsection*{Solución y aplicación}
+El diagrama muestra las relaciones principales: una partida contiene personaje y lluvia; el versus contiene dos partidas; el perfil utiliza preferencias; los controles implementan una interfaz. Las flechas discontinuas indican dependencias de uso y no herencia. Los ayudantes gráficos y la clase heredada \texttt{GotaMala} se omiten para que la vista general sea legible; no es una enumeración exhaustiva de todos los campos.
+
+\subsection*{Evidencia}
+\begin{itemize}
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/GameLluvia.java#L14}{GameLluvia.java, línea 14} (\texttt{extends ApplicationAdapter})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/Partida.java#L8}{Partida.java, línea 8} (\texttt{private final Personaje})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/PartidaVersus.java#L4}{PartidaVersus.java, línea 4} (\texttt{private final Partida})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/VistaJuego.java#L14}{VistaJuego.java, línea 14} (\texttt{private final SpriteBatch})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/PerfilJugador.java#L9}{PerfilJugador.java, línea 9} (\texttt{private final Preferences})
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\linewidth,height=0.72\textheight,keepaspectratio]{images/01-dominio.png}
+\caption{01 dominio}
+\end{figure}
+
+
+
+

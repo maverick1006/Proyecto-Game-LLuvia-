@@ -1,0 +1,28 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+hide empty members
+interface ControlMovimiento {
+ + actualizar(personaje : Personaje, delta : float) : void
+}
+class Personaje {
+ - control : ControlMovimiento
+ + actualizar(delta : float, necesitaAgua : boolean) : void
+ + mover(distancia : float) : void
+}
+class ControlTeclado
+class ControlTactil
+class GameLluvia
+class Viewport <<LibGDX>>
+ControlMovimiento <|.. ControlTeclado
+ControlMovimiento <|.. ControlTactil
+Personaje --> ControlMovimiento : delega
+GameLluvia ..> ControlTeclado : selecciona
+GameLluvia ..> ControlTactil : selecciona
+GameLluvia ..> Personaje : mediante Partida
+ControlTactil --> Viewport
+@enduml

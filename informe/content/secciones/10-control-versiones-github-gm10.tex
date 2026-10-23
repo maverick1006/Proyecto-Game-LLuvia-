@@ -1,0 +1,32 @@
+\section{GM-10. GitHub e historial de evolución}
+
+\subsection*{Aplicación}
+Repositorio: https://github.com/maverick1006/Proyecto-Game-LLuvia-
+
+Se utilizan commits para registrar avances reales. Antes del cierre documental se verificaron en el remoto las ramas \texttt{primera-version}, \texttt{segunda-version}, \texttt{tercera-version} y \texttt{cuarta-version}. Sus puntas corresponden a las cuatro primeras versiones, no a seis contribuciones distintas.
+
+La preparación de entrega se desarrolla en \texttt{codex/entrega-final}. Los cambios de empaquetado y la documentación final deben quedar como avances revisables, sin inventar autoría de compañeros ni crear commits vacíos. \textbf{La presencia de seis commits locales no sustituye su publicación en GitHub.}
+
+\subsection*{Evidencia y verificación}
+El archivo HISTORIAL.txt registra el historial local de entrega. VALIDACION.md distingue lo publicado de lo local. Antes de enviar, comprobar la rama entregada y su historial con:
+
+\begin{verbatim}
+git log --oneline --reverse
+git rev-list --count HEAD
+git ls-remote --heads origin
+\end{verbatim}
+
+Adjuntar al informe final el enlace a la rama publicada que contiene estos cambios y comprobar al menos seis commits. No declarar este requisito cerrado mientras esa publicación no esté confirmada.
+
+\section{Validación y alcance de la entrega}
+
+Los resultados reproducidos y las limitaciones están en VALIDACION.md. El módulo Android existe, pero su compilación en SDK y la ejecución en dispositivo siguen sin demostración. Las instrucciones Eclipse se ofrecen en ENTREGA\_ECLIPSE.md; la ejecución desde ese IDE requiere validación en el entorno del equipo.
+
+\section{Fuentes}
+
+\begin{itemize}
+\item Pauta GM-1 a GM-10 y reglas del reporte compartidas por el equipo.
+\item Código base GameLluvia2024 entregado por el profesor y código actual del repositorio.
+\item \href{https://libgdx.com/wiki/start/import-and-running}{LibGDX: importar y ejecutar}.
+\item \href{https://github.com/Schiz0idCat/cars/blob/main/README.md}{Repositorio cars, referencia de organización del README}.
+\end{itemize}

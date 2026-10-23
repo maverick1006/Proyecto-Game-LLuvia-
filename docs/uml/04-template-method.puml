@@ -1,0 +1,34 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+hide empty members
+abstract class Gota {
+ - area : Rectangle
+ - velocidad : float
+ - terminada : boolean
+ + actualizar(delta : float, personaje : Personaje) : void {final}
+ # {abstract} aplicarEfecto(personaje : Personaje) : void
+}
+class GotaBuena {
+ # aplicarEfecto(personaje : Personaje) : void
+}
+class ObjetoEspecial {
+ - tipo : TipoObjeto
+ # aplicarEfecto(personaje : Personaje) : void
+}
+class Lluvia
+class Personaje
+Gota <|-- GotaBuena
+Gota <|-- ObjetoEspecial
+Lluvia o-- Gota
+Gota ..> Personaje
+note right of Gota
+Secuencia fija:
+caer -> salida -> colision -> efecto -> terminar
+El efecto cambia segun la subclase.
+end note
+@enduml

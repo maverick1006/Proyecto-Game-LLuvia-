@@ -1,0 +1,35 @@
+\section{GM-2. Análisis desde ingeniería de software}
+
+\subsection*{Aplicación y comparación con la base}
+
+La base entregada por el profesor, GameLluvia2024, es un proyecto LibGDX con módulos \texttt{core} y \texttt{lwjgl3}. Sus clases principales son \texttt{GameLluvia}, \texttt{Tarro} y \texttt{Lluvia}: una cubeta recibe gotas buenas o dañinas. La comparación se realizó contra la copia original conservada, no contra el README antiguo.
+
+{\small
+\begin{longtable}{p{0.27\linewidth}p{0.66\linewidth}}
+\toprule
+Base observada & Modificación y motivo \\
+\midrule
+\endhead
+\texttt{Lluvia} mantiene dos arrays paralelos para rectángulos y tipos. & Una lista de objetos \texttt{Gota} reúne posición y comportamiento, y permite procesarlos polimórficamente. \\
+\texttt{actualizarMovimiento()} borra por índice mientras avanza hacia delante. & Recorrido inverso para no saltar el elemento que ocupa el índice eliminado. \\
+\texttt{Tarro.dibujar()} descuenta un contador de 50 cuadros para terminar el daño. & Temporizador en segundos dentro de \texttt{Personaje.actualizar()}; el dibujo no decide cuándo termina la protección. \\
+La base no contiene estado final por agotamiento de vidas y puede seguir descontándolas. & Daño acotado y fases de derrota/victoria, reinicio y pausa. \\
+Las texturas de gotas y el sonido de daño no se liberan en sus destructores. & Recursos de audio liberados en \texttt{GameLluvia.dispose()} y gráficos en \texttt{VistaJuego.dispose()}. \\
+Cámara fija de 800$\times$480, sin gestión propia del redimensionado. & Mundo de 960$\times$600 con \texttt{FitViewport}, coordenadas convertidas para la entrada y bandas al cambiar proporción. \\
+Control táctil comentado dentro de \texttt{Tarro}. & Interfaz con estrategias de teclado y táctil; selección al iniciar. \\
+Sin campaña, perfil ni tienda. & \texttt{Partida}, \texttt{PerfilJugador}, configuración de zonas/dificultad, jefe, catálogo y versus. \\
+\bottomrule
+\end{longtable}
+}
+
+Las modificaciones separan reglas, dibujo, entrada y persistencia, manteniendo una solución universitaria directa. \texttt{GameLluvia} conserva coordinación, estados y parte de la presentación; no afirmamos separación completa mediante MVC. El dominio todavía utiliza tipos de LibGDX como \texttt{Rectangle}.
+
+\subsection*{Evidencia}
+\begin{itemize}
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/Lluvia.java#L29}{Lluvia.java, línea 29} (\texttt{public void mover(})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/Personaje.java#L69}{Personaje.java, línea 69} (\texttt{public boolean recibirDanio()})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/GameLluvia.java#L424}{GameLluvia.java, línea 424} (\texttt{@Override public void dispose()})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/VistaJuego.java#L110}{VistaJuego.java, línea 110} (\texttt{public void dispose()})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/Partida.java#L7}{Partida.java, línea 7} (\texttt{public enum Fase})
+\end{itemize}
+

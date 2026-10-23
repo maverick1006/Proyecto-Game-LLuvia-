@@ -1,0 +1,37 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+hide empty members
+class Nivel {
+ - nombre : String {readOnly}
+ - objetivo : int {readOnly}
+ - velocidad : float {readOnly}
+ - intervalo : float {readOnly}
+ - probabilidadMala : float {readOnly}
+ - Nivel(b : Builder)
+}
+class "Nivel.Builder" as Builder {
+ + Builder(nombre : String)
+ + objetivo(valor : int) : Builder
+ + velocidad(valor : float) : Builder
+ + intervalo(valor : float) : Builder
+ + probabilidadMala(valor : float) : Builder
+ + construir() : Nivel
+}
+enum Dificultad {
+ NOOB
+ PRO
+ HACKER
+ + crearNivel(numero : int) : Nivel
+}
+Dificultad ..> Builder : cliente
+Builder ..> Nivel : valida y crea
+note bottom of Builder
+Clase estatica anidada en Nivel.
+No se requiere Director separado.
+end note
+@enduml

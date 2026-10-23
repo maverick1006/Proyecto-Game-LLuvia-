@@ -1,0 +1,88 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+hide empty members
+class GameLluvia
+class ApplicationAdapter <<LibGDX>>
+class VistaJuego
+class Partida
+class PartidaVersus
+class Personaje
+class Lluvia
+abstract class Gota
+class GotaBuena
+class ObjetoEspecial
+interface ControlMovimiento
+class ControlTeclado
+class ControlTactil
+class Nivel
+class "Nivel.Builder" as Builder
+enum Dificultad
+enum Zona
+enum TipoObjeto
+enum Aspecto
+class PerfilJugador
+class ConfiguracionJuego
+class JefeOvni
+class ChorroAgua
+class Rectangle <<LibGDX>>
+class Preferences <<LibGDX>>
+class FitViewport <<LibGDX>>
+class SpriteBatch <<LibGDX>>
+class ShapeRenderer <<LibGDX>>
+class BitmapFont <<LibGDX>>
+ApplicationAdapter <|-- GameLluvia
+GameLluvia --> VistaJuego
+GameLluvia --> Partida
+GameLluvia --> PartidaVersus
+GameLluvia --> ConfiguracionJuego
+GameLluvia --> PerfilJugador
+GameLluvia --> FitViewport
+VistaJuego --> SpriteBatch
+VistaJuego --> ShapeRenderer
+VistaJuego --> BitmapFont
+VistaJuego ..> Aspecto
+PartidaVersus *-- "2" Partida
+Partida *-- Personaje
+Partida *-- Lluvia
+Partida *-- "0..1" JefeOvni
+Partida --> Dificultad
+Partida --> Nivel
+Partida ..> Zona
+Lluvia o-- "0..*" Gota
+Lluvia ..> Zona
+Lluvia ..> Nivel
+Gota <|-- GotaBuena
+Gota <|-- ObjetoEspecial
+ObjetoEspecial --> TipoObjeto
+Personaje --> ControlMovimiento
+Personaje *-- Rectangle
+Gota *-- Rectangle
+Gota ..> Personaje
+ControlMovimiento <|.. ControlTeclado
+ControlMovimiento <|.. ControlTactil
+ControlTactil --> Viewport
+class Viewport <<LibGDX>>
+class ScalingViewport <<LibGDX>>
+Viewport <|-- ScalingViewport
+ScalingViewport <|-- FitViewport
+Dificultad ..> Builder : construye
+Builder ..> Nivel : crea
+JefeOvni o-- "0..*" ChorroAgua
+JefeOvni ..> Lluvia
+JefeOvni ..> Personaje
+ConfiguracionJuego --> Preferences
+ConfiguracionJuego *-- PerfilJugador
+PerfilJugador --> Preferences
+PerfilJugador ..> Aspecto
+PerfilJugador ..> Dificultad
+note bottom of GameLluvia
+Vista de las relaciones principales.
+Los ayudantes de dibujo y GotaMala
+se omiten para facilitar la lectura.
+end note
+@enduml

@@ -1,0 +1,6 @@
+eccd0ff | matis | Crea primera version jugable con niveles, patrones y pruebas
+86acf62 | matis | Agrega tienda, personajes, dificultades y efectos de lluvia
+d52952e | matis | Agrega campana de 30 niveles, jefe OVNI y versus local
+af75f64 | matis | Amplia skins, ajusta vidas y agrega desafio secreto del alien
+cbd0d0f | matis | Empaqueta JAR ejecutable con dependencias y verifica sus assets
+El cierre documental se registra en el commit que contiene este archivo. Consultar git log para su hash definitivo; verificar la publicacion en GitHub.

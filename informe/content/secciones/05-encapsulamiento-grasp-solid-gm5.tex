@@ -1,0 +1,34 @@
+\section{GM-5. Encapsulamiento, GRASP y SOLID}
+
+\subsection*{Aplicación}
+
+{\small
+\begin{longtable}{p{0.27\linewidth}p{0.66\linewidth}}
+\toprule
+Principio & Aplicación concreta y límite \\
+\midrule
+\endhead
+Encapsulamiento & Vidas, puntos, monedas y área de \texttt{Personaje} son privados. \texttt{recibirDanio()} rechaza golpes durante protección y con cero vidas. \texttt{quitarPuntos()} evita negativos. \\
+Experto en información, GRASP & \texttt{Personaje} aplica efectos porque conoce sus recursos; \texttt{PerfilJugador} decide una compra porque conoce saldo y propiedad del aspecto. \\
+Alta cohesión, GRASP & \texttt{Lluvia} administra objetos caídos; \texttt{JefeOvni} administra ataques y proyectiles; los ayudantes de dibujo representan elementos. \\
+Bajo acoplamiento, GRASP & Los controles comparten un contrato y las reglas no cargan sonidos ni texturas. Existe dependencia de LibGDX en colisiones y entrada. \\
+Responsabilidad única, SOLID & Se separan movimiento, perfil y reglas de campaña. Aplicación parcial: \texttt{GameLluvia} todavía coordina y presenta varias pantallas. \\
+Abierto/cerrado, SOLID & Puede agregarse otra estrategia sin cambiar cómo \texttt{Personaje} invoca el contrato. No se afirma cumplimiento total: nuevos efectos pueden requerir modificar un \texttt{switch}. \\
+Sustitución de Liskov, SOLID & Las gotas utilizadas respetan el contrato de actualización y finalización; sus efectos varían mediante el método abstracto. \\
+Segregación de interfaces, SOLID & \texttt{ControlMovimiento} exige solo \texttt{actualizar}; no impone audio o dibujo a los controles. \\
+Inversión de dependencias, SOLID & \texttt{Personaje} recibe \texttt{ControlMovimiento} en su constructor y depende de esa abstracción. La composición concreta se resuelve fuera de él. \\
+\bottomrule
+\end{longtable}
+}
+
+\texttt{Lluvia.getGotas()} devuelve una vista no modificable de la lista; impide agregar o quitar elementos desde la vista, pero no convierte los objetos contenidos en inmutables. \texttt{Nivel} sí tiene sus datos privados finales y no ofrece setters.
+
+\subsection*{Evidencia}
+\begin{itemize}
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/Personaje.java#L10}{Personaje.java, línea 10} (\texttt{private final ControlMovimiento})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/Personaje.java#L69}{Personaje.java, línea 69} (\texttt{public boolean recibirDanio()})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/PerfilJugador.java#L27}{PerfilJugador.java, línea 27} (\texttt{public boolean comprar(})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/Lluvia.java#L10}{Lluvia.java, línea 10} (\texttt{Collections.unmodifiableList})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/Nivel.java#L4}{Nivel.java, línea 4} (\texttt{private final String})
+\end{itemize}
+

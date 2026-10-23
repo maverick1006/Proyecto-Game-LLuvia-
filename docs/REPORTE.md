@@ -1,212 +1,506 @@
-# Reporte de avance — GameLluvia
+# Reporte ejecutivo — GameLluvia: Guardián de la lluvia
 
-Fecha: 11 de octubre de 2026. Documento de trabajo: completar nombres de integrantes y actualizar evidencias antes de entregar. Las rutas de clases siguientes son relativas a `core/src/main/java/puppy/code` salvo indicación contraria.
+**Integrantes:** Matías Santelices S., Rodrigo Escudero y Ariel Fuenzalida.
+**Asignatura:** Programación Avanzada. **Entrega:** 23 de octubre de 2026.
+
+Este reporte corresponde a la campaña de 30 niveles y a la preparación final del proyecto. Las evidencias enlazan archivos y líneas de la copia documentada; si se cambia el código, se deben revisar las referencias. El historial de entrega y las pruebas se documentan en GM-10 y VALIDACION.md.
+
 
 ## GM-1. Perspectiva del jugador
 
-El jugador recoge agua limpia para un pueblo. Debe completar tres etapas sin perder sus tres vidas. Las gotas celestes suman diez puntos; las rosas marcadas con una X causan daño. Los objetivos acumulados son 100, 220 y 360 puntos. Aumentan la velocidad, la frecuencia de aparición y la proporción de gotas dañinas. No hay límite de tiempo.
+### Aplicación
 
-Controles: flechas/A/D en escritorio, arrastre en Android y modo ratón opcional. P o Escape pausa; Enter inicia o continúa. El menú permite cambiar controles y el botón superior alterna sonido. El juego muestra puntuación, vidas, nivel y progreso. Evidencias visuales generadas por la prueba de escritorio:
+El jugador es el Guardián de la Lluvia: recoge agua en un entorno afectado por contaminantes y acumula una reserva con la que se enfrenta a un OVNI. La recolección tiene dos propósitos: avanzar por puntuación y obtener munición para el combate final. Se pierde al quedarse sin vidas y se gana al derrotar al jefe.
+
+La campaña comprende llanura (niveles 1–10), hielo (11–20) y desierto de Atacama (21–30). El agua normal suma 10 puntos y una carga. Cada 100 puntos permite avanzar; los peligros pueden hacer retroceder. A partir de 3000 puntos comienza el ascenso de tres segundos y después la fase del jefe. **No existe un nivel numérico 31 jugable**: el jefe es otra fase de la partida y el nivel mostrado permanece en 30.
+
+Noob tiene 5 vidas, Pro 3 y Hacker 1; también cambia el ritmo de caída. Después de cuatro segundos sin recoger agua comienza una reducción progresiva de velocidad, hasta un 60 %. Agua normal, doble y oasis restablecen la hidratación. No se exige agua durante las rondas de monedas.
+
+| Elemento | Efecto base |
+|---|---|
+| Agua / agua doble / oasis | +10/+20/+30 puntos y +1/+2/+3 cargas; hidratan |
+| Café / fruta | Velocidad ×1,5 durante 7 segundos |
+| Termo | Protección frente a nieve/hielo durante 8 segundos; elimina esos efectos activos |
+| Monedas dobles / puntos dobles | Multiplicador correspondiente durante 8 segundos |
+| Sangre / tinta | −20 / −50 puntos |
+| Veneno / nieve | −10 / −20 puntos y velocidad a la mitad durante 5 / 4 segundos |
+| Hielo / excremento de pájaro | Inmovilización durante 1,5 segundos; hielo también resta 30 puntos |
+| Ácido / fuego / cactus | −1 vida y −30/−40/−25 puntos si el golpe es aceptado |
+| Bolsa rota | Pierde hasta 5 monedas de la partida y bloquea su recolección durante 4 segundos |
+
+Los puntos nunca quedan negativos. El multiplicador de puntos no multiplica la munición. Tras un daño aceptado hay 1,2 segundos de protección contra nuevos golpes que quitan vida.
+
+El menú ofrece comenzar, tienda, mejores puntuaciones, guía de objetos y versus. Hay 29 aspectos: uno inicial, 15 comprables, nueve por niveles, tres por victoria de campaña y un alien oculto. Son cosméticos. La campaña entrega además una bolsa de 250/400/550 monedas al ganar en Noob/Pro/Hacker. Los récords son locales por dificultad.
+
+Al llegar por primera vez a cada hito 5, 10, 15, 20, 25 y 30 se activa una ronda de monedas de ocho segundos; descender y regresar no permite repetir el mismo hito. Un botón discreto arriba a la izquierda del menú abre otro secreto: combate directo en Pro, con 40 cargas iniciales. Solo desbloquea al alien si se gana y no modifica dinero, ranking ni niveles guardados.
+
+| Acción | Campaña | Versus local |
+|---|---|---|
+| Movimiento | A/D o flechas izquierda/derecha; ratón/táctil seleccionable | J1 A/D; J2 izquierda/derecha |
+| Disparo al jefe | Espacio o clic en el área de juego | J1 W; J2 arriba |
+| Pausa | P, Escape o botón | P, Escape o botón |
+| Confirmación | Enter o botones | Enter o botones |
+| Sonido | M o botón | M o botón |
+
+Versus usa un teclado y pantalla dividida: gana quien sobrevive al rival o vence primero al OVNI, con empate si ambos pierden a la vez o ambos ganan. No altera el perfil de campaña. El control táctil existe, pero no equivale a una validación en Android.
+
+### Evidencia
+- [GameLluvia.java, línea 209](../core/src/main/java/puppy/code/GameLluvia.java#L209) (`private void menu()`)
+- [Partida.java, línea 36](../core/src/main/java/puppy/code/Partida.java#L36) (`public void actualizar(float delta)`)
+- [Personaje.java, línea 78](../core/src/main/java/puppy/code/Personaje.java#L78) (`public void atrapar(`)
+- [Dificultad.java, línea 4](../core/src/main/java/puppy/code/Dificultad.java#L4) (`NOOB(`)
+- [Aspecto.java, línea 4](../core/src/main/java/puppy/code/Aspecto.java#L4) (`EXPLORADOR(`)
+- [PartidaVersus.java, línea 14](../core/src/main/java/puppy/code/PartidaVersus.java#L14) (`public int getGanador()`)
 
 ![Menú](capturas/01-menu.png)
-![Partida](capturas/02-partida.png)
-![Pausa](capturas/03-pausa.png)
+![Hielo](capturas/12-hielo.png)
+![Atacama](capturas/13-atacama.png)
+![Jefe](capturas/15-jefe.png)
+![Versus](capturas/17-versus.png)
 
-## GM-2. Análisis y modificaciones
 
-La base del profesor contenía `GameLluvia`, `Tarro` y `Lluvia`, con dos listas paralelas para posición y tipo. La lógica quitaba elementos al recorrer hacia adelante, por lo que podía saltarse gotas. El daño se medía en fotogramas, no había fin de partida y faltaba liberar algunos recursos. Sólo había módulo Desktop y el control táctil estaba comentado.
+## GM-2. Análisis desde ingeniería de software
 
-La versión actual usa objetos `Gota`, eliminación inversa, tiempo de protección en segundos, derrota y victoria, reinicio y tres niveles. `FitViewport` conserva la proporción con bandas al cambiar el tamaño. Las reglas no dependen de texturas o audio y pueden probarse sin abrir una ventana. Los recursos gráficos y de audio utilizados son propiedad de `GameLluvia`, que los libera en `dispose()`.
+### Aplicación y comparación con la base
 
-Se conservan Java, LibGDX y los sonidos de la entrega base. Las ilustraciones simples se dibujan con `ShapeRenderer`. Se agregó un módulo Android; su presencia no demuestra todavía compatibilidad real: falta compilar y probar en dispositivo.
+La base entregada por el profesor, GameLluvia2024, es un proyecto LibGDX con módulos `core` y `lwjgl3`. Sus clases principales son `GameLluvia`, `Tarro` y `Lluvia`: una cubeta recibe gotas buenas o dañinas. La comparación se realizó contra la copia original conservada, no contra el README antiguo.
 
-## GM-3. UML del dominio y su relación con LibGDX
+| Base observada | Modificación y motivo |
+|---|---|
+| `Lluvia` mantiene dos arrays paralelos para rectángulos y tipos. | Una lista de objetos `Gota` reúne posición y comportamiento, y permite procesarlos polimórficamente. |
+| `actualizarMovimiento()` borra por índice mientras avanza hacia delante. | Recorrido inverso para no saltar el elemento que ocupa el índice eliminado. |
+| `Tarro.dibujar()` descuenta un contador de 50 cuadros para terminar el daño. | Temporizador en segundos dentro de `Personaje.actualizar()`; el dibujo no decide cuándo termina la protección. |
+| La base no contiene estado final por agotamiento de vidas y puede seguir descontándolas. | Daño acotado y fases de derrota/victoria, reinicio y pausa. |
+| Las texturas de gotas y el sonido de daño no se liberan en sus destructores. | Recursos de audio liberados en `GameLluvia.dispose()` y gráficos en `VistaJuego.dispose()`. |
+| Cámara fija de 800×480, sin gestión propia del redimensionado. | Mundo de 960×600 con `FitViewport`, coordenadas convertidas para la entrada y bandas al cambiar proporción. |
+| Control táctil comentado dentro de `Tarro`. | Interfaz con estrategias de teclado y táctil; selección al iniciar. |
+| Sin campaña, perfil ni tienda. | `Partida`, `PerfilJugador`, configuración de zonas/dificultad, jefe, catálogo y versus. |
 
-```mermaid
-classDiagram
-    ApplicationAdapter <|-- GameLluvia
-    GameLluvia --> FitViewport
-    GameLluvia --> SpriteBatch
-    GameLluvia --> ShapeRenderer
-    GameLluvia --> ConfiguracionJuego
-    GameLluvia *-- Tarro
-    GameLluvia *-- Lluvia
-    GameLluvia --> Nivel
-    Tarro --> ControlMovimiento
-    Tarro *-- Rectangle
-    ControlMovimiento <|.. ControlTeclado
-    ControlMovimiento <|.. ControlTactil
-    ControlTactil --> Viewport
-    Lluvia o-- Gota
-    Lluvia --> Nivel
-    Gota *-- Rectangle
-    Gota <|-- GotaBuena
-    Gota <|-- GotaMala
-    Gota --> Tarro
-    NivelBuilder ..> Nivel : construye
-    ConfiguracionJuego --> Preferences
-    class Gota {
-        <<abstract>>
-        -Rectangle area
-        -float velocidad
-        -boolean terminada
-        +actualizar(float delta, Tarro tarro) final
-        #aplicarEfecto(Tarro tarro)*
-        +esBuena() boolean*
-    }
-    class ControlMovimiento {
-        <<interface>>
-        +actualizar(Tarro tarro, float delta)
-    }
-    class Tarro {
-        -int vidas
-        -int puntos
-        -float invulnerabilidad
-        +actualizar(float delta)
-        +recibirDanio() boolean
-        +sumarPuntos(int cantidad)
-    }
+Las modificaciones separan reglas, dibujo, entrada y persistencia, manteniendo una solución universitaria directa. `GameLluvia` conserva coordinación, estados y parte de la presentación; no afirmamos separación completa mediante MVC. El dominio todavía utiliza tipos de LibGDX como `Rectangle`.
+
+### Evidencia
+- [Lluvia.java, línea 29](../core/src/main/java/puppy/code/Lluvia.java#L29) (`public void mover(`)
+- [Personaje.java, línea 69](../core/src/main/java/puppy/code/Personaje.java#L69) (`public boolean recibirDanio()`)
+- [GameLluvia.java, línea 424](../core/src/main/java/puppy/code/GameLluvia.java#L424) (`@Override public void dispose()`)
+- [VistaJuego.java, línea 110](../core/src/main/java/puppy/code/VistaJuego.java#L110) (`public void dispose()`)
+- [Partida.java, línea 7](../core/src/main/java/puppy/code/Partida.java#L7) (`public enum Fase`)
+
+## GM-3. Diseño UML del dominio y relación con LibGDX
+
+### Problema
+La ampliación agrega campaña, perfil, variantes de objetos y un jefe. Sin un mapa de responsabilidades sería difícil identificar qué clase contiene cada regla.
+
+### Contexto
+El módulo `core` comparte el juego entre launchers. `GameLluvia` extiende `ApplicationAdapter`; `VistaJuego` utiliza los recursos gráficos y las reglas utilizan rectángulos para colisionar.
+
+### Solución y aplicación
+El diagrama muestra las relaciones principales: una partida contiene personaje y lluvia; el versus contiene dos partidas; el perfil utiliza preferencias; los controles implementan una interfaz. Las flechas discontinuas indican dependencias de uso y no herencia. Los ayudantes gráficos y la clase heredada `GotaMala` se omiten para que la vista general sea legible; no es una enumeración exhaustiva de todos los campos.
+
+### Evidencia
+- [GameLluvia.java, línea 14](../core/src/main/java/puppy/code/GameLluvia.java#L14) (`extends ApplicationAdapter`)
+- [Partida.java, línea 8](../core/src/main/java/puppy/code/Partida.java#L8) (`private final Personaje`)
+- [PartidaVersus.java, línea 4](../core/src/main/java/puppy/code/PartidaVersus.java#L4) (`private final Partida`)
+- [VistaJuego.java, línea 14](../core/src/main/java/puppy/code/VistaJuego.java#L14) (`private final SpriteBatch`)
+- [PerfilJugador.java, línea 9](../core/src/main/java/puppy/code/PerfilJugador.java#L9) (`private final Preferences`)
+
+![UML](uml/01-dominio.png)
+
+Fuente editable: [PlantUML](uml/01-dominio.puml).
+
+```plantuml
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+hide empty members
+class GameLluvia
+class ApplicationAdapter <<LibGDX>>
+class VistaJuego
+class Partida
+class PartidaVersus
+class Personaje
+class Lluvia
+abstract class Gota
+class GotaBuena
+class ObjetoEspecial
+interface ControlMovimiento
+class ControlTeclado
+class ControlTactil
+class Nivel
+class "Nivel.Builder" as Builder
+enum Dificultad
+enum Zona
+enum TipoObjeto
+enum Aspecto
+class PerfilJugador
+class ConfiguracionJuego
+class JefeOvni
+class ChorroAgua
+class Rectangle <<LibGDX>>
+class Preferences <<LibGDX>>
+class FitViewport <<LibGDX>>
+class SpriteBatch <<LibGDX>>
+class ShapeRenderer <<LibGDX>>
+class BitmapFont <<LibGDX>>
+ApplicationAdapter <|-- GameLluvia
+GameLluvia --> VistaJuego
+GameLluvia --> Partida
+GameLluvia --> PartidaVersus
+GameLluvia --> ConfiguracionJuego
+GameLluvia --> PerfilJugador
+GameLluvia --> FitViewport
+VistaJuego --> SpriteBatch
+VistaJuego --> ShapeRenderer
+VistaJuego --> BitmapFont
+VistaJuego ..> Aspecto
+PartidaVersus *-- "2" Partida
+Partida *-- Personaje
+Partida *-- Lluvia
+Partida *-- "0..1" JefeOvni
+Partida --> Dificultad
+Partida --> Nivel
+Partida ..> Zona
+Lluvia o-- "0..*" Gota
+Lluvia ..> Zona
+Lluvia ..> Nivel
+Gota <|-- GotaBuena
+Gota <|-- ObjetoEspecial
+ObjetoEspecial --> TipoObjeto
+Personaje --> ControlMovimiento
+Personaje *-- Rectangle
+Gota *-- Rectangle
+Gota ..> Personaje
+ControlMovimiento <|.. ControlTeclado
+ControlMovimiento <|.. ControlTactil
+ControlTactil --> Viewport
+class Viewport <<LibGDX>>
+class ScalingViewport <<LibGDX>>
+Viewport <|-- ScalingViewport
+ScalingViewport <|-- FitViewport
+Dificultad ..> Builder : construye
+Builder ..> Nivel : crea
+JefeOvni o-- "0..*" ChorroAgua
+JefeOvni ..> Lluvia
+JefeOvni ..> Personaje
+ConfiguracionJuego --> Preferences
+ConfiguracionJuego *-- PerfilJugador
+PerfilJugador --> Preferences
+PerfilJugador ..> Aspecto
+PerfilJugador ..> Dificultad
+note bottom of GameLluvia
+Vista de las relaciones principales.
+Los ayudantes de dibujo y GotaMala
+se omiten para facilitar la lectura.
+end note
+@enduml
 ```
 
-En el diagrama, `NivelBuilder` representa la clase anidada `Nivel.Builder`. `Rectangle`, `Preferences`, `Viewport`, `FitViewport`, `ApplicationAdapter`, `SpriteBatch` y `ShapeRenderer` son tipos de LibGDX. El dominio usa Rectangle para colisiones; no es completamente independiente del framework.
 
-## GM-4. Clase abstracta e interfaz
+## GM-4. Clase abstracta e interfaz utilizadas
 
-`Gota.java` es abstracta y tiene dos hijas: `GotaBuena.java` y `GotaMala.java`. Ambas son instanciadas y procesadas en `Lluvia.actualizar()`. El polimorfismo resuelve el efecto al recogerlas.
+### Aplicación
+`Gota` es abstracta. Sus hijas `GotaBuena` y `ObjetoEspecial` son creadas por `Lluvia.crearGota()` y usadas como `Gota` en `Lluvia.mover()`. La primera recoge agua; la segunda aplica un `TipoObjeto`. `GotaMala` sigue en el código como clase de la versión anterior, pero no se utiliza como evidencia principal porque la fábrica actual no la genera.
 
-`ControlMovimiento.java` es implementada por `ControlTeclado.java` y `ControlTactil.java`. `GameLluvia.iniciar()` elige una implementación y la entrega al constructor de `Tarro`. `Tarro.actualizar()` utiliza esa interfaz en cada actualización. Las dos implementaciones son seleccionables desde el menú.
+`ControlMovimiento` tiene dos implementaciones: `ControlTeclado` y `ControlTactil`. `GameLluvia.iniciar()` elige una y `Partida` la entrega al personaje. `Personaje.actualizar()` la invoca en ejecución. El modo ratón permite ejercitar la estrategia táctil en escritorio.
+
+### Evidencia
+- [Gota.java, línea 5](../core/src/main/java/puppy/code/Gota.java#L5) (`public abstract class`)
+- [GotaBuena.java, línea 3](../core/src/main/java/puppy/code/GotaBuena.java#L3) (`extends Gota`)
+- [ObjetoEspecial.java, línea 3](../core/src/main/java/puppy/code/ObjetoEspecial.java#L3) (`extends Gota`)
+- [Lluvia.java, línea 40](../core/src/main/java/puppy/code/Lluvia.java#L40) (`private Gota crearGota(`)
+- [ControlMovimiento.java, línea 3](../core/src/main/java/puppy/code/ControlMovimiento.java#L3) (`public interface`)
+- [ControlTeclado.java, línea 6](../core/src/main/java/puppy/code/ControlTeclado.java#L6) (`implements ControlMovimiento`)
+- [ControlTactil.java, línea 7](../core/src/main/java/puppy/code/ControlTactil.java#L7) (`implements ControlMovimiento`)
+- [Personaje.java, línea 41](../core/src/main/java/puppy/code/Personaje.java#L41) (`control.actualizar(this, delta)`)
+- [GameLluvia.java, línea 50](../core/src/main/java/puppy/code/GameLluvia.java#L50) (`private void iniciar()`)
+
+Diseño: diagramas de GM-3, GM-7 y GM-8. No basta declarar las clases: las llamadas anteriores demuestran su uso.
 
 ## GM-5. Encapsulamiento, GRASP y SOLID
 
-- Encapsulamiento: vidas, puntos y área son privados. `Tarro.recibirDanio()` controla cuándo se pierde una vida y evita valores negativos. No se devuelve el rectángulo mutable del tarro.
-- Experto en información (GRASP): `Tarro` conoce su estado y aplica sus reglas de daño; `Gota` conoce su posición y velocidad.
-- Alta cohesión y bajo acoplamiento (GRASP): `Lluvia` gestiona las gotas; los controles leen entradas; `Nivel` contiene la configuración de una etapa.
-- Responsabilidad única (SOLID): las reglas de daño y los controles no cargan texturas ni reproducen audio.
-- Inversión de dependencias (SOLID): `Tarro` depende de `ControlMovimiento`, no de teclado o teléfono.
-- Sustitución de Liskov: las dos gotas respetan el ciclo común y sólo cambian su efecto.
-- Abierto/cerrado, aplicación parcial: añadir un nuevo control no requiere modificar `Tarro`. Un nuevo tipo de gota sí requeriría ajustar su creación y representación; no afirmamos extensibilidad total.
+### Aplicación
 
-Limitación: `GameLluvia` aún reúne presentación y coordinación. Es una decisión para este primer avance, no un ejemplo de separación completa de responsabilidades.
+| Principio | Aplicación concreta y límite |
+|---|---|
+| Encapsulamiento | Vidas, puntos, monedas y área de `Personaje` son privados. `recibirDanio()` rechaza golpes durante protección y con cero vidas. `quitarPuntos()` evita negativos. |
+| Experto en información, GRASP | `Personaje` aplica efectos porque conoce sus recursos; `PerfilJugador` decide una compra porque conoce saldo y propiedad del aspecto. |
+| Alta cohesión, GRASP | `Lluvia` administra objetos caídos; `JefeOvni` administra ataques y proyectiles; los ayudantes de dibujo representan elementos. |
+| Bajo acoplamiento, GRASP | Los controles comparten un contrato y las reglas no cargan sonidos ni texturas. Existe dependencia de LibGDX en colisiones y entrada. |
+| Responsabilidad única, SOLID | Se separan movimiento, perfil y reglas de campaña. Aplicación parcial: `GameLluvia` todavía coordina y presenta varias pantallas. |
+| Abierto/cerrado, SOLID | Puede agregarse otra estrategia sin cambiar cómo `Personaje` invoca el contrato. No se afirma cumplimiento total: nuevos efectos pueden requerir modificar un `switch`. |
+| Sustitución de Liskov, SOLID | Las gotas utilizadas respetan el contrato de actualización y finalización; sus efectos varían mediante el método abstracto. |
+| Segregación de interfaces, SOLID | `ControlMovimiento` exige solo `actualizar`; no impone audio o dibujo a los controles. |
+| Inversión de dependencias, SOLID | `Personaje` recibe `ControlMovimiento` en su constructor y depende de esa abstracción. La composición concreta se resuelve fuera de él. |
+
+`Lluvia.getGotas()` devuelve una vista no modificable de la lista; impide agregar o quitar elementos desde la vista, pero no convierte los objetos contenidos en inmutables. `Nivel` sí tiene sus datos privados finales y no ofrece setters.
+
+### Evidencia
+- [Personaje.java, línea 10](../core/src/main/java/puppy/code/Personaje.java#L10) (`private final ControlMovimiento`)
+- [Personaje.java, línea 69](../core/src/main/java/puppy/code/Personaje.java#L69) (`public boolean recibirDanio()`)
+- [PerfilJugador.java, línea 27](../core/src/main/java/puppy/code/PerfilJugador.java#L27) (`public boolean comprar(`)
+- [Lluvia.java, línea 10](../core/src/main/java/puppy/code/Lluvia.java#L10) (`Collections.unmodifiableList`)
+- [Nivel.java, línea 4](../core/src/main/java/puppy/code/Nivel.java#L4) (`private final String`)
 
 ## GM-6. Singleton
 
-**Problema:** menú y partida necesitan consultar la misma preferencia de sonido y el mismo récord.
+### Problema
+La configuración y el perfil deben consultarse desde diferentes estados sin crear copias con valores divergentes.
 
-**Contexto:** una aplicación LibGDX con ejecución de la lógica en el hilo principal.
+### Contexto
+La aplicación inicializa LibGDX antes de acceder a las preferencias; el flujo ordinario se ejecuta en el hilo principal.
 
-**Solución:** `ConfiguracionJuego` tiene constructor privado, instancia estática privada y acceso por `getInstancia()`. Lee y guarda valores con `Preferences`. Se crea después de que LibGDX inicializa `Gdx.app`; no es un gestor de recursos gráficos. No se presenta como una implementación para acceso concurrente.
+### Solución y aplicación
+`ConfiguracionJuego` tiene constructor privado, instancia estática privada y acceso mediante `getInstancia()`. `GameLluvia.create()` obtiene la instancia. El constructor utiliza `Gdx.app.getPreferences()` y crea el perfil asociado. No es una implementación sincronizada para uso concurrente ni un gestor global de todos los recursos.
 
-**Evidencia:** `ConfiguracionJuego.java`; usos en `GameLluvia.create()`, `procesarEntrada()`, `actualizar()` y `dibujarTextos()`.
+### Evidencia
+- [ConfiguracionJuego.java, línea 7](../core/src/main/java/puppy/code/ConfiguracionJuego.java#L7) (`private static ConfiguracionJuego`)
+- [ConfiguracionJuego.java, línea 13](../core/src/main/java/puppy/code/ConfiguracionJuego.java#L13) (`private ConfiguracionJuego()`)
+- [ConfiguracionJuego.java, línea 19](../core/src/main/java/puppy/code/ConfiguracionJuego.java#L19) (`public static ConfiguracionJuego getInstancia()`)
+- [GameLluvia.java, línea 37](../core/src/main/java/puppy/code/GameLluvia.java#L37) (`configuracion = ConfiguracionJuego.getInstancia()`)
 
-```mermaid
-classDiagram
-    GameLluvia --> ConfiguracionJuego
-    ConfiguracionJuego --> Preferences
-    class ConfiguracionJuego {
-        -ConfiguracionJuego instancia$
-        -ConfiguracionJuego()
-        +getInstancia() ConfiguracionJuego$
-        +alternarSonido()
-        +registrarPuntos(int puntos)
-    }
+### UML
+![UML](uml/02-singleton.png)
+
+Fuente editable: [PlantUML](uml/02-singleton.puml).
+
+```plantuml
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+hide empty members
+class ConfiguracionJuego {
+ - {static} instancia : ConfiguracionJuego
+ - preferencias : Preferences
+ - perfil : PerfilJugador
+ - ConfiguracionJuego()
+ + {static} getInstancia() : ConfiguracionJuego
+ + alternarSonido() : void
+ + getPerfil() : PerfilJugador
+}
+class GameLluvia
+class Preferences <<LibGDX>>
+class PerfilJugador
+GameLluvia --> ConfiguracionJuego : getInstancia()
+ConfiguracionJuego --> Preferences
+ConfiguracionJuego *-- PerfilJugador
+PerfilJugador --> Preferences
+@enduml
 ```
 
-**Para defender:** una única instancia mantiene coherente la configuración; no hace falta convertir todas las clases en Singleton.
 
 ## GM-7. Strategy
 
-**Problema:** la entrada cambia entre teclado y pantalla táctil, pero las reglas del tarro son iguales.
+### Problema
+El movimiento depende del dispositivo de entrada, pero el personaje debe conservar las mismas reglas de límites, velocidad y efectos.
 
-**Contexto:** escritorio y Android comparten el módulo `core`.
+### Contexto
+Se permite teclado o ratón/táctil; versus asigna teclas distintas a cada jugador.
 
-**Solución:** `ControlMovimiento` define el contrato. Cada control implementa su algoritmo. El tarro delega la lectura de entrada a la estrategia recibida en su constructor.
+### Solución y aplicación
+`Personaje` es el contexto; `ControlMovimiento` es la estrategia; `ControlTeclado` y `ControlTactil` son las implementaciones. Se inyecta el control al construir la partida y el personaje delega en él en cada actualización. El teclado calcula una dirección y el táctil convierte coordenadas mediante `Viewport.unproject()`.
 
-**Evidencia:** `ControlMovimiento.java`, `ControlTeclado.java`, `ControlTactil.java`, `Tarro.actualizar()` y `GameLluvia.iniciar()`.
+### Evidencia
+- [ControlMovimiento.java, línea 4](../core/src/main/java/puppy/code/ControlMovimiento.java#L4) (`void actualizar(`)
+- [Personaje.java, línea 41](../core/src/main/java/puppy/code/Personaje.java#L41) (`control.actualizar(this, delta)`)
+- [ControlTeclado.java, línea 11](../core/src/main/java/puppy/code/ControlTeclado.java#L11) (`public void actualizar(`)
+- [ControlTactil.java, línea 16](../core/src/main/java/puppy/code/ControlTactil.java#L16) (`viewport.unproject`)
+- [GameLluvia.java, línea 50](../core/src/main/java/puppy/code/GameLluvia.java#L50) (`private void iniciar()`)
 
-```mermaid
-classDiagram
-    Tarro --> ControlMovimiento : delega
-    ControlMovimiento <|.. ControlTeclado
-    ControlMovimiento <|.. ControlTactil
-    class ControlMovimiento {
-        <<interface>>
-        +actualizar(Tarro tarro, float delta)
-    }
+### UML
+![UML](uml/03-strategy.png)
+
+Fuente editable: [PlantUML](uml/03-strategy.puml).
+
+```plantuml
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+hide empty members
+interface ControlMovimiento {
+ + actualizar(personaje : Personaje, delta : float) : void
+}
+class Personaje {
+ - control : ControlMovimiento
+ + actualizar(delta : float, necesitaAgua : boolean) : void
+ + mover(distancia : float) : void
+}
+class ControlTeclado
+class ControlTactil
+class GameLluvia
+class Viewport <<LibGDX>>
+ControlMovimiento <|.. ControlTeclado
+ControlMovimiento <|.. ControlTactil
+Personaje --> ControlMovimiento : delega
+GameLluvia ..> ControlTeclado : selecciona
+GameLluvia ..> ControlTactil : selecciona
+GameLluvia ..> Personaje : mediante Partida
+ControlTactil --> Viewport
+@enduml
 ```
 
-**Para defender:** el contexto es `Tarro`, la estrategia es `ControlMovimiento` y sus implementaciones son los algoritmos intercambiables. La selección se realiza al empezar una partida.
 
 ## GM-8. Template Method
 
-**Problema:** todas las gotas caen, salen de la pantalla o chocan, pero no todas producen el mismo efecto.
+### Problema
+Los objetos comparten caída y colisión, pero tienen distintos efectos al ser recogidos.
 
-**Contexto:** la lluvia contiene una colección de distintos tipos de gotas.
+### Contexto
+`Lluvia` recorre una colección de `Gota` que contiene agua y objetos especiales.
 
-**Solución:** `Gota.actualizar()` es `final`: mueve, comprueba salida, comprueba colisión y termina la gota. En caso de colisión llama al paso abstracto `aplicarEfecto()`. Las hijas suman puntos o causan daño.
+### Solución y aplicación
+`Gota.actualizar()` es `final`: rechaza un objeto terminado, mueve su área, verifica salida y colisión, ejecuta `aplicarEfecto()` y marca la finalización. `aplicarEfecto()` es abstracto. `GotaBuena` recoge agua y `ObjetoEspecial` delega el efecto al personaje. La plantilla fija el algoritmo mientras sus hijas implementan el paso variable.
 
-**Evidencia:** `Gota.java`, `GotaBuena.java`, `GotaMala.java`.
+### Evidencia
+- [Gota.java, línea 16](../core/src/main/java/puppy/code/Gota.java#L16) (`public final void actualizar(`)
+- [Gota.java, línea 27](../core/src/main/java/puppy/code/Gota.java#L27) (`protected abstract void aplicarEfecto(`)
+- [GotaBuena.java, línea 5](../core/src/main/java/puppy/code/GotaBuena.java#L5) (`aplicarEfecto(`)
+- [ObjetoEspecial.java, línea 9](../core/src/main/java/puppy/code/ObjetoEspecial.java#L9) (`aplicarEfecto(`)
+- [Lluvia.java, línea 34](../core/src/main/java/puppy/code/Lluvia.java#L34) (`gota.actualizar(delta, personaje)`)
 
-```mermaid
-classDiagram
-    Gota <|-- GotaBuena
-    Gota <|-- GotaMala
-    class Gota {
-        <<abstract>>
-        +actualizar(float delta, Tarro tarro) final
-        #aplicarEfecto(Tarro tarro)*
-    }
-    class GotaBuena {
-        #aplicarEfecto(Tarro tarro)
-    }
-    class GotaMala {
-        #aplicarEfecto(Tarro tarro)
-    }
+### UML
+![UML](uml/04-template-method.png)
+
+Fuente editable: [PlantUML](uml/04-template-method.puml).
+
+```plantuml
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+hide empty members
+abstract class Gota {
+ - area : Rectangle
+ - velocidad : float
+ - terminada : boolean
+ + actualizar(delta : float, personaje : Personaje) : void {final}
+ # {abstract} aplicarEfecto(personaje : Personaje) : void
+}
+class GotaBuena {
+ # aplicarEfecto(personaje : Personaje) : void
+}
+class ObjetoEspecial {
+ - tipo : TipoObjeto
+ # aplicarEfecto(personaje : Personaje) : void
+}
+class Lluvia
+class Personaje
+Gota <|-- GotaBuena
+Gota <|-- ObjetoEspecial
+Lluvia o-- Gota
+Gota ..> Personaje
+note right of Gota
+Secuencia fija:
+caer -> salida -> colision -> efecto -> terminar
+El efecto cambia segun la subclase.
+end note
+@enduml
 ```
 
-**Para defender:** la herencia por sí sola no demuestra Template Method; aquí existe una secuencia fija que invoca un paso variable.
 
 ## GM-9. Builder
 
-**Problema:** los niveles tienen varios parámetros numéricos fáciles de confundir en un constructor largo.
+### Problema
+Un constructor con varios números facilitaría confundir objetivo, velocidad, intervalo y probabilidad.
 
-**Contexto:** tres etapas comparten valores por defecto, pero cambian metas y dificultad.
+### Contexto
+Cada dificultad construye configuraciones para 30 niveles; se necesitan valores válidos e inmutabilidad posterior.
 
-**Solución:** `Nivel.Builder` permite nombrar cada ajuste y valida los datos al llamar a `construir()`. El `Nivel` resultante conserva campos privados finales. No necesitamos un Director separado para estos tres niveles.
+### Solución y aplicación
+`Nivel.Builder` ofrece métodos encadenables con nombres y valores predeterminados. `construir()` comprueba nombre, objetivo positivo, velocidad e intervalo positivos y finitos, y probabilidad finita entre 0 y 1. Crea un `Nivel` con campos privados finales. El cliente real es `Dificultad.crearNivel()`. No se incorpora un Director porque esta construcción no lo necesita.
 
-**Evidencia:** `Nivel.java` y el arreglo `niveles` de `GameLluvia.java`.
+### Evidencia
+- [Nivel.java, línea 23](../core/src/main/java/puppy/code/Nivel.java#L23) (`public static class Builder`)
+- [Nivel.java, línea 34](../core/src/main/java/puppy/code/Nivel.java#L34) (`public Nivel construir()`)
+- [Nivel.java, línea 10](../core/src/main/java/puppy/code/Nivel.java#L10) (`private Nivel(Builder b)`)
+- [Dificultad.java, línea 16](../core/src/main/java/puppy/code/Dificultad.java#L16) (`public Nivel crearNivel(`)
 
-```mermaid
-classDiagram
-    GameLluvia --> NivelBuilder
-    NivelBuilder ..> Nivel : construye
-    class NivelBuilder {
-        +objetivo(int valor) Builder
-        +velocidad(float valor) Builder
-        +intervalo(float valor) Builder
-        +probabilidadMala(float valor) Builder
-        +construir() Nivel
-    }
-    class Nivel {
-        -String nombre
-        -int objetivo
-        -float velocidad
-        -float intervalo
-        -float probabilidadMala
-    }
+### UML
+![UML](uml/05-builder.png)
+
+Fuente editable: [PlantUML](uml/05-builder.puml).
+
+```plantuml
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+hide empty members
+class Nivel {
+ - nombre : String {readOnly}
+ - objetivo : int {readOnly}
+ - velocidad : float {readOnly}
+ - intervalo : float {readOnly}
+ - probabilidadMala : float {readOnly}
+ - Nivel(b : Builder)
+}
+class "Nivel.Builder" as Builder {
+ + Builder(nombre : String)
+ + objetivo(valor : int) : Builder
+ + velocidad(valor : float) : Builder
+ + intervalo(valor : float) : Builder
+ + probabilidadMala(valor : float) : Builder
+ + construir() : Nivel
+}
+enum Dificultad {
+ NOOB
+ PRO
+ HACKER
+ + crearNivel(numero : int) : Nivel
+}
+Dificultad ..> Builder : cliente
+Builder ..> Nivel : valida y crea
+note bottom of Builder
+Clase estatica anidada en Nivel.
+No se requiere Director separado.
+end note
+@enduml
 ```
 
-**Para defender:** `.velocidad(280).intervalo(0.5f)` expresa mejor la intención que una serie de números sin nombres.
 
-## GM-10. GitHub
+## GM-10. GitHub e historial de evolución
 
-El repositorio remoto estaba vacío al descargarlo. Este primer avance no equivale a cumplir los seis commits de la pauta. Registrar los próximos cambios reales con sus autores: controles, correcciones, pruebas Android, mejoras visuales y documentación. No inventar trabajo individual ni dividir artificialmente un mismo cambio para llegar al mínimo. Antes de entregar, adjuntar el enlace al historial y comprobar que contiene al menos seis commits.
+### Aplicación
+Repositorio: https://github.com/maverick1006/Proyecto-Game-LLuvia-
 
-## Validación y pendientes
+Se utilizan commits para registrar avances reales. Antes del cierre documental se verificaron en el remoto las ramas `primera-version`, `segunda-version`, `tercera-version` y `cuarta-version`. Sus puntas corresponden a las cuatro primeras versiones, no a seis contribuciones distintas.
 
-Verificado el 11 de octubre de 2026 en Windows con JDK 17: compilación Desktop y distribución `installDist` correctas; diez pruebas de reglas aprobadas, cero errores y cero fallos. La prueba visual confirmó estados MENU, JUGANDO, PAUSA y JUGANDO tras reanudar, y generó capturas que se revisaron para comprobar distribución y escalado. Android no se compiló: no se encontró SDK instalado en la ubicación habitual ni variables ANDROID configuradas.
+La preparación de entrega se desarrolla en `codex/entrega-final`. Los cambios de empaquetado y la documentación final deben quedar como avances revisables, sin inventar autoría de compañeros ni crear commits vacíos. **La presencia de seis commits locales no sustituye su publicación en GitHub.**
 
-Las pruebas de reglas están en `core/src/test/java/puppy/code/ReglasJuegoTest.java`. Cubren recogida única, daño simultáneo, recuperación por tiempo, vidas no negativas, límites de movimiento, eliminación de varias gotas y datos inválidos del Builder.
+### Evidencia y verificación
+El archivo [HISTORIAL.txt](HISTORIAL.txt) registra el historial local de entrega. [VALIDACION.md](VALIDACION.md) distingue lo publicado de lo local. Antes de enviar, comprobar la rama entregada y su historial con:
 
-La prueba `lwjgl3/src/test/java/puppy/code/lwjgl3/PruebaVisual.java` abre una ventana real y guarda capturas del menú, partida, pausa y cambio de tamaño. No demuestra por sí sola victoria, derrota, audio correcto, persistencia entre ejecuciones ni controles táctiles reales.
+```bash
+git log --oneline --reverse
+git rev-list --count HEAD
+git ls-remote --heads origin
+```
 
-Antes de entregar: jugar hasta ganar y perder, reiniciar, cerrar y reabrir para verificar récord y sonido, probar Android, revisar audio, validar los tres IDEs restantes y completar historial GitHub. Añadir aquí los resultados reales de esas pruebas, incluyendo dispositivo y versión de Android.
+Adjuntar al informe final el enlace a la rama publicada que contiene estos cambios y comprobar al menos seis commits. No declarar este requisito cerrado mientras esa publicación no esté confirmada.
+
+## Validación y alcance de la entrega
+
+Los resultados reproducidos y las limitaciones están en [VALIDACION.md](VALIDACION.md). El módulo Android existe, pero su compilación en SDK y la ejecución en dispositivo siguen sin demostración. Las instrucciones Eclipse se ofrecen en [ENTREGA_ECLIPSE.md](ENTREGA_ECLIPSE.md); la ejecución desde ese IDE requiere validación en el entorno del equipo.
+
+## Fuentes
+
+- Pauta GM-1 a GM-10 y reglas del reporte compartidas por el equipo.
+- Código base GameLluvia2024 entregado por el profesor y código actual del repositorio.
+- [LibGDX: importar y ejecutar](https://libgdx.com/wiki/start/import-and-running).
+- [Repositorio cars, referencia de organización del README](https://github.com/Schiz0idCat/cars/blob/main/README.md).
