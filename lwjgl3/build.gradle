@@ -19,3 +19,24 @@ tasks.register('smoke', JavaExec) {
     workingDir = rootProject.file('assets')
     args rootProject.file('docs/capturas').absolutePath
 }
+
+// Incluye librerias y assets para entregar un solo archivo ejecutable.
+tasks.register('dist', Jar) {
+    dependsOn classes, configurations.runtimeClasspath
+    archiveFileName = 'GameLluvia.jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest { attributes 'Main-Class': application.mainClass.get() }
+    from sourceSets.main.output
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude 'META-INF/*.SF', 'META-INF/*.RSA', 'META-INF/*.DSA', 'META-INF/INDEX.LIST', 'module-info.class'
+}
+
+// Prueba el contenido empaquetado sin usar la carpeta assets del proyecto.
+tasks.register('smokeJar', JavaExec) {
+    dependsOn testClasses, tasks.named('dist')
+    classpath = files(sourceSets.test.output, tasks.named('dist').flatMap { it.archiveFile })
+    mainClass = 'puppy.code.lwjgl3.PruebaVisual'
+    workingDir = layout.buildDirectory.dir('prueba-jar').get().asFile
+    doFirst { workingDir.mkdirs() }
+    args rootProject.file('docs/capturas').absolutePath
+}
