@@ -12,7 +12,7 @@ Los dos PDF finales están en esta misma carpeta, junto al README:
 1. **[Informe del proyecto](01-Informe-GameLluvia.pdf)**.
 2. **[Manual de usuario](02-Manual-de-Usuario-GameLluvia.pdf)**.
 
-Las carpetas `informe` y `manual` conservan las fuentes editables y sus copias de los documentos.
+Las carpetas `informe` y `manual` conservan las fuentes editables; los PDF finales se encuentran únicamente en la raíz.
 
 ## Descargar el trabajo completo
 

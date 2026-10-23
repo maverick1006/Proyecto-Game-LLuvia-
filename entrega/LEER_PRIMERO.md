@@ -6,7 +6,7 @@ Descarga la rama **entrega-final** completa mediante **Code > Download ZIP** y d
 - **GameLluvia.jar**: juego de escritorio listo para ejecutar con Java 17. Puedes usar `JUGAR_JAR.bat`.
 - **GameLluvia-Android-debug.apk**: APK de prueba compilado; ejecución en teléfono pendiente.
 
-Los PDF finales están en la raíz descargada, junto al README: **01-Informe-GameLluvia.pdf** y **02-Manual-de-Usuario-GameLluvia.pdf**. Las carpetas **informe** y **manual** conservan las fuentes editables y otras copias de esos mismos PDF. También se incluyen dentro del ZIP de Eclipse. Sus anexos finales actualizan el estado de validación.
+Los PDF finales están en la raíz descargada, junto al README: **01-Informe-GameLluvia.pdf** y **02-Manual-de-Usuario-GameLluvia.pdf**. Las carpetas **informe** y **manual** conservan únicamente las fuentes editables. El ZIP de Eclipse incluye los mismos dos PDF en su propia raíz para que pueda entregarse como un paquete independiente. Sus anexos finales actualizan el estado de validación.
 
 ## Apertura en Eclipse
 

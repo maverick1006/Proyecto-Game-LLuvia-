@@ -50,11 +50,11 @@ El historial remoto de entrega se verificó con seis commits hasta dd95078, en l
 - `gradlew.bat -Pandroid=true :android:assembleDebug`: BUILD SUCCESSFUL; APK con assets y bibliotecas nativas arm64-v8a, armeabi-v7a y x86_64.
 - SDK configurado únicamente en `local.properties`, ignorado por Git.
 - Guías: `ABRIR_EN_ECLIPSE.md` y `docs/ANDROID_STUDIO.md`.
-- Informe PDF y manual PDF incluidos en las carpetas `informe` y `manual`.
+- Informe PDF y manual PDF incluidos únicamente en la raíz, junto al README; las carpetas `informe` y `manual` conservan las fuentes.
 
 ## Archivo completo de la rama
 
-La carpeta `entrega` incluye el ZIP exportado desde Eclipse, el JAR Desktop, el APK debug y sus SHA-256. Estos archivos no se regeneran al descargar GitHub: están incluidos en la rama para facilitar la evaluación. El código editable principal está en la raíz Gradle; `informe` y `manual` contienen los documentos finales. La exportación real desde Eclipse se comparó archivo por archivo con el paquete portátil: coincidencia completa.
+La carpeta `entrega` incluye el ZIP exportado desde Eclipse, el JAR Desktop, el APK debug y sus SHA-256. Estos archivos no se regeneran al descargar GitHub: están incluidos en la rama para facilitar la evaluación. El código editable principal está en la raíz Gradle; los documentos PDF finales están junto al README y sus fuentes en `informe` y `manual`. La exportación real desde Eclipse se comparó archivo por archivo con el paquete portátil: coincidencia completa.
 
 ## Revisión del informe y UML
 

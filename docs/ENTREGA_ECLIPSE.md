@@ -19,7 +19,7 @@ Resultado: `build/distributions/GameLluvia-Eclipse.zip`. Se genera con Gradle a 
 5. Elige ZIP y un destino fuera del proyecto. Conserva la carpeta raíz `GameLluvia`.
 6. Reimporta el ZIP en otro workspace y comprueba el arranque antes de entregar.
 
-No confundir el ZIP de fuentes de GitHub con la versión Eclipse que lleva bibliotecas incluidas. El informe y el manual están en `informe` y `manual`, con PDF y fuentes LaTeX.
+No confundir el ZIP de fuentes de GitHub con la versión Eclipse que lleva bibliotecas incluidas. Los PDF finales están en la raíz, junto al README. Las carpetas `informe` y `manual` conservan las fuentes LaTeX.
 
 ## Comprobación realizada
 
