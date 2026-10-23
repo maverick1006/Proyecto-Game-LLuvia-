@@ -28,8 +28,8 @@ Total: **36 pruebas de lógica**, sin fallos ni errores. `smokeJar` abrió una v
 - Capturas actuales: `docs/capturas`. Se generan con un perfil de prueba, no con la cartera real del jugador.
 - La prueba visual prepara algunos escenarios mediante reflexión. La prueba de lógica de jefe recorre impactos reales de proyectiles; la preparación visual no demuestra una campaña completa jugada a mano.
 - El audio se carga sin error; no se certifica su calidad subjetiva ni su reproducción en todos los equipos.
-- Eclipse: instrucciones revisadas, pero sin ejecución comprobada desde el IDE. Falta que el equipo realice y verifique el export solicitado.
-- Android: módulo y control presentes; compilación y dispositivo pendientes.
+- Eclipse 2024-06 (4.32): ZIP descomprimido e importado en workspace nuevo; Problems sin errores; menú y partida ejecutados desde el IDE con Java 21 integrado. Configuración compartida y bibliotecas relativas.
+- Android: APK debug compilado correctamente con JDK 17, SDK Platform 35 y Build-Tools 34.0.0. Dispositivo pendiente; ADB no detectó teléfonos conectados. No certifica gestos, sonido ni rendimiento móvil.
 - Otros sistemas operativos e IDEs: no certificados por estas pruebas.
 - GitHub: se verificó publicada `cuarta-version` en `af75f64`. Se confirmó publicada la rama `entrega-final` en `dd95078`, con seis commits. Los ajustes documentales posteriores deben distinguirse de esa verificación. El historial local queda en `HISTORIAL.txt`.
 - Informe: el documento independiente de `Informe_GameLluvia` compiló correctamente en el editor LaTeX. La plantilla institucional y el manual corregidos también compilaron correctamente en el editor LaTeX. La compilación no sustituye la revisión visual final del PDF exportado desde Prism.
@@ -43,3 +43,11 @@ Informe Prism: https://prism.openai.com/?u=9cffbd15-7e1e-4f86-81dd-667650e2bb7b&
 Manual Prism: https://prism.openai.com/?u=691d9a75-6762-47ec-8d3d-bc24c2985be6&pg=1&m=main.tex
 
 El historial remoto de entrega se verificó con seis commits hasta dd95078, en la rama entrega-final. Los ajustes posteriores de documentación se registran aparte.
+
+## Apertura y compilación para la entrega (23/10/2026)
+
+- `gradlew.bat -Pandroid=false exportarEclipse`: correcto; dependencias copiadas dentro de `lib`.
+- `gradlew.bat -Pandroid=true :android:assembleDebug`: BUILD SUCCESSFUL; APK con assets y bibliotecas nativas arm64-v8a, armeabi-v7a y x86_64.
+- SDK configurado únicamente en `local.properties`, ignorado por Git.
+- Guías: `ABRIR_EN_ECLIPSE.md` y `docs/ANDROID_STUDIO.md`.
+- Informe PDF y manual PDF incluidos en las carpetas `informe` y `manual`.

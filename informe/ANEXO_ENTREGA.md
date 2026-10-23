@@ -1,0 +1,1 @@
+El PDF final incorpora un anexo de instalación y validación del 23/10/2026. Reemplaza las notas previas sobre Eclipse y compilación Android. La ejecución en teléfono sigue pendiente. main.tex incluye anexo-instalacion.pdf al final; mantener ese archivo al importar en Prism. Las copias anteriores en Prism no contienen este anexo hasta importar las fuentes actualizadas.

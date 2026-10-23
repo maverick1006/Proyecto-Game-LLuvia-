@@ -9,3 +9,6 @@
 local.properties
 *.log
 **/guardado/
+
+!config/eclipse/.settings/
+!config/eclipse/.settings/*.prefs

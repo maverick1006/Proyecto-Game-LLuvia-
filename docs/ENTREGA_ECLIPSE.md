@@ -1,62 +1,28 @@
-# Exportación para Eclipse y Aula Virtual
+# Entrega para Eclipse
 
-## Qué se entrega
+La guía de apertura está en [ABRIR_EN_ECLIPSE.md](../ABRIR_EN_ECLIPSE.md). El ZIP específico contiene `.project`, `.classpath`, ajustes de Java, configuración compartida de ejecución y dependencias dentro de `lib`, mediante rutas relativas. No incluye el workspace ni rutas a cachés personales.
 
-1. Fuentes completas con Gradle Wrapper, módulos `core` y `lwjgl3`, carpeta `assets`, documentación y pruebas. Mantener también el módulo Android si se entrega el repositorio completo, aclarando su estado de validación.
-2. `GameLluvia.jar`, construido con `:lwjgl3:dist`; contiene dependencias y assets, pero requiere Java.
-3. Informe ejecutivo final en PDF, obtenido del proyecto Prism, con autores, diagramas y evidencias actualizadas.
-4. El **export realizado desde Eclipse** que solicita la pauta. Un ZIP preparado desde Git no demuestra por sí mismo que se haya realizado esa exportación ni que se haya probado el IDE.
+## Generar el paquete portátil
 
-## Importar y preparar Eclipse
+```powershell
+.\gradlew.bat -Pandroid=false exportarEclipse
+```
 
-1. Descomprimir las fuentes en una carpeta nueva fuera del workspace.
-2. Instalar/configurar JDK 17 para el proyecto y Gradle. Usar Eclipse con Buildship.
-3. `File > Import > Gradle > Existing Gradle Project`: seleccionar la raíz con `settings.gradle`, usar el Wrapper y finalizar.
-4. Esperar la sincronización. Si hace falta, `Gradle > Refresh Gradle Project`.
-5. Ejecutar `:core:test` y `:lwjgl3:run` desde Gradle Tasks. Deben pasar las pruebas y abrirse el juego.
-6. Si se ejecuta como Java Application, la clase es `puppy.code.lwjgl3.Lwjgl3Launcher`; en `Run Configurations > Arguments > Working directory` seleccionar la carpeta raíz `assets`. Elegir JDK 17 en JRE.
+Resultado: `build/distributions/GameLluvia-Eclipse.zip`. Se genera con Gradle a partir de las mismas fuentes de Desktop. La compilación Eclipse usa `core/src/main/java`, `lwjgl3/src/main/java`, recursos `assets` y bibliotecas `lib` en un solo proyecto Java. Gradle conserva sus módulos originales.
 
-## Metadatos: qué conservar y qué no
+## Exportar desde Eclipse
 
-| Archivo | Repositorio Gradle | Export real desde Eclipse |
-|---|---|---|
-| `settings.gradle`, `build.gradle`, `gradle.properties` y scripts de cada módulo | Obligatorios | Incluir |
-| `gradlew`, `gradlew.bat`, `gradle/wrapper/*` | Obligatorios, incluido `gradle-wrapper.jar` | Incluir |
-| `.project` | Puede generarlo Eclipse/Buildship; está ignorado por Git | Incluir si el IDE lo generó para los proyectos exportados |
-| `.classpath` | No copiar el de otro computador como solución universal | Incluir el generado por el IDE; inspeccionar que no dependa de `C:/Users/...` o de bibliotecas fuera del paquete |
-| `.settings/` | Configuración local, normalmente ignorada | Conservar los ajustes necesarios para el proyecto; revisar rutas de Java/Gradle y datos específicos del equipo |
-| `.metadata/` del workspace | No incluir | No incluir |
-| `.gradle/`, cachés, `bin/`, `build/` | No incluir como fuentes | Excluir; entregar el JAR compilado aparte |
-| `local.properties` | No incluir: contiene SDK personal | No incluir; cada equipo configura Android si lo necesita |
-| `guardado/` y logs | No incluir | No incluir |
+1. Importa y ejecuta el proyecto según la guía de apertura.
+2. Selecciona el proyecto y usa **File > Export > General > Archive File**.
+3. Selecciona las fuentes, `assets`, `lib`, documentación, wrapper, scripts y metadatos `.project`, `.classpath`, `.settings` y `GameLluvia.launch`.
+4. Excluye `bin`, `build`, `.gradle`, guardados, logs, `local.properties` y `.metadata` del workspace.
+5. Elige ZIP y un destino fuera del proyecto. Conserva la carpeta raíz `GameLluvia`.
+6. Reimporta el ZIP en otro workspace y comprueba el arranque antes de entregar.
 
-No se deben subir metadatos con rutas absolutas de otro equipo para aparentar portabilidad. Buildship reconstruye la configuración a partir de Gradle. La tarea `gradlew.bat eclipse` existe en los módulos, pero su salida puede contener rutas a dependencias de la caché local; no sustituye una prueba de importación en otro equipo.
+No confundir el ZIP de fuentes de GitHub con la versión Eclipse que lleva bibliotecas incluidas. El informe y el manual están en `informe` y `manual`, con PDF y fuentes LaTeX.
 
-## Exportar desde Eclipse a ZIP
+## Comprobación realizada
 
-1. Con el proyecto importado y funcionando, usar `File > Export > General > Archive File`.
-2. Seleccionar los proyectos de la raíz y los módulos `core` y `lwjgl3`, además de `assets`, wrapper y documentación. Revisar la previsualización del árbol: el ZIP debe conservar la raíz y los módulos como carpetas hermanas, sin perder `settings.gradle` ni duplicar árboles completos dentro de otro módulo.
-3. Excluir cachés, salidas de compilación, guardados y archivos personales indicados arriba. Conservar los metadatos Eclipse necesarios.
-4. Elegir ZIP y un destino **fuera del proyecto**, por ejemplo `GameLluvia-Eclipse.zip`. Exportar.
-5. Abrir el ZIP y comprobar que están `assets/rain.mp3`, las fuentes de ambos módulos, `settings.gradle`, `gradlew.bat` y `gradle/wrapper/gradle-wrapper.jar`.
-6. Descomprimir el ZIP en otra carpeta y abrir **un workspace nuevo**. Importarlo y ejecutarlo allí antes de subirlo.
+El 23/10/2026 se descomprimió el paquete generado en una carpeta de prueba, se importó con **Existing Projects into Workspace** en un workspace nuevo de Eclipse 2024-06 (4.32), se comprobó la vista Problems sin errores y se ejecutó `Lwjgl3Launcher` usando la configuración compartida. El IDE y la ejecución utilizaron su Java 21 integrado; los builds Gradle Desktop y Android se comprobaron con JDK 17. La compatibilidad de compilación del código sigue siendo Java 11.
 
-### Importación del profesor
-
-La ruta reproducible es `Existing Gradle Project` sobre la raíz descomprimida. Si se utiliza `General > Existing Projects into Workspace`, seleccionar la raíz con los `.project`, habilitar búsqueda de proyectos anidados si aparece y seleccionar ambos módulos. Después sincronizar con Gradle/Buildship y resolver el JDK. Si el export no contiene metadatos adecuados, volver a la importación Gradle; no seleccionar esta opción sobre un ZIP de fuentes sin `.project`.
-
-Para evitar problemas con recursos, ejecutar preferentemente `:lwjgl3:run`, que ya apunta a `assets`. Para una ejecución Java directa, configurar el directorio de trabajo en el nuevo equipo; una configuración de lanzamiento con rutas personales no es portable.
-
-## Comprobación de entrega
-
-- [ ] Los tres autores aparecen con sus nombres correctos.
-- [ ] Fuentes y documentación corresponden a la misma versión.
-- [ ] Export Eclipse probado desde un workspace nuevo; registrar versión del IDE y resultado.
-- [ ] JAR ejecutado con `java -jar GameLluvia.jar`.
-- [ ] Informe PDF compilado sin imágenes faltantes ni referencias rotas.
-- [ ] Historial publicado con al menos seis commits reales.
-- [ ] Enlace de GitHub apunta a la rama de entrega, no a una versión antigua.
-- [ ] Android se declara según la evidencia disponible; no anunciarlo como probado si no lo está.
-- [ ] Archivo del Aula Virtual comprobado después de subirlo; envío a cargo del equipo.
-
-Las rutas y etiquetas de menús pueden variar entre versiones de Eclipse. Estas instrucciones no afirman que la importación haya sido ejecutada desde Eclipse en esta sesión. Referencia: [importación y ejecución en LibGDX](https://libgdx.com/wiki/start/import-and-running).
+Evidencia: `docs/capturas/18-eclipse-menu.png`. Los resultados restantes y límites se registran en [VALIDACION.md](VALIDACION.md).

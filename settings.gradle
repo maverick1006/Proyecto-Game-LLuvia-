@@ -1,5 +1,12 @@
 pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
 rootProject.name = 'GameLluvia'
 include 'core', 'lwjgl3'
-// Desktop también se puede compilar en equipos sin el SDK de Android.
-if (providers.gradleProperty('android').orNull == 'true') include 'android'
+def opcionAndroid = providers.gradleProperty('android').orNull
+def propiedadesLocales = new Properties()
+if (file('local.properties').exists()) {
+    file('local.properties').withInputStream { propiedadesLocales.load(it) }
+}
+// Android Studio escribe sdk.dir al seleccionar el SDK del equipo.
+if (opcionAndroid == 'true' || (opcionAndroid != 'false' && propiedadesLocales.getProperty('sdk.dir'))) {
+    include 'android'
+}

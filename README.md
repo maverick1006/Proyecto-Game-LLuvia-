@@ -22,7 +22,7 @@ Proyecto de Programación Avanzada desarrollado en **Java y LibGDX**, a partir d
 - **Gradle Wrapper 8.10.1**, incluido en el repositorio. No hace falta instalar Gradle por separado.
 - **LibGDX 1.12.1**, descargado por Gradle.
 - Para Eclipse: **Eclipse IDE for Java Developers**, con **Buildship (Gradle Integration)** y soporte para Java 17. Si la versión de Eclipse requiere otro Java para iniciar el IDE, su JVM de arranque es independiente del JDK 17 configurado para este proyecto y Gradle.
-- Conexión a Internet para la primera resolución de dependencias. No copiar cachés ni rutas personales de otro equipo.
+- Conexión a Internet para la primera resolución de dependencias al importar las fuentes Gradle. El ZIP específico para Eclipse ya incluye las bibliotecas, mediante rutas relativas.
 
 Descarga el ZIP de la rama de entrega o clona el repositorio:
 
@@ -42,24 +42,24 @@ Si recibiste el ZIP final, ya contiene esa preparación: descomprímelo y utiliz
 
 ## Abrir y ejecutar en Eclipse
 
-1. Descomprime o clona el proyecto en una carpeta fuera del workspace de Eclipse.
-2. En `Window > Preferences > Java > Installed JREs`, agrega el **JDK 17** y selecciónalo para el proyecto. Verifica también el Java Home de Gradle en la configuración de importación.
-3. Elige `File > Import > Gradle > Existing Gradle Project`.
-4. Selecciona la **raíz completa**, no solo `core`, `assets` o `lwjgl3`. Conserva la opción **Gradle Wrapper** y finaliza la importación.
-5. Espera a que se descarguen las dependencias. Si es necesario, clic derecho sobre el proyecto > `Gradle > Refresh Gradle Project`.
-6. Abre `Window > Show View > Other > Gradle > Gradle Tasks`. Ejecuta la tarea **`:lwjgl3:run`**, en `lwjgl3 > application > run`. Esta tarea ya configura el directorio de trabajo como `assets`.
+**Para el profesor:** utiliza `GameLluvia-Eclipse.zip`. Incluye fuentes, recursos, bibliotecas y configuración Java portátil. No requiere Android SDK ni descargar LibGDX para ejecutarlo.
 
-### Alternativa: Run As > Java Application
+1. Descomprime el ZIP fuera del workspace.
+2. **File > Import > General > Existing Projects into Workspace**.
+3. Selecciona la carpeta `GameLluvia`, marca el proyecto y pulsa **Finish**.
+4. Abre `lwjgl3/src/main/java/puppy/code/lwjgl3/Lwjgl3Launcher.java` y usa **Run As > Java Application**. Selecciona **GameLluvia** si lo solicita.
 
-1. Busca `lwjgl3/src/main/java/puppy/code/lwjgl3/Lwjgl3Launcher.java`.
-2. En `Run > Run Configurations > Java Application`, crea una configuración para el módulo `lwjgl3` (el nombre que Eclipse muestre para ese módulo).
-3. Clase principal: **`puppy.code.lwjgl3.Lwjgl3Launcher`**. No es `DesktopLauncher`, ni se ejecuta `GameLluvia` directamente.
-4. En `Arguments > Working directory`, selecciona **Other > Workspace** y la carpeta **`assets` de la raíz**. Si Eclipse no la muestra, usa `File System` y elige esa misma carpeta local. Esta ruta se configura en cada equipo; no publiques una ruta `C:/Users/...` propia.
-5. En la pestaña JRE, selecciona JDK 17. Aplica los cambios y ejecuta. Esta configuración permite usar después `Run As > Java Application`.
+[Pasos completos y solución de problemas](ABRIR_EN_ECLIPSE.md). La configuración compartida usa la carpeta `assets` del workspace. El paquete conserva Java y LibGDX, con `core` y `lwjgl3` en sus carpetas originales.
 
-Si aparece `File not found: rain.mp3`, revisa la carpeta `assets`, el directorio de trabajo y la sincronización Gradle. No muevas recursos manualmente dentro de `src` para ocultar el problema.
+**Fuentes de GitHub:** se importan mediante **Gradle > Existing Gradle Project**, raíz con `settings.gradle`, Wrapper y JDK 17. Requieren Internet inicialmente. Ejecuta **lwjgl3 > application > run** desde Gradle Tasks.
 
-`Existing Projects into Workspace` es una ruta alternativa para un **export real de Eclipse con sus metadatos**. Un ZIP de GitHub no necesita contener `.project` ni `.classpath`: se importa como proyecto Gradle. Consulta [la guía de exportación](docs/ENTREGA_ECLIPSE.md).
+Para regenerar el paquete Eclipse: `.\gradlew.bat -Pandroid=false exportarEclipse`. Resultado: `build/distributions/GameLluvia-Eclipse.zip`. [Exportación desde el IDE](docs/ENTREGA_ECLIPSE.md).
+
+## Android Studio
+
+Abre la raíz con **File > Open**, configura SDK Platform 35 y Build-Tools 34.0.0, elige **Gradle JDK 17** y sincroniza. Android Studio escribe `sdk.dir` en `local.properties`; esto habilita el módulo Android automáticamente. No publiques ese archivo personal.
+
+APK compilado correctamente el 23/10/2026: `.\gradlew.bat -Pandroid=true :android:assembleDebug`. [Instrucciones completas](docs/ANDROID_STUDIO.md). La entrega incluye `GameLluvia-Android-debug.apk`. La prueba en teléfono sigue pendiente; no se certifican todavía gestos, audio ni rendimiento Android.
 
 ## Ejecutar por consola
 
@@ -131,7 +131,7 @@ Las monedas, skins y puntuaciones se guardan **localmente**, sin cuenta en líne
 |---|---|
 | `core` | Reglas, estados, dibujo, controles y perfil compartidos |
 | `lwjgl3` | Launcher Desktop y prueba visual |
-| `android` | Módulo Android opcional, pendiente de validación |
+| `android` | Launcher Android y empaquetado APK; dispositivo pendiente |
 | `assets` | Recursos de audio e imágenes de la base |
 | `docs` | Reporte, auditoría, diagramas y capturas |
 
@@ -154,7 +154,7 @@ Los personajes y escenarios actuales se dibujan con formas de LibGDX. Las skins 
 .\gradlew.bat :lwjgl3:smokeJar
 ```
 
-Las pruebas de lógica cubren progresión, daño, efectos, compras, recompensas y versus. `smoke` abre una ventana y verifica escenarios con un perfil aislado. `smokeJar` verifica esos escenarios cargando el JAR completo desde una carpeta sin assets externos. No sustituyen una partida manual prolongada ni certifican audio percibido, Eclipse o Android.
+Las pruebas de lógica cubren progresión, daño, efectos, compras, recompensas y versus. `smoke` abre una ventana y verifica escenarios con un perfil aislado. `smokeJar` verifica esos escenarios cargando el JAR completo desde una carpeta sin assets externos. No sustituyen una partida manual prolongada ni certifican audio percibido o ejecución Android en dispositivo. La importación y el arranque desde Eclipse se comprobaron aparte.
 
 Consulta resultados y límites concretos en [VALIDACION.md](docs/VALIDACION.md).
 
@@ -166,7 +166,7 @@ Android no está verificado en dispositivo. Para habilitar su módulo se necesit
 .\gradlew.bat -Pandroid=true :android:assembleDebug
 ```
 
-El APK esperado es `android/build/outputs/apk/debug/android-debug.apk`. La tarea es una instrucción de compilación, no una afirmación de que Android haya sido probado.
+El APK esperado es `android/build/outputs/apk/debug/android-debug.apk`. La compilación del APK está comprobada. La ejecución en teléfono todavía requiere la revisión indicada en docs/ANDROID_STUDIO.md.
 
 Android Studio, VS Code y NetBeans pueden trabajar sobre la misma raíz Gradle. No se ha certificado su importación en todas las versiones de estos IDEs.
 

@@ -1,0 +1,42 @@
+def escritorio = project(':lwjgl3')
+def carpetaEclipse = layout.buildDirectory.dir('eclipse/GameLluvia')
+
+tasks.register('prepararEclipse', Sync) {
+    dependsOn escritorio.tasks.named('classes'), escritorio.configurations.runtimeClasspath
+    into carpetaEclipse
+    from(rootDir) {
+        include 'core/src/**', 'core/build.gradle', 'lwjgl3/src/main/**', 'lwjgl3/build.gradle'
+        include 'android/**', 'assets/**', 'docs/**', 'informe/**', 'manual/**'
+        include 'gradle/**', 'gradlew', 'gradlew.bat', 'settings.gradle', 'build.gradle', 'gradle.properties'
+        include 'README.md', 'JUGAR.bat', 'ABRIR_EN_ECLIPSE.md'
+        include 'config/eclipse/**'
+        exclude '**/build/**', '**/bin/**', '**/local.properties', 'config/eclipse/*.launch'
+    }
+    from(rootProject.file('config/eclipse')) { exclude 'project.xml', 'launch.xml' }
+    doLast {
+        def destino = carpetaEclipse.get().asFile
+        new File(destino, 'GameLluvia.launch').setText(rootProject.file('config/eclipse/launch.xml').getText('UTF-8'), 'UTF-8')
+        new File(destino, '.project').setText(rootProject.file('config/eclipse/project.xml').getText('UTF-8'), 'UTF-8')
+        def bibliotecas = escritorio.configurations.runtimeClasspath.files.findAll {
+            it != project(':core').tasks.named('jar').get().archiveFile.get().asFile
+        }
+        copy { from bibliotecas; into new File(destino, 'lib') }
+        def entradas = bibliotecas.sort { it.name }.collect {
+            '  <classpathentry kind="lib" path="lib/' + it.name + '"/>'
+        }.join('\n')
+        new File(destino, '.classpath').setText('''<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+  <classpathentry kind="src" path="core/src/main/java"/>
+  <classpathentry kind="src" path="lwjgl3/src/main/java"/>
+  <classpathentry kind="src" path="assets"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17"/>
+''' + entradas + '\n  <classpathentry kind="output" path="bin"/>\n</classpath>\n', 'UTF-8')
+    }
+}
+
+tasks.register('exportarEclipse', Zip) {
+    dependsOn 'prepararEclipse'
+    from(layout.buildDirectory.dir('eclipse'))
+    archiveFileName = 'GameLluvia-Eclipse.zip'
+    destinationDirectory = layout.buildDirectory.dir('distributions')
+}
