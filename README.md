@@ -12,21 +12,15 @@ Los dos PDF finales están en esta misma carpeta, junto al README:
 1. **[Informe del proyecto](01-Informe-GameLluvia.pdf)**.
 2. **[Manual de usuario](02-Manual-de-Usuario-GameLluvia.pdf)**.
 
-Las carpetas `informe` y `manual` conservan las fuentes editables, los PDF finales se encuentran únicamente en la raíz.
+Los PDF finales se encuentran en la raíz del repositorio.
 
 ## Descargar el trabajo completo
 
 La rama para entregar es **[entrega-final](https://github.com/maverick1006/Proyecto-Game-LLuvia-/tree/entrega-final)**. En GitHub selecciona esa rama y pulsa **Code > Download ZIP**. Descomprime el archivo antes de abrir el proyecto.
 
-El ZIP de la rama incluye:
+El ZIP incluye el código Java, los recursos del juego, las pruebas, la configuración de Gradle y ambos PDF. El informe contiene los diagramas UML y la explicación de los requisitos.
 
-- **[Proyecto listo para Eclipse](entrega/GameLluvia-Eclipse.zip)**: descomprime este ZIP adicional e importa `GameLluvia` como **General > Existing Projects into Workspace**.
-- **[Juego ejecutable Desktop](entrega/GameLluvia.jar)**, con [lanzador Windows](entrega/JUGAR_JAR.bat).
-- **[APK Android de prueba](entrega/GameLluvia-Android-debug.apk)**: compilado.
-- **[Informe ejecutivo PDF](01-Informe-GameLluvia.pdf)** y **[manual de usuario PDF](02-Manual-de-Usuario-GameLluvia.pdf)**, con fuentes LaTeX y anexos de instalación.
-- Fuentes Java, pruebas, UML, recursos, Gradle Wrapper y guías.
-
-**[Leer primero](entrega/LEER_PRIMERO.md)** | **[Pasos para Eclipse](ABRIR_EN_ECLIPSE.md)** | **[Android Studio](docs/ANDROID_STUDIO.md)**
+Los ejecutables se generan desde las fuentes siguiendo los pasos de este README.
 
 ## Contenido
 
@@ -37,7 +31,7 @@ El ZIP de la rama incluye:
 - [Juego y controles](#juego-y-controles)
 - [Organización y patrones](#organización-y-patrones)
 - [Pruebas y plataformas](#pruebas-y-plataformas)
-- [Documentación de entrega](#documentación-de-entrega)
+- [Documentos para revisar primero](#documentos-para-revisar-primero)
 
 ## Instalación y requisitos
 
@@ -45,7 +39,7 @@ El ZIP de la rama incluye:
 - **Gradle Wrapper 8.10.1**, incluido en el repositorio. No hace falta instalar Gradle por separado.
 - **LibGDX 1.12.1**, descargado por Gradle.
 - Para Eclipse: **Eclipse IDE for Java Developers**, con **Buildship (Gradle Integration)** y soporte para Java 17. Si la versión de Eclipse requiere otro Java para iniciar el IDE, su JVM de arranque es independiente del JDK 17 configurado para este proyecto y Gradle.
-- Conexión a Internet para la primera resolución de dependencias al importar las fuentes Gradle. El ZIP específico para Eclipse ya incluye las bibliotecas, mediante rutas relativas.
+- Conexión a Internet para la primera resolución de dependencias al importar las fuentes Gradle.
 
 Para obtener directamente la rama correcta por Git:
 
@@ -56,41 +50,47 @@ cd GameLluvia
 
 ## Abrir y ejecutar en Eclipse
 
-1. Descomprime el ZIP fuera del workspace.
-2. **File > Import > General > Existing Projects into Workspace**.
-3. Selecciona la carpeta `GameLluvia`, marca el proyecto y pulsa **Finish**.
-4. Abre `lwjgl3/src/main/java/puppy/code/lwjgl3/Lwjgl3Launcher.java` y usa **Run As > Java Application**. Selecciona **GameLluvia** si lo solicita.
+1. Descomprime el ZIP completo fuera del workspace de Eclipse.
+2. En Eclipse, abre **Window > Preferences > Java > Installed JREs** y agrega o selecciona el **JDK 17**.
+3. Selecciona **File > Import > Gradle > Existing Gradle Project**. Si no aparece Gradle, instala **Buildship Gradle Integration** desde Eclipse Marketplace.
+4. En **Project root directory**, selecciona la carpeta que contiene `settings.gradle` y `gradlew.bat`.
+5. Utiliza **Gradle Wrapper** y configura **Gradle JVM / Java home** con JDK 17. Pulsa **Finish** y espera la descarga de dependencias.
+6. Abre **Window > Show View > Other > Gradle > Gradle Tasks**. En el módulo `lwjgl3`, ejecuta **application > run**.
 
-[Pasos completos y solución de problemas](ABRIR_EN_ECLIPSE.md). La configuración compartida usa la carpeta `assets` del workspace. El paquete conserva Java y LibGDX, con `core` y `lwjgl3` en sus carpetas originales.
-
-**Fuentes de GitHub:** se importan mediante **Gradle > Existing Gradle Project**, raíz con `settings.gradle`, Wrapper y JDK 17. Requieren Internet inicialmente. Ejecuta **lwjgl3 > application > run** desde Gradle Tasks.
-
-Para regenerar el paquete Eclipse: `.\gradlew.bat -Pandroid=false exportarEclipse`. Resultado: `build/distributions/GameLluvia-Eclipse.zip`. [Exportación desde el IDE](docs/ENTREGA_ECLIPSE.md).
+La tarea `run` configura el directorio de recursos automáticamente. Para escritorio no se necesita instalar Android SDK.
 
 ### Si Eclipse no abre el proyecto
 
-Puedes ejecutar la copia ya compilada desde la raíz descargada:
+Comprueba que importaste la raíz como proyecto **Gradle**, que JDK 17 está seleccionado y que tienes conexión a Internet. Después usa **Gradle > Refresh Gradle Project** sobre el proyecto.
 
-```powershell
-java -jar .\entrega\GameLluvia.jar
-```
-
-En Windows también puedes usar `entrega/JUGAR_JAR.bat`. Requiere Java compatible, el entorno probado usa JDK 17. Esta alternativa no necesita Gradle ni Android SDK.
-
-Para comprobar y compilar las fuentes de Desktop sin configurar Android:
+También puedes compilar y ejecutar desde PowerShell, ubicado en la raíz descomprimida:
 
 ```powershell
 .\gradlew.bat -Pandroid=false :core:test :lwjgl3:dist
+java -jar .\lwjgl3\build\libs\GameLluvia.jar
+```
+
+Para ejecutarlo directamente con Gradle:
+
+```powershell
 .\gradlew.bat -Pandroid=false :lwjgl3:run
 ```
 
-Si falta un recurso, comprueba que descomprimiste la carpeta completa. El proyecto Gradle debe importarse desde la raíz, no desde `core` ni `assets`.
+Si aparece un error de recursos, comprueba que descomprimiste también la carpeta `assets`. No importes únicamente `core` o `lwjgl3`.
+
+### Generar un paquete independiente para Eclipse
+
+```powershell
+.\gradlew.bat -Pandroid=false exportarEclipse
+```
+
+Se genera `build/distributions/GameLluvia-Eclipse.zip` con fuentes, recursos, bibliotecas y configuración Eclipse. Descomprime ese paquete e impórtalo mediante **File > Import > General > Existing Projects into Workspace**. Luego ejecuta la configuración **GameLluvia** desde **Run > Run Configurations > Java Application**. Esta forma de importación corresponde al paquete generado.
 
 ## Android Studio
 
 Abre la raíz con **File > Open**, configura SDK Platform 35 y Build-Tools 34.0.0, elige **Gradle JDK 17** y sincroniza. Android Studio escribe `sdk.dir` en `local.properties`, esto habilita el módulo Android automáticamente. No publiques ese archivo personal.
 
-APK compilado correctamente el 23/10/2026: `.\gradlew.bat -Pandroid=true :android:assembleDebug`. [Instrucciones completas](docs/ANDROID_STUDIO.md). La entrega incluye `GameLluvia-Android-debug.apk`.
+La compilación del APK se comprobó el 23/10/2026 mediante `.\gradlew.bat -Pandroid=true :android:assembleDebug`. El archivo generado queda en `android/build/outputs/apk/debug/android-debug.apk`. La ejecución en teléfono sigue pendiente.
 
 ## Ejecutar por consola
 
@@ -98,14 +98,14 @@ En PowerShell, desde la raíz:
 
 ```powershell
 java -version
-.\gradlew.bat :lwjgl3:run
+.\gradlew.bat -Pandroid=false :lwjgl3:run
 ```
 
 Linux/macOS:
 
 ```bash
 chmod +x gradlew
-./gradlew :lwjgl3:run
+./gradlew -Pandroid=false :lwjgl3:run
 ```
 
 El módulo de escritorio se llama **`lwjgl3`**: no existen las tareas `desktop:run` o `desktop:dist` en este proyecto. La ejecución Gradle configura los assets automáticamente.
@@ -113,7 +113,7 @@ El módulo de escritorio se llama **`lwjgl3`**: no existen las tareas `desktop:r
 ## Generar y ejecutar el JAR
 
 ```powershell
-.\gradlew.bat :core:test :lwjgl3:dist
+.\gradlew.bat -Pandroid=false :core:test :lwjgl3:dist
 java -jar .\lwjgl3\build\libs\GameLluvia.jar
 ```
 
@@ -124,7 +124,7 @@ En Linux/macOS, sustituye el wrapper por `./gradlew` y usa barras `/`. Para ejec
 También se puede generar una distribución con bibliotecas separadas:
 
 ```powershell
-.\gradlew.bat :lwjgl3:installDist :lwjgl3:distZip
+.\gradlew.bat -Pandroid=false :lwjgl3:installDist :lwjgl3:distZip
 .\lwjgl3\build\install\lwjgl3\bin\lwjgl3.bat
 ```
 
@@ -153,8 +153,6 @@ La campaña recorre llanura (1–10), hielo (11–20) y Atacama (21–30). El ag
 
 Las monedas, skins y puntuaciones se guardan **localmente**, sin cuenta en línea. El launcher usa `../guardado` respecto al directorio de trabajo; si ejecutas desde otra carpeta, puede utilizar otro guardado. No incluyas guardados personales en la entrega.
 
-![Menú](docs/capturas/01-menu.png)
-![Versus](docs/capturas/17-versus.png)
 
 ## Organización y patrones
 
@@ -164,7 +162,6 @@ Las monedas, skins y puntuaciones se guardan **localmente**, sin cuenta en líne
 | `lwjgl3` | Launcher Desktop y prueba visual |
 | `android` | Launcher Android y empaquetado APK, dispositivo pendiente |
 | `assets` | Recursos de audio e imágenes de la base |
-| `docs` | Reporte, auditoría, diagramas y capturas |
 
 Los personajes y escenarios actuales se dibujan con formas de LibGDX.
 
@@ -180,14 +177,13 @@ Los personajes y escenarios actuales se dibujan con formas de LibGDX.
 ## Pruebas y plataformas
 
 ```powershell
-.\gradlew.bat :core:test
-.\gradlew.bat :lwjgl3:smoke
-.\gradlew.bat :lwjgl3:smokeJar
+.\gradlew.bat -Pandroid=false :core:test
+.\gradlew.bat -Pandroid=false :lwjgl3:smoke
+.\gradlew.bat -Pandroid=false :lwjgl3:smokeJar
 ```
 
 Las pruebas de lógica cubren progresión, daño, efectos, compras, recompensas y versus. `smoke` abre una ventana y verifica escenarios con un perfil aislado. `smokeJar` verifica esos escenarios cargando el JAR completo desde una carpeta sin assets externos. No sustituyen una partida manual prolongada ni certifican audio percibido o ejecución Android en dispositivo. La importación y el arranque desde Eclipse se comprobaron aparte.
 
-Consulta resultados y límites concretos en [VALIDACION.md](docs/VALIDACION.md).
 
 ### Android e IDEs restantes
 
