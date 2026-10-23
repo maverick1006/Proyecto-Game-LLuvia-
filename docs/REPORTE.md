@@ -505,7 +505,7 @@ git ls-remote --heads origin
 
 ## Validación y alcance de la entrega
 
-Los resultados reproducidos y las limitaciones están en [VALIDACION.md](VALIDACION.md). El módulo Android existe, pero su compilación en SDK y la ejecución en dispositivo siguen sin demostración. Las instrucciones Eclipse se ofrecen en [ENTREGA_ECLIPSE.md](ENTREGA_ECLIPSE.md); la ejecución desde ese IDE requiere validación en el entorno del equipo.
+Los resultados reproducidos y las limitaciones están en [VALIDACION.md](VALIDACION.md). El APK Android se compiló con JDK 17 y SDK 35; la ejecución en teléfono sigue pendiente. El paquete Eclipse se importó en un workspace nuevo de Eclipse 2024-06 y abrió el menú y una partida. Se exportó mediante Archive File del IDE y se comparó su contenido con el paquete portátil. Consultar [ENTREGA_ECLIPSE.md](ENTREGA_ECLIPSE.md) y [ANDROID_STUDIO.md](ANDROID_STUDIO.md).
 
 ## Fuentes
 

@@ -5,6 +5,20 @@ Proyecto de Programación Avanzada desarrollado en **Java y LibGDX**, a partir d
 **Integrantes:** Matías Santelices S., Rodrigo Escudero y Ariel Fuenzalida.
 **Entrega:** 23 de octubre de 2026.
 
+## Descargar el trabajo completo
+
+La rama para entregar es **[entrega-final](https://github.com/maverick1006/Proyecto-Game-LLuvia-/tree/entrega-final)**. En GitHub selecciona esa rama y pulsa **Code > Download ZIP**. Descomprime el archivo antes de abrir el proyecto.
+
+El ZIP de la rama incluye:
+
+- **[Proyecto listo para Eclipse](entrega/GameLluvia-Eclipse.zip)**: descomprime este ZIP adicional e importa `GameLluvia` como **General > Existing Projects into Workspace**. Lleva LibGDX y sus dependencias incluidas.
+- **[Juego ejecutable Desktop](entrega/GameLluvia.jar)**, con [lanzador Windows](entrega/JUGAR_JAR.bat).
+- **[APK Android de prueba](entrega/GameLluvia-Android-debug.apk)**: compilado; prueba en teléfono pendiente.
+- **[Informe ejecutivo PDF](informe/Informe-GameLluvia-final.pdf)** y **[manual de usuario PDF](manual/Manual-GameLluvia-final.pdf)**, con fuentes LaTeX y anexos de instalación.
+- Fuentes Java, pruebas, UML, recursos, Gradle Wrapper y guías.
+
+**[Leer primero](entrega/LEER_PRIMERO.md)** | **[Pasos para Eclipse](ABRIR_EN_ECLIPSE.md)** | **[Android Studio](docs/ANDROID_STUDIO.md)**
+
 ## Contenido
 
 - [Instalación y requisitos](#instalación-y-requisitos)
@@ -24,21 +38,14 @@ Proyecto de Programación Avanzada desarrollado en **Java y LibGDX**, a partir d
 - Para Eclipse: **Eclipse IDE for Java Developers**, con **Buildship (Gradle Integration)** y soporte para Java 17. Si la versión de Eclipse requiere otro Java para iniciar el IDE, su JVM de arranque es independiente del JDK 17 configurado para este proyecto y Gradle.
 - Conexión a Internet para la primera resolución de dependencias al importar las fuentes Gradle. El ZIP específico para Eclipse ya incluye las bibliotecas, mediante rutas relativas.
 
-Descarga el ZIP de la rama de entrega o clona el repositorio:
+Para obtener directamente la rama correcta por Git:
 
 ```bash
-git clone https://github.com/maverick1006/Proyecto-Game-LLuvia-.git
-cd Proyecto-Game-LLuvia-
+git clone --branch entrega-final https://github.com/maverick1006/Proyecto-Game-LLuvia-.git GameLluvia
+cd GameLluvia
 ```
 
-La versión jugable anterior está en `cuarta-version` (commit `af75f64`). La preparación final está publicada en `entrega-final` (seis commits verificados hasta `dd95078`):
-
-```bash
-git fetch origin
-git switch --track origin/entrega-final
-```
-
-Si recibiste el ZIP final, ya contiene esa preparación: descomprímelo y utiliza su carpeta raíz, donde están `settings.gradle` y `gradlew.bat`.
+La raíz descargada conserva el proyecto Gradle; la carpeta `entrega` contiene las versiones preparadas para evaluar y ejecutar.
 
 ## Abrir y ejecutar en Eclipse
 

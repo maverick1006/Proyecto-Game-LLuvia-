@@ -21,7 +21,7 @@ No se detectó un requisito GM-4 a GM-9 que obligara a reescribir la lógica. No
 - Los objetos de la lista no modificable de `Lluvia` siguen siendo mutables.
 - `GotaMala` y el récord antiguo de `ConfiguracionJuego` permanecen como legado; el ranking vigente pertenece a `PerfilJugador`.
 - Los diagramas son una vista de las relaciones principales, no una lista exhaustiva de miembros.
-- Android y la importación real en Eclipse no están certificados por las pruebas Desktop.
+- Eclipse se importó y ejecutó en un workspace nuevo; APK Android compilado. La ejecución Android en teléfono y la sincronización visual del proyecto en Android Studio siguen pendientes. Esas verificaciones se distinguen de las pruebas de lógica Desktop.
 - GM-10 exige publicación real. Consultar `VALIDACION.md` y `HISTORIAL.txt`.
 
 ## Evidencia detallada

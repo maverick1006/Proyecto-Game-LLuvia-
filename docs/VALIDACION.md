@@ -51,3 +51,7 @@ El historial remoto de entrega se verificó con seis commits hasta dd95078, en l
 - SDK configurado únicamente en `local.properties`, ignorado por Git.
 - Guías: `ABRIR_EN_ECLIPSE.md` y `docs/ANDROID_STUDIO.md`.
 - Informe PDF y manual PDF incluidos en las carpetas `informe` y `manual`.
+
+## Archivo completo de la rama
+
+La carpeta `entrega` incluye el ZIP exportado desde Eclipse, el JAR Desktop, el APK debug y sus SHA-256. Estos archivos no se regeneran al descargar GitHub: están incluidos en la rama para facilitar la evaluación. El código editable principal está en la raíz Gradle; `informe` y `manual` contienen los documentos finales. La exportación real desde Eclipse se comparó archivo por archivo con el paquete portátil: coincidencia completa.
