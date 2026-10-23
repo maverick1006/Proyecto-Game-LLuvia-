@@ -10,6 +10,7 @@ Noob tiene 5 vidas, Pro 3 y Hacker 1; también cambia el ritmo de caída. Despu�
 
 {\small
 \begin{longtable}{p{0.27\linewidth}p{0.66\linewidth}}
+\caption{Elementos del juego y sus efectos}\\
 \toprule
 Elemento & Efecto base \\
 \midrule
@@ -35,6 +36,7 @@ Al llegar por primera vez a cada hito 5, 10, 15, 20, 25 y 30 se activa una ronda
 
 {\small
 \begin{longtable}{p{0.2\linewidth}p{0.35\linewidth}p{0.36\linewidth}}
+\caption{Controles de campaña y versus}\\
 \toprule
 Acción & Campaña & Versus local \\
 \midrule
@@ -52,38 +54,38 @@ Versus usa un teclado y pantalla dividida: gana quien sobrevive al rival o vence
 
 \subsection*{Evidencia}
 \begin{itemize}
-\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/GameLluvia.java#L209}{GameLluvia.java, línea 209} (\texttt{private void menu()})
-\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/Partida.java#L36}{Partida.java, línea 36} (\texttt{public void actualizar(float delta)})
-\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/Personaje.java#L78}{Personaje.java, línea 78} (\texttt{public void atrapar(})
-\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/Dificultad.java#L4}{Dificultad.java, línea 4} (\texttt{NOOB(})
-\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/Aspecto.java#L4}{Aspecto.java, línea 4} (\texttt{EXPLORADOR(})
-\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/PartidaVersus.java#L14}{PartidaVersus.java, línea 14} (\texttt{public int getGanador()})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/entrega-final/core/src/main/java/puppy/code/GameLluvia.java#L209}{GameLluvia.java, línea 209} (\texttt{private void menu()})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/entrega-final/core/src/main/java/puppy/code/Partida.java#L36}{Partida.java, línea 36} (\texttt{public void actualizar(float delta)})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/entrega-final/core/src/main/java/puppy/code/Personaje.java#L78}{Personaje.java, línea 78} (\texttt{public void atrapar(})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/entrega-final/core/src/main/java/puppy/code/Dificultad.java#L4}{Dificultad.java, línea 4} (\texttt{NOOB(})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/entrega-final/core/src/main/java/puppy/code/Aspecto.java#L4}{Aspecto.java, línea 4} (\texttt{EXPLORADOR(})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/entrega-final/core/src/main/java/puppy/code/PartidaVersus.java#L14}{PartidaVersus.java, línea 14} (\texttt{public int getGanador()})
 \end{itemize}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.72\textheight,keepaspectratio]{images/01-menu.png}
-\caption{01 menu}
+\caption{Menú principal del juego}
 \end{figure}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.72\textheight,keepaspectratio]{images/12-hielo.png}
-\caption{12 hielo}
+\caption{Campaña en la zona de hielo}
 \end{figure}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.72\textheight,keepaspectratio]{images/13-atacama.png}
-\caption{13 atacama}
+\caption{Campaña en el desierto de Atacama}
 \end{figure}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.72\textheight,keepaspectratio]{images/15-jefe.png}
-\caption{15 jefe}
+\caption{Combate contra el jefe OVNI}
 \end{figure}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.72\textheight,keepaspectratio]{images/17-versus.png}
-\caption{17 versus}
+\caption{Versus local con pantalla dividida}
 \end{figure}
 
 

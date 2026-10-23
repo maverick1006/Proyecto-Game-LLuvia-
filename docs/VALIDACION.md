@@ -31,5 +31,15 @@ Total: **36 pruebas de lógica**, sin fallos ni errores. `smokeJar` abrió una v
 - Eclipse: instrucciones revisadas, pero sin ejecución comprobada desde el IDE. Falta que el equipo realice y verifique el export solicitado.
 - Android: módulo y control presentes; compilación y dispositivo pendientes.
 - Otros sistemas operativos e IDEs: no certificados por estas pruebas.
-- GitHub: se verificó publicada `cuarta-version` en `af75f64`. La rama `codex/entrega-final` debe publicarse y comprobarse antes de entregar. El historial local queda en `HISTORIAL.txt`.
+- GitHub: se verificó publicada `cuarta-version` en `af75f64`. Se confirmó publicada la rama `entrega-final` en `dd95078`, con seis commits. Los ajustes documentales posteriores deben distinguirse de esa verificación. El historial local queda en `HISTORIAL.txt`.
 - Informe: el documento independiente de `Informe_GameLluvia` compiló correctamente en el editor LaTeX. La plantilla institucional y el manual corregidos también compilaron correctamente en el editor LaTeX. La compilación no sustituye la revisión visual final del PDF exportado desde Prism.
+
+## Exportación final de documentos
+
+Se importaron copias corregidas en Prism y se descargó el informe PDF final. Se revisaron las páginas renderizadas del informe y del manual; se corrigió el desborde de una ruta larga del JAR en el manual antes de su exportación final.
+
+Informe Prism: https://prism.openai.com/?u=9cffbd15-7e1e-4f86-81dd-667650e2bb7b&pg=1&m=main.tex
+
+Manual Prism: https://prism.openai.com/?u=691d9a75-6762-47ec-8d3d-bc24c2985be6&pg=1&m=main.tex
+
+El historial remoto de entrega se verificó con seis commits hasta dd95078, en la rama entrega-final. Los ajustes posteriores de documentación se registran aparte.

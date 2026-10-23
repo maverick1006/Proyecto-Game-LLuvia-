@@ -20,6 +20,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{titlesec}
+\usepackage{xurl}
 \usepackage{hyperref}
 
 % --- Paleta de Colores Inspirada en GameLluvia ---
@@ -118,11 +119,11 @@
 \begin{tikzpicture}[remember picture, overlay]
     % Fondo base Azul Noche Profundo
     \fill[NavyDark] (current page.south west) rectangle (current page.north east);
-    
+
     % Destello central
-    \shade[inner color=CyanGlow!35, outer color=NavyDark!0] 
+    \shade[inner color=CyanGlow!35, outer color=NavyDark]
         ($(current page.center)+(0,3cm)$) circle (7.5cm);
-        
+
     % Borde neón arcade
     \draw[CyanBright, line width=2pt] ($(current page.north west)+(1cm,-1cm)$) rectangle ($(current page.south east)+(-1cm,1cm)$);
     \draw[CyanGlow!40, line width=0.8pt] ($(current page.north west)+(1.15cm,-1.15cm)$) rectangle ($(current page.south east)+(-1.15cm,1.15cm)$);
@@ -173,8 +174,8 @@
     ]
         \centering
         {\sffamily\bfseries\color{white}\small EQUIPO DE DESARROLLO}\\[0.15cm]
-        {\sffamily\color{CyanBright}\textbf{Rodrigo Escudero}} \textcolor{white!60}{$\cdot$} 
-        {\sffamily\color{CyanBright}\textbf{Ariel Fuenzalida}} \textcolor{white!60}{$\cdot$} 
+        {\sffamily\color{CyanBright}\textbf{Rodrigo Escudero}} \textcolor{white!60}{$\cdot$}
+        {\sffamily\color{CyanBright}\textbf{Ariel Fuenzalida}} \textcolor{white!60}{$\cdot$}
         {\sffamily\color{CyanBright}\textbf{Matías Santelices S.}}\\[0.15cm]
         {\sffamily\color{white!70}\scriptsize Entorno: Java SE (JDK 17) + LibGDX 1.12.1 \textcolor{CyanBright}{|} Edición Cuarta Versión (Commit \texttt{af75f64})}
     \end{tcolorbox}
@@ -305,11 +306,11 @@ Tú encarnas al \textbf{Guardián de la Lluvia}, un intrépido recolector equipa
 \bottomrule
 \end{tabularx}
 \end{tcolorbox}
-\caption{Ficha técnica de requerimientos para la versión de escritorio.}
+\caption{Entorno probado y aspectos que requieren comprobación en el equipo de evaluación.}
 \end{table}
 
 \subsection*{JAR de la entrega final}
-La preparación final agrega \texttt{.\textbackslash gradlew.bat :lwjgl3:dist}. El archivo \texttt{lwjgl3/build/libs/GameLluvia.jar} incluye librerías y assets. Se ejecuta con \texttt{java -jar GameLluvia.jar}, con Java instalado.
+La preparación final agrega \texttt{.\textbackslash gradlew.bat :lwjgl3:dist}. El archivo \path{lwjgl3/build/libs/GameLluvia.jar} incluye librerías y assets. Se ejecuta con \texttt{java -jar GameLluvia.jar}, con Java instalado.
 \subsection*{Guía de Puesta en Marcha Rápida}
 
 El proyecto incluye scripts que requieren JDK 17 y conexión para descargar dependencias en su primera ejecución. La distribución también requiere Java instalado:
@@ -317,7 +318,7 @@ El proyecto incluye scripts que requieren JDK 17 y conexión para descargar depe
 \begin{enumerate}[label=\textbf{\arabic*.}, itemsep=0.8em]
     \item \textbf{Ejecución Inmediata en Windows (Recomendada):}\\
     Navegue a la carpeta raíz del proyecto y haga doble clic sobre el archivo \textbf{\texttt{JUGAR.bat}}. Este script compila y ejecuta de manera autónoma el módulo de escritorio.
-    
+
     \item \textbf{Ejecución desde Consola de Comandos o Terminal:}\\
     Si prefiere ejecutar mediante terminal o utiliza Linux/macOS, abra una consola en la raíz del proyecto y escriba:
     \begin{tcolorbox}[colback=NavyDark, colframe=CyanGlow, arc=1.5mm, boxrule=0.8pt, left=8pt, right=8pt, top=4pt, bottom=4pt]
@@ -475,16 +476,16 @@ La interfaz gráfica de usuario (GUI) ha sido diseñada con un estilo arcade mod
         \node[inner sep=0pt, rounded corners=3mm, draw=CyanGlow, line width=1.5pt] (pantalla) {
             \includegraphics[width=0.88\textwidth]{images/02-partida.png}
         };
-        \node[fill=NavyDark, text=CyanBright, font=\bfseries\sffamily\scriptsize, rounded corners=1mm, draw=CyanGlow] 
+        \node[fill=NavyDark, text=CyanBright, font=\bfseries\sffamily\scriptsize, rounded corners=1mm, draw=CyanGlow]
             at ($(pantalla.north west)+(2.2cm,-0.6cm)$) {[1] Puntuación Actual};
-            
-        \node[fill=NavyDark, text=GoldDrop, font=\bfseries\sffamily\scriptsize, rounded corners=1mm, draw=GoldDrop] 
+
+        \node[fill=NavyDark, text=GoldDrop, font=\bfseries\sffamily\scriptsize, rounded corners=1mm, draw=GoldDrop]
             at ($(pantalla.north)+(0cm,-0.6cm)$) {[2] Nivel y Bioma / Agua};
-            
-        \node[fill=NavyDark, text=RedAlert!40!white, font=\bfseries\sffamily\scriptsize, rounded corners=1mm, draw=RedAlert] 
+
+        \node[fill=NavyDark, text=RedAlert!40!white, font=\bfseries\sffamily\scriptsize, rounded corners=1mm, draw=RedAlert]
             at ($(pantalla.north east)+(-2.2cm,-0.6cm)$) {[3] Vidas y Monedas};
-            
-        \node[fill=NavyDark, text=white, font=\bfseries\sffamily\scriptsize, rounded corners=1mm, draw=white!60] 
+
+        \node[fill=NavyDark, text=white, font=\bfseries\sffamily\scriptsize, rounded corners=1mm, draw=white!60]
             at ($(pantalla.north east)+(-1.2cm,-1.5cm)$) {[4] Botón de Pausa};
     \end{tikzpicture}\\[0.2cm]
     {\small\sffamily\color{NavyDark!70}\textit{Figura: Elementos informativos desplegados en tiempo real durante la partida.}}
@@ -493,13 +494,13 @@ La interfaz gráfica de usuario (GUI) ha sido diseñada con un estilo arcade mod
 \begin{enumerate}[label=\textbf{[\arabic*]}, itemsep=0.8em]
     \item \textbf{Marcador de Puntos (Extremo Superior Izquierdo):}\\
     Muestra la puntuación acumulada durante la sesión. El agua normal aporta 10 puntos. Agua doble, oasis, multiplicadores y perjuicios cambian la relación entre gotas y puntuación. Si este valor llega a múltiplos de $100$ ($100, 200, 300\dots$), el sistema incrementa automáticamente tu nivel de campaña.
-    
+
     \item \textbf{Panel Central de Nivel, Bioma y Reserva de Agua:}\\
     Indica el nivel en el que te encuentras (del $1$ al $30$) y el bioma activo (Llanura, Hielo o Desierto). A su vez, muestra las \textbf{cargas de agua} disponibles en tu recolector, necesarias para disparar al jefe. Recoger agua restaura la hidratación; disparar no modifica la sed.
-    
+
     \item \textbf{Contador de Vidas y Monedas (Extremo Superior Derecho):}\\
     Representa las vidas que le quedan al personaje antes de caer derrotado. Junto a las vidas, se contabilizan las monedas doradas obtenidas en la tormenta, las cuales se transfieren a tu billetera permanente para gastar en la tienda.
-    
+
     \item \textbf{Acceso Rápido a Pausa:}\\
     Un botón interactivo que detiene la acción si necesitas un respiro o deseas salir guardando las monedas. Abandonar no registra el puntaje en el ranking.
 \end{enumerate}
@@ -805,6 +806,8 @@ El juego cuenta con un armario de \textbf{29 aspectos cosméticos (skins)} inspi
 % ==============================================================================
 % SECCION 9: PREGUNTAS FRECUENTES Y SOLUCION DE PROBLEMAS (FAQ)
 % ==============================================================================
+\begingroup
+\small
 \section{Preguntas Frecuentes y Solución de Problemas (FAQ)}
 \label{sec:faq}
 
@@ -816,7 +819,7 @@ El juego cuenta con un armario de \textbf{29 aspectos cosméticos (skins)} inspi
 \vspace{0.4cm}
 
 \begin{tarjetaitem}{Presiono la Barra Espaciadora pero el recolector no dispara. ¿Qué ocurre?}{Munición de Agua}
-    El cañón de agua a presión solo se activa en fases de combate (durante la batalla contra el Jefe OVNI en el nivel 31 tanto en campaña como en versus o desafío oculto), y \textbf{requiere tener cargas de agua en el tanque}. \\
+    El cañón de agua a presión solo se activa en fases de combate (durante la batalla contra el Jefe OVNI en la fase final tanto en campaña como en versus o desafío oculto), y \textbf{requiere tener cargas de agua en el tanque}. \\
     \textbf{Solución:} Si tu reserva de agua está en 0, esquiva los ataques alienígenas y atrapa las gotas que flotan en el espacio para recargar munición.
 \end{tarjetaitem}
 
@@ -838,7 +841,7 @@ El juego cuenta con un armario de \textbf{29 aspectos cosméticos (skins)} inspi
     Asegúrese de contar con Java instalado en su sistema. Abra un terminal y verifique ejecutando \texttt{java -version}. El entorno probado utiliza JDK 17. El código se compila con compatibilidad Java 11; Java 8 no puede ejecutar estas clases.
 \end{tarjetaitem}
 
-\vspace{0.8cm}
+\vspace{0.2cm}
 
 \begin{center}
     \begin{tcolorbox}[
@@ -855,5 +858,6 @@ El juego cuenta con un armario de \textbf{29 aspectos cosméticos (skins)} inspi
     \end{tcolorbox}
 \end{center}
 
+\endgroup
 \end{document}
 

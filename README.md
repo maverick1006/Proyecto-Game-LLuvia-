@@ -31,11 +31,11 @@ git clone https://github.com/maverick1006/Proyecto-Game-LLuvia-.git
 cd Proyecto-Game-LLuvia-
 ```
 
-La versión jugable anterior está en `cuarta-version` (commit `af75f64`). La preparación final se realiza en `codex/entrega-final`; para descargarla por Git debe estar publicada:
+La versión jugable anterior está en `cuarta-version` (commit `af75f64`). La preparación final está publicada en `entrega-final` (seis commits verificados hasta `dd95078`):
 
 ```bash
 git fetch origin
-git switch --track origin/codex/entrega-final
+git switch --track origin/entrega-final
 ```
 
 Si recibiste el ZIP final, ya contiene esa preparación: descomprímelo y utiliza su carpeta raíz, donde están `settings.gradle` y `gradlew.bat`.
@@ -174,7 +174,9 @@ Android Studio, VS Code y NetBeans pueden trabajar sobre la misma raíz Gradle. 
 
 - [Reporte GM-1 a GM-10](docs/REPORTE.md).
 - [Informe LaTeX con plantilla institucional](informe/main.tex).
+- [Informe final PDF](informe/Informe-GameLluvia-final.pdf).
 - [Manual de usuario corregido](manual/main.tex).
+- [Manual final PDF](manual/Manual-GameLluvia-final.pdf).
 - [Revisión de los aportes del equipo](docs/REVISION_APORTES.md).
 - [Auditoría de código y rúbrica](docs/AUDITORIA.md).
 - [Exportación Eclipse y Aula Virtual](docs/ENTREGA_ECLIPSE.md).

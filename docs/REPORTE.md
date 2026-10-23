@@ -477,22 +477,31 @@ end note
 ## GM-10. GitHub e historial de evolución
 
 ### Aplicación
-Repositorio: https://github.com/maverick1006/Proyecto-Game-LLuvia-
 
-Se utilizan commits para registrar avances reales. Antes del cierre documental se verificaron en el remoto las ramas `primera-version`, `segunda-version`, `tercera-version` y `cuarta-version`. Sus puntas corresponden a las cuatro primeras versiones, no a seis contribuciones distintas.
+El repositorio conserva seis commits de avances reales. Se verificó por consulta al remoto que la rama `entrega-final` apunta a `dd95078a1b2b7f9219c420c02deb36337b5b77ef`, que contiene el historial siguiente:
 
-La preparación de entrega se desarrolla en `codex/entrega-final`. Los cambios de empaquetado y la documentación final deben quedar como avances revisables, sin inventar autoría de compañeros ni crear commits vacíos. **La presencia de seis commits locales no sustituye su publicación en GitHub.**
+| Commit | Avance registrado |
+|---|---|
+| eccd0ff | Primera versión jugable, patrones y pruebas |
+| 86acf62 | Tienda, personajes, dificultades y efectos |
+| d52952e | Campaña de 30 niveles, jefe OVNI y versus |
+| af75f64 | Nuevas skins, vidas por dificultad y desafío alien |
+| cbd0d0f | JAR ejecutable con dependencias y prueba de assets |
+| dd95078 | Reporte, UML, README y guías de entrega |
 
-### Evidencia y verificación
-El archivo [HISTORIAL.txt](HISTORIAL.txt) registra el historial local de entrega. [VALIDACION.md](VALIDACION.md) distingue lo publicado de lo local. Antes de enviar, comprobar la rama entregada y su historial con:
+### Evidencia
+
+- [Rama de entrega publicada](https://github.com/maverick1006/Proyecto-Game-LLuvia-/tree/entrega-final).
+- [Historial de la rama](https://github.com/maverick1006/Proyecto-Game-LLuvia-/commits/entrega-final/).
+- [Sexto commit verificado](https://github.com/maverick1006/Proyecto-Game-LLuvia-/commit/dd95078a1b2b7f9219c420c02deb36337b5b77ef).
+
+La comprobación se realizó el 23 de octubre de 2026. Se distinguen los commits publicados de cualquier ajuste documental posterior. Los nombres de los tres integrantes en la portada no se utilizan para atribuirles commits que Git no registra a su nombre.
 
 ```bash
 git log --oneline --reverse
-git rev-list --count HEAD
+git rev-list --count dd95078
 git ls-remote --heads origin
 ```
-
-Adjuntar al informe final el enlace a la rama publicada que contiene estos cambios y comprobar al menos seis commits. No declarar este requisito cerrado mientras esa publicación no esté confirmada.
 
 ## Validación y alcance de la entrega
 

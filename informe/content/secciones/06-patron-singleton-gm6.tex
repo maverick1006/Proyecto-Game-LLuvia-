@@ -11,17 +11,17 @@ La aplicación inicializa LibGDX antes de acceder a las preferencias; el flujo o
 
 \subsection*{Evidencia}
 \begin{itemize}
-\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/ConfiguracionJuego.java#L7}{ConfiguracionJuego.java, línea 7} (\texttt{private static ConfiguracionJuego})
-\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/ConfiguracionJuego.java#L13}{ConfiguracionJuego.java, línea 13} (\texttt{private ConfiguracionJuego()})
-\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/ConfiguracionJuego.java#L19}{ConfiguracionJuego.java, línea 19} (\texttt{public static ConfiguracionJuego getInstancia()})
-\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/codex/entrega-final/core/src/main/java/puppy/code/GameLluvia.java#L37}{GameLluvia.java, línea 37} (\texttt{configuracion = ConfiguracionJuego.getInstancia()})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/entrega-final/core/src/main/java/puppy/code/ConfiguracionJuego.java#L7}{ConfiguracionJuego.java, línea 7} (\texttt{private static ConfiguracionJuego})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/entrega-final/core/src/main/java/puppy/code/ConfiguracionJuego.java#L13}{ConfiguracionJuego.java, línea 13} (\texttt{private ConfiguracionJuego()})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/entrega-final/core/src/main/java/puppy/code/ConfiguracionJuego.java#L19}{ConfiguracionJuego.java, línea 19} (\texttt{public static ConfiguracionJuego getInstancia()})
+\item \href{https://github.com/maverick1006/Proyecto-Game-LLuvia-/blob/entrega-final/core/src/main/java/puppy/code/GameLluvia.java#L37}{GameLluvia.java, línea 37} (\texttt{configuracion = ConfiguracionJuego.getInstancia()})
 \end{itemize}
 
 \subsection*{UML}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.72\textheight,keepaspectratio]{images/02-singleton.png}
-\caption{02 singleton}
+\caption{Singleton de configuración y acceso al perfil}
 \end{figure}
 
 
