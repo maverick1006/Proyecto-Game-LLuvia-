@@ -205,20 +205,6 @@ El APK esperado es `android/build/outputs/apk/debug/android-debug.apk`. La compi
 
 Android Studio, VS Code y NetBeans pueden trabajar sobre la misma raíz Gradle. No se ha certificado su importación en todas las versiones de estos IDEs.
 
-## Documentación de entrega
-
-- [Reporte GM-1 a GM-10](docs/REPORTE.md).
-- [Informe LaTeX con plantilla institucional](informe/main.tex).
-- [Informe final PDF](01-Informe-GameLluvia.pdf).
-- [Manual de usuario corregido](manual/main.tex).
-- [Manual final PDF](02-Manual-de-Usuario-GameLluvia.pdf).
-- [Revisión de los aportes del equipo](docs/REVISION_APORTES.md).
-- [Auditoría de código y rúbrica](docs/AUDITORIA.md).
-- [Revisión final por requisito y guía para la defensa](docs/REVISION_FINAL.md).
-- [Exportación Eclipse y Aula Virtual](docs/ENTREGA_ECLIPSE.md).
-- [Pruebas y limitaciones](docs/VALIDACION.md).
-- [Diagramas UML editables e imágenes](docs/uml/).
-  
 ## Referencias y créditos
 
 Base: GameLluvia2024 entregado por el profesor. Se conservan sus sonidos y recursos de partida.
