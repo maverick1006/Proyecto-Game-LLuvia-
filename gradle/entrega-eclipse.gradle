@@ -9,6 +9,7 @@ tasks.register('prepararEclipse', Sync) {
         include 'android/**', 'assets/**', 'docs/**', 'informe/**', 'manual/**'
         include 'gradle/**', 'gradlew', 'gradlew.bat', 'settings.gradle', 'build.gradle', 'gradle.properties'
         include 'README.md', 'JUGAR.bat', 'ABRIR_EN_ECLIPSE.md'
+        include '01-Informe-GameLluvia.pdf', '02-Manual-de-Usuario-GameLluvia.pdf'
         include 'config/eclipse/**'
         exclude '**/build/**', '**/bin/**', '**/local.properties', 'config/eclipse/*.launch'
     }

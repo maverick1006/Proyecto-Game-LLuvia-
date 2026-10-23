@@ -34,8 +34,8 @@ Resultado: `build/distributions/GameLluvia-Eclipse.zip`. Este paquete se genera 
 
 ## Informe y manual incluidos
 
-- [Informe ejecutivo PDF](informe/Informe-GameLluvia-final.pdf): requisitos GM-1 a GM-10.
-- [Manual de usuario PDF](manual/Manual-GameLluvia-final.pdf): reglas y controles.
+- [Informe ejecutivo PDF](01-Informe-GameLluvia.pdf): requisitos GM-1 a GM-10.
+- [Manual de usuario PDF](02-Manual-de-Usuario-GameLluvia.pdf): reglas y controles.
 - Fuentes editables: `informe/main.tex` y `manual/main.tex`.
 - [Resultados y límites](docs/VALIDACION.md).
 - [Android Studio](docs/ANDROID_STUDIO.md).

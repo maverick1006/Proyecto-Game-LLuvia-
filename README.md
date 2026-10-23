@@ -5,6 +5,15 @@ Proyecto de Programación Avanzada desarrollado en **Java y LibGDX**, a partir d
 **Integrantes:** Matías Santelices S., Rodrigo Escudero y Ariel Fuenzalida.
 **Entrega:** 23 de octubre de 2026.
 
+## Documentos para revisar primero
+
+Los dos PDF finales están en esta misma carpeta, junto al README:
+
+1. **[Informe del proyecto](01-Informe-GameLluvia.pdf)**.
+2. **[Manual de usuario](02-Manual-de-Usuario-GameLluvia.pdf)**.
+
+Las carpetas `informe` y `manual` conservan las fuentes editables y sus copias de los documentos.
+
 ## Descargar el trabajo completo
 
 La rama para entregar es **[entrega-final](https://github.com/maverick1006/Proyecto-Game-LLuvia-/tree/entrega-final)**. En GitHub selecciona esa rama y pulsa **Code > Download ZIP**. Descomprime el archivo antes de abrir el proyecto.
@@ -14,7 +23,7 @@ El ZIP de la rama incluye:
 - **[Proyecto listo para Eclipse](entrega/GameLluvia-Eclipse.zip)**: descomprime este ZIP adicional e importa `GameLluvia` como **General > Existing Projects into Workspace**. Lleva LibGDX y sus dependencias incluidas.
 - **[Juego ejecutable Desktop](entrega/GameLluvia.jar)**, con [lanzador Windows](entrega/JUGAR_JAR.bat).
 - **[APK Android de prueba](entrega/GameLluvia-Android-debug.apk)**: compilado; prueba en teléfono pendiente.
-- **[Informe ejecutivo PDF](informe/Informe-GameLluvia-final.pdf)** y **[manual de usuario PDF](manual/Manual-GameLluvia-final.pdf)**, con fuentes LaTeX y anexos de instalación.
+- **[Informe ejecutivo PDF](01-Informe-GameLluvia.pdf)** y **[manual de usuario PDF](02-Manual-de-Usuario-GameLluvia.pdf)**, con fuentes LaTeX y anexos de instalación.
 - Fuentes Java, pruebas, UML, recursos, Gradle Wrapper y guías.
 
 **[Leer primero](entrega/LEER_PRIMERO.md)** | **[Pasos para Eclipse](ABRIR_EN_ECLIPSE.md)** | **[Android Studio](docs/ANDROID_STUDIO.md)**
@@ -200,9 +209,9 @@ Android Studio, VS Code y NetBeans pueden trabajar sobre la misma raíz Gradle. 
 
 - [Reporte GM-1 a GM-10](docs/REPORTE.md).
 - [Informe LaTeX con plantilla institucional](informe/main.tex).
-- [Informe final PDF](informe/Informe-GameLluvia-final.pdf).
+- [Informe final PDF](01-Informe-GameLluvia.pdf).
 - [Manual de usuario corregido](manual/main.tex).
-- [Manual final PDF](manual/Manual-GameLluvia-final.pdf).
+- [Manual final PDF](02-Manual-de-Usuario-GameLluvia.pdf).
 - [Revisión de los aportes del equipo](docs/REVISION_APORTES.md).
 - [Auditoría de código y rúbrica](docs/AUDITORIA.md).
 - [Revisión final por requisito y guía para la defensa](docs/REVISION_FINAL.md).
