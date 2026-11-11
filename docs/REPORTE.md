@@ -4,11 +4,15 @@
 
 **Proyecto:** Programación Avanzada · Java y LibGDX.
 
+**Revisión:** 10 de noviembre de 2026.
+
 ## GM-1. Perspectiva del jugador
 
 ### Historia: rescatar la lluvia
 
 Una nave altera la lluvia sobre Chile. En la llanura aún quedan gotas de agua limpia, pero junto a ellas caen gotas contaminadas que obligan al guardián a moverse con cuidado. El menú muestra el tarro, la gota azul y la gota oscura del juego base: son el equipo y las señales con que empezó el rescate. Durante la partida, los escenarios y las variantes de gotas se dibujan con LibGDX.
+
+Antes de la campaña, Luma aparece con un retrato y los tres sprites originales. En el primer diálogo explica qué gotas recoger; en el segundo relaciona el termo y el oasis con el viaje; en el tercero anticipa el rayo del OVNI y el uso del agua como munición. La conversación es por escrito y avanza con Enter o el botón Continuar. Se puede saltar o volver a elegir dificultad. Mientras se lee, el juego está en `PROLOGO` y no se simulan gotas ni se consume agua. Los reintentos, el versus y el desafío oculto entran directamente.
 
 La contaminación cambia con el paisaje. En el sur, el agua se congela: la nieve ralentiza, el hielo puede inmovilizar y el termo ayuda a atravesar la zona. En Atacama, la sequía y el calor vuelven escasa el agua; una gota de oasis repone cargas para el combate. Las alertas de nivel dan una pista distinta en cada escenario. Al llegar a 3000 puntos, el OVNI activa su rayo y se lleva al guardián. En órbita, el agua que venía recogiendo pasa de ser un recurso de supervivencia a ser la munición del chorro. El encuentro oculto permite desbloquear el aspecto Alien: es una recompensa cosmética y no afecta al progreso de la campaña.
 
@@ -19,6 +23,7 @@ La contaminación cambia con el paisaje. En el sur, el agua se congela: la nieve
 - **Dificultad:** Noob tiene cinco vidas, Pro tres y Hacker una; también varían el intervalo, la velocidad y los peligros.
 - **Versus:** J1 se mueve con A/D y dispara con W. J2 usa flechas y dispara con Arriba.
 
+![Luma presenta la misión antes de la campaña](capturas/27-prologo-luma.png)
 ![Menú de GameLluvia](capturas/01-menu.png)
 ![Partida versus local](capturas/17-versus.png)
 ![Cambio de control durante la partida](capturas/26-control-en-partida.png)
@@ -82,7 +87,7 @@ Una línea con triángulo continuo indica herencia; con triángulo discontinuo, 
 - **Ventaja:** el cambio funciona en ambas direcciones sin reconstruir la partida, perder progreso ni volver al menú. `ReglasJuegoTest` verifica la dirección del movimiento después del cambio, conservando identidad, puntos y agua.
 - **Utilidad y límite:** la elección se hace en la pantalla, y el personaje usa la interfaz sin saber si la entrada viene de teclas o de coordenadas táctiles. Así se evita un condicional de dispositivos en el movimiento del jugador. El versus mantiene sus dos controles de teclado y no ofrece esta alternancia.
 
-**Evidencia:** [evento T](../core/src/main/java/puppy/code/GameLluvia.java#L134), [botón del HUD](../core/src/main/java/puppy/code/GameLluvia.java#L350), [cambio de instancia](../core/src/main/java/puppy/code/GameLluvia.java#L54) y [setter](../core/src/main/java/puppy/code/Personaje.java#L32).
+**Evidencia:** [evento T](../core/src/main/java/puppy/code/GameLluvia.java#L168), [botón del HUD](../core/src/main/java/puppy/code/GameLluvia.java#L404), [cambio de instancia](../core/src/main/java/puppy/code/GameLluvia.java#L54) y [setter](../core/src/main/java/puppy/code/Personaje.java#L32).
 
 ![UML de Strategy](uml/03-strategy.png)
 
@@ -108,8 +113,24 @@ Una línea con triángulo continuo indica herencia; con triángulo discontinuo, 
 
 ## GM-10. GitHub y evidencia
 
-La [rama de entrega original](https://github.com/maverick1006/Proyecto-Game-LLuvia-/tree/entrega-final) conserva los avances de la primera versión, tienda, campaña, aspectos, ejecutable y documentación. La corrección agrega las imágenes directamente al README y a este reporte para que se vean desde GitHub.
+La [rama entrega-final](https://github.com/maverick1006/Proyecto-Game-LLuvia-/tree/entrega-final) conserva el historial del desarrollo. Estos son seis hitos comprobables en Git:
+
+| Commit | Avance |
+|---|---|
+| eccd0ff | Primera versión jugable |
+| 86acf62 | Tienda, dificultades y efectos |
+| d52952e | Campaña, OVNI y versus |
+| af75f64 | Aspectos, vidas y desafío Alien |
+| cbd0d0f | Empaquetado del ejecutable de escritorio |
+| d865ac5 | Primera revisión según la pauta del profesor |
+
+El README muestra el prólogo y el UML maestro sin abrir otro archivo. Los diagramas de detalle también aparecen como imágenes. La evidencia complementaria está en el reporte y en el historial del repositorio.
 
 ## Validación
 
-Las 38 pruebas de `CampanaTest`, `ProgresoTest` y `ReglasJuegoTest` se ejecutaron con JDK 17 y JUnit 4.13.2. Las comprobaciones nuevas cubren la sustitución de control durante la partida y el comportamiento distinto del ácido. Desde la consola integrada de Eclipse o una terminal se pueden volver a ejecutar con `.\gradlew.bat -Pandroid=false :core:test`. La prueba visual de escritorio también pasó: pulsa T en campaña, mueve al jugador con un toque simulado y usa el botón del HUD para volver al teclado sin recrear al jugador. Esta revisión no certifica el funcionamiento en un teléfono Android.
+Las 38 pruebas de `CampanaTest`, `ProgresoTest` y `ReglasJuegoTest` se ejecutaron con JDK 17 y JUnit 4.13.2. Las comprobaciones nuevas cubren la sustitución de control durante la partida y el comportamiento distinto del ácido. Desde la consola integrada de Eclipse o una terminal se pueden volver a ejecutar con `.\gradlew.bat -Pandroid=false :core:test`. La prueba visual de escritorio comprueba los tres diálogos, que no haya simulación durante la introducción, la vuelta a dificultad y el salto directo a campaña. También pulsa T en campaña, mueve al jugador con un toque simulado y usa el botón del HUD para volver al teclado sin recrear al jugador. Esta revisión no certifica el funcionamiento en un teléfono Android.
+
+
+## Cómo abrir esta revisión
+
+Importar la raíz del ZIP en Eclipse mediante **File > Import > Gradle > Existing Gradle Project**, con Buildship, Gradle Wrapper y JDK 17. Ejecutar **lwjgl3 > application > run** desde Gradle Tasks. La alternativa en PowerShell es `./gradlew.bat -Pandroid=false :lwjgl3:run`. El README explica cómo generar el JAR, el ZIP independiente para Eclipse y el APK. El ZIP de GitHub contiene las fuentes y requiere Internet para la primera descarga de dependencias.

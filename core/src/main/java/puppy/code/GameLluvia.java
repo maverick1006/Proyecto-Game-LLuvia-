@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.List;
 
 public class GameLluvia extends ApplicationAdapter {
-    private enum Estado { MENU, DIFICULTAD, TIENDA, PUNTUACIONES, AYUDA, JUGANDO, PAUSA, DERROTA, VICTORIA, RESULTADO_VERSUS }
+    private enum Estado { MENU, DIFICULTAD, PROLOGO, TIENDA, PUNTUACIONES, AYUDA, JUGANDO, PAUSA, DERROTA, VICTORIA, RESULTADO_VERSUS }
     private Estado estado = Estado.MENU;
     private final FitViewport viewport = new FitViewport(960, 600, new OrthographicCamera());
     private VistaJuego vista;
@@ -29,7 +29,7 @@ public class GameLluvia extends ApplicationAdapter {
     private boolean tactil, resultadoGuardado, nuevoRecord;
     private float reloj, tiempoRecord, tiempoMensaje;
     private String mensaje = "";
-    private int paginaTienda;
+    private int paginaTienda, paginaPrologo;
     private Zona zonaGuia = Zona.LLANURA;
 
     @Override public void create() {
@@ -54,6 +54,36 @@ public class GameLluvia extends ApplicationAdapter {
     private void alternarControlEnPartida() {
         tactil = !tactil;
         partida.getPersonaje().setControlMovimiento(crearControl());
+    }
+
+    private static final String[][] PROLOGO = {
+        {"01 / LA LLUVIA CAMBIO",
+            "Soy Luma, guardiana de la llanura.",
+            "Anoche una nave oscurecio la lluvia. Mira mi tarro:",
+            "guarda las gotas azules y esquiva las contaminadas."},
+        {"02 / LA RUTA DEL AGUA",
+            "Sigue el agua desde la llanura hasta el hielo del sur.",
+            "Lleva un termo para el frio. En Atacama, busca el oasis.",
+            "Cada 100 puntos de agua avanzas un nivel."},
+        {"03 / LA NAVE ESTA CERCA",
+            "Si el OVNI te atrapa con su rayo, conserva la calma.",
+            "El agua que reuniste alimenta tu chorro en el espacio.",
+            "Dispara con Espacio o toca el campo de juego."}
+    };
+
+    private void confirmarDificultad() {
+        if (modoVersus) {
+            iniciar();
+        } else {
+            paginaPrologo = 0;
+            tiempoMensaje = 0;
+            cambiarEstado(Estado.PROLOGO);
+        }
+    }
+
+    private void avanzarPrologo() {
+        if (paginaPrologo == PROLOGO.length - 1) iniciar();
+        else paginaPrologo++;
     }
 
     private void iniciar() {
@@ -122,8 +152,12 @@ public class GameLluvia extends ApplicationAdapter {
                 if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) dificultad = Dificultad.NOOB;
                 if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) dificultad = Dificultad.PRO;
                 if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) dificultad = Dificultad.HACKER;
-                if (aceptar) iniciar();
+                if (aceptar) confirmarDificultad();
                 else if (volver) cambiarEstado(Estado.MENU);
+                break;
+            case PROLOGO:
+                if (volver) cambiarEstado(Estado.DIFICULTAD);
+                else if (aceptar) avanzarPrologo();
                 break;
             case JUGANDO:
                 if (volver || Gdx.input.isKeyJustPressed(Input.Keys.P)) cambiarEstado(Estado.PAUSA);
@@ -170,6 +204,7 @@ public class GameLluvia extends ApplicationAdapter {
         switch (estado) {
             case MENU: menu(); break;
             case DIFICULTAD: dificultades(); break;
+            case PROLOGO: prologo(); break;
             case TIENDA: tienda(); break;
             case PUNTUACIONES: puntuaciones(); break;
             case AYUDA: ayuda(); break;
@@ -251,9 +286,28 @@ public class GameLluvia extends ApplicationAdapter {
             if (vista.boton(opcion == dificultad ? "SELECCIONADO" : "ELEGIR", x + 20, 242, 236, 48, opcion == dificultad)) dificultad = opcion;
         }
         vista.centrar(modoVersus ? "Gana quien sobreviva al rival o venza primero al OVNI. J1: A/D + W. J2: flechas + arriba." : "30 niveles / Llanura, hielo y Atacama / Jefe OVNI al completar 3000 puntos.", 0, 960, 184, 0.95f, "A3B8C8");
-        if (vista.boton("JUGAR " + dificultad, 330, 103, 300, 54, true)) { iniciar(); return; }
+        if (vista.boton("JUGAR " + dificultad, 330, 103, 300, 54, true)) { confirmarDificultad(); return; }
         if (vista.boton("VOLVER", 42, 43, 160, 40, false)) cambiarEstado(Estado.MENU);
     }
+    private void prologo() {
+        String[] escena = PROLOGO[paginaPrologo];
+        cabecera("ANTES DE LA LLUVIA", "PROLOGO / " + (paginaPrologo + 1) + " DE " + PROLOGO.length);
+        vista.panel(48, 150, 864, 350, "0C192C");
+        vista.panel(70, 179, 245, 286, "16273C");
+        vista.centrar("LUMA", 70, 245, 439, 1.2f, "67DCCE");
+        vista.personaje(Aspecto.EXPLORADOR, 146, 252, 6, reloj, false, false);
+        vista.iconosHistoria(148, 208);
+        vista.texto(escena[0], 344, 437, 1.55f, "67DCCE");
+        for (int i = 1; i < escena.length; i++) {
+            vista.texto(escena[i], 344, 385 - (i - 1) * 42, 1.13f, "E4EDF5");
+        }
+        boolean ultima = paginaPrologo == PROLOGO.length - 1;
+        if (vista.boton("VOLVER", 48, 70, 180, 48, false)) cambiarEstado(Estado.DIFICULTAD);
+        else if (vista.boton("SALTAR HISTORIA", 390, 70, 236, 48, false)) iniciar();
+        else if (vista.boton(ultima ? "EMPEZAR MISIÓN" : "CONTINUAR", 644, 70, 268, 48, true)) avanzarPrologo();
+        vista.centrar("Enter: avanzar / Esc: dificultad", 0, 960, 44, 0.9f, "E4EDF5");
+    }
+
     private void tienda() {
         cabecera("TIENDA / VESTUARIO", "Compra con monedas o desbloquea llegando a niveles altos.");
         vista.panel(24, 93, 204, 415, "0C192C");

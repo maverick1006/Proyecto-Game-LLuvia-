@@ -5,9 +5,13 @@ Proyecto de Programación Avanzada desarrollado en **Java y LibGDX**, a partir d
 **Integrantes:** Matías Santelices S., Rodrigo Escudero y Ariel Fuenzalida.
 **Entrega:** 23 de octubre de 2026.
 
+![Luma presenta la misión en el prólogo](docs/capturas/27-prologo-luma.png)
+
 ![Menú de GameLluvia](docs/capturas/01-menu.png)
 
-Un OVNI contaminó la lluvia sobre Chile. El guardián recoge agua limpia en la llanura, atraviesa el hielo del sur y busca un oasis en Atacama. Cuando la nave lo atrapa con su rayo, usa el agua acumulada para disparar en órbita. El menú muestra los tres sprites del juego original: el tarro, el agua limpia y la gota contaminada. El desafío oculto desbloquea el aspecto Alien sin alterar el progreso de la campaña.
+Un OVNI contaminó la lluvia sobre Chile. El guardián recoge agua limpia en la llanura, atraviesa el hielo del sur y busca un oasis en Atacama. Cuando la nave lo atrapa con su rayo, usa el agua acumulada para disparar en órbita. Antes de empezar la campaña, Luma presenta la misión en tres diálogos. Usa **Enter** o **Continuar** para avanzar, **Saltar historia** para jugar de inmediato o **Esc** para volver a dificultad. La lluvia no empieza hasta entrar a la partida.
+
+El menú muestra los tres sprites del juego original: el tarro, el agua limpia y la gota contaminada. El desafío oculto desbloquea el aspecto Alien sin alterar el progreso de la campaña.
 
 ## Documentos para revisar primero
 
@@ -16,7 +20,7 @@ Los dos PDF finales están en esta misma carpeta, junto al README:
 1. **[Informe del proyecto](01-Informe-GameLluvia.pdf)**.
 2. **[Manual de usuario](02-Manual-de-Usuario-GameLluvia.pdf)**.
 
-**[Reporte de correcciones y evidencia](docs/REPORTE.md)** · Los PDF de la raíz corresponden a la entrega original; las correcciones se documentan en el reporte enlazado.
+**[Reporte de correcciones y evidencia](docs/REPORTE.md)** · El informe y el manual en PDF incluyen esta revisión.
 
 ## Descargar el trabajo completo
 

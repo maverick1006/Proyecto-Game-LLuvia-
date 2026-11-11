@@ -33,9 +33,9 @@ public class PruebaVisual extends GameLluvia {
                     if (nombre.equals("isKeyJustPressed")) {
                         int tecla = (Integer) argumentos[0];
                         return ((cuadro == 210 || cuadro == 230) && tecla == Input.Keys.P)
-                                || ((cuadro == 460 || cuadro == 490 || cuadro == 570 || cuadro == 640) && tecla == Input.Keys.ESCAPE)
+                                || ((cuadro == 460 || cuadro == 490 || cuadro == 570 || cuadro == 640 || cuadro == 823 || cuadro == 826) && tecla == Input.Keys.ESCAPE)
                                 || (cuadro == 172 && tecla == Input.Keys.T)
-                                || ((cuadro == 510 || cuadro == 730) && tecla == Input.Keys.ENTER);
+                                || ((cuadro == 132 || cuadro == 134 || cuadro == 136 || cuadro == 510 || cuadro == 730 || cuadro == 824 || cuadro == 825 || cuadro == 827) && tecla == Input.Keys.ENTER);
                     }
                     if (nombre.equals("isKeyPressed")) {
                         int tecla = (Integer) argumentos[0];
@@ -73,6 +73,7 @@ public class PruebaVisual extends GameLluvia {
             case 775: return new float[]{480, 190};
             case 780: return new float[]{200, 265};
             case 790: case 800: case 810: return new float[]{655, 58};
+            case 828: return new float[]{500, 92};
             default: return null;
         }
     }
@@ -119,6 +120,13 @@ public class PruebaVisual extends GameLluvia {
         if (cuadro == 60) comprobar(perfil().getMonedas() == 820 && perfil().getEquipado() == Aspecto.FONTANERO, "Compra y equipamiento");
         if (cuadro == 80) capturar("06-desbloqueos", "TIENDA");
         if (cuadro == 110) capturar("07-dificultad", "DIFICULTAD");
+        if (cuadro == 130) {
+            comprobar(partida() == null, "El prologo no inicia la simulacion");
+        }
+        if (cuadro == 131) capturar("27-prologo-luma", "PROLOGO");
+        if (cuadro == 132) comprobar((Integer) leer(this, "paginaPrologo") == 1, "Avanza al segundo dialogo");
+        if (cuadro == 134) comprobar((Integer) leer(this, "paginaPrologo") == 2, "Avanza al tercer dialogo");
+        if (cuadro == 136) capturar("28-inicio-campana", "JUGANDO");
         if (cuadro == 170) comprobar(partida().getPersonaje().getX() > 456, "Movimiento con teclado");
         if (cuadro == 172) comprobar(leer(jugadorAntesDelCambio, "control") instanceof ControlTactil,
                 "T cambia al control tactil en plena partida");
@@ -169,6 +177,10 @@ public class PruebaVisual extends GameLluvia {
         }
         if (cuadro == 805) capturar("24-personajes-nuevos", "TIENDA");
         if (cuadro == 820) capturar("25-recompensas-alien", "TIENDA");
+        if (cuadro == 825) comprobar(leer(this, "estado").toString().equals("PROLOGO"), "Campana abre la historia");
+        if (cuadro == 826) comprobar(leer(this, "estado").toString().equals("DIFICULTAD"), "Esc vuelve a dificultad");
+        if (cuadro == 828) comprobar(leer(this, "estado").toString().equals("JUGANDO") && !partida().esDesafioOculto(),
+                "Saltar inicia la campana");
         if (cuadro == 830) Gdx.app.exit();
     }
     private void puntos(int puntos) {

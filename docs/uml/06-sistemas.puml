@@ -19,8 +19,11 @@ class GameLluvia {
  - perfil : PerfilJugador
  - partida : Partida
  - versus : PartidaVersus
+ - paginaPrologo : int
  + create() : void
  + render() : void
+ - prologo() : void
+ - avanzarPrologo() : void
  - guardarResultado(completa : boolean) : void
 }
 class VistaJuego {
@@ -94,7 +97,12 @@ end note
 
 class ConfiguracionJuego
 enum Aspecto
-enum "GameLluvia.Estado" as Estado
+enum "GameLluvia.Estado" as Estado {
+ DIFICULTAD
+ PROLOGO
+ JUGANDO
+ ...
+}
 class DibujoEscenario
 class DibujoObjetos
 class DibujoPersonaje
