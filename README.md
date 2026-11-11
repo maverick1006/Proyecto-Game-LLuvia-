@@ -148,6 +148,19 @@ La campaña recorre llanura (1–10), hielo (11–20) y Atacama (21–30). El ag
 
 Las monedas, skins y puntuaciones se guardan **localmente**, sin cuenta en línea. El launcher usa `../guardado` respecto al directorio de trabajo, si ejecutas desde otra carpeta, puede utilizar otro guardado. No incluyas guardados personales en la entrega.
 
+### Android e IDEs restantes
+
+Android no está verificado en dispositivo. Para habilitar su módulo se necesita SDK Platform 35, JDK 17 y `local.properties` con el `sdk.dir` del equipo:
+
+```powershell
+.\gradlew.bat -Pandroid=true :android:assembleDebug
+```
+
+El APK esperado es `android/build/outputs/apk/debug/android-debug.apk`. La compilación del APK está comprobada.
+
+Android Studio, VS Code y NetBeans pueden trabajar sobre la misma raíz Gradle.
+
+
 ## Referencias y créditos
 
 Base: GameLluvia2024 entregado por el profesor. Se conservan sus sonidos y recursos de partida.
