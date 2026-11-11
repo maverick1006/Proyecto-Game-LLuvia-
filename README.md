@@ -3,15 +3,7 @@
 Proyecto de Programación Avanzada desarrollado en **Java y LibGDX**, a partir de GameLluvia2024 entregado por el profesor. Recolecta agua, supera 30 niveles y utiliza el agua acumulada para vencer al OVNI.
 
 **Integrantes:** Matías Santelices S., Rodrigo Escudero y Ariel Fuenzalida.
-**Entrega:** 23 de octubre de 2026.
-
-![Luma presenta la misión en el prólogo](docs/capturas/27-prologo-luma.png)
-
-![Menú de GameLluvia](docs/capturas/01-menu.png)
-
-Un OVNI contaminó la lluvia sobre Chile. El guardián recoge agua limpia en la llanura, atraviesa el hielo del sur y busca un oasis en Atacama. Cuando la nave lo atrapa con su rayo, usa el agua acumulada para disparar en órbita. Antes de empezar la campaña, Luma presenta la misión en tres diálogos. Usa **Enter** o **Continuar** para avanzar, **Saltar historia** para jugar de inmediato o **Esc** para volver a dificultad. La lluvia no empieza hasta entrar a la partida.
-
-El menú muestra los tres sprites del juego original: el tarro, el agua limpia y la gota contaminada. El desafío oculto desbloquea el aspecto Alien sin alterar el progreso de la campaña.
+**Entrega:** 10 de noviembre de 2026.
 
 ## Documentos para revisar primero
 
@@ -19,8 +11,6 @@ Los dos PDF finales están en esta misma carpeta, junto al README:
 
 1. **[Informe del proyecto](01-Informe-GameLluvia.pdf)**.
 2. **[Manual de usuario](02-Manual-de-Usuario-GameLluvia.pdf)**.
-
-**[Reporte de correcciones y evidencia](docs/REPORTE.md)** · El informe y el manual en PDF incluyen esta revisión.
 
 ## Descargar el trabajo completo
 
@@ -37,8 +27,6 @@ Los ejecutables se generan desde las fuentes siguiendo los pasos de este README.
 - [Ejecutar por consola](#ejecutar-por-consola)
 - [Generar y ejecutar el JAR](#generar-y-ejecutar-el-jar)
 - [Juego y controles](#juego-y-controles)
-- [Diagramas UML](#diagramas-uml)
-- [Documentos para revisar primero](#documentos-para-revisar-primero)
 
 ## Instalación y requisitos
 
@@ -95,7 +83,7 @@ Se genera `build/distributions/GameLluvia-Eclipse.zip` con fuentes, recursos, bi
 
 ## Android Studio
 
-Abre la raíz con **File > Open**, configura SDK Platform 35 y Build-Tools 34.0.0, elige **Gradle JDK 17** y sincroniza. Android Studio escribe `sdk.dir` en `local.properties`, esto habilita el módulo Android automáticamente. No publiques ese archivo personal.
+Abre la raíz con **File > Open**, configura SDK Platform 35 y Build-Tools 34.0.0, elige **Gradle JDK 17** y sincroniza. Android Studio escribe `sdk.dir` en `local.properties`, esto habilita el módulo Android automáticamente.
 
 La compilación del APK se comprobó el 23/10/2026 mediante `.\gradlew.bat -Pandroid=true :android:assembleDebug`. El archivo generado queda en `android/build/outputs/apk/debug/android-debug.apk`. La ejecución en teléfono sigue pendiente.
 
@@ -159,34 +147,6 @@ La campaña recorre llanura (1–10), hielo (11–20) y Atacama (21–30). El ag
 | Cambiar control durante la partida | T o botón del HUD: teclado ↔ táctil/ratón | Teclas fijas para los dos jugadores |
 
 Las monedas, skins y puntuaciones se guardan **localmente**, sin cuenta en línea. El launcher usa `../guardado` respecto al directorio de trabajo, si ejecutas desde otra carpeta, puede utilizar otro guardado. No incluyas guardados personales en la entrega.
-
-## Diagramas UML
-
-![UML maestro de core](docs/uml/00-uml-completo.png)
-
-### Vistas de dominio, sistemas y patrones
-
-![Dominio](docs/uml/01-dominio.png)
-![Sistemas](docs/uml/06-sistemas.png)
-![Singleton](docs/uml/02-singleton.png)
-![Strategy](docs/uml/03-strategy.png)
-![Template Method](docs/uml/04-template-method.png)
-![Builder](docs/uml/05-builder.png)
-
-![Versus local](docs/capturas/17-versus.png)
-
-
-### Android e IDEs restantes
-
-Android no está verificado en dispositivo. Para habilitar su módulo se necesita SDK Platform 35, JDK 17 y `local.properties` con el `sdk.dir` del equipo:
-
-```powershell
-.\gradlew.bat -Pandroid=true :android:assembleDebug
-```
-
-El APK esperado es `android/build/outputs/apk/debug/android-debug.apk`. La compilación del APK está comprobada.
-
-Android Studio, VS Code y NetBeans pueden trabajar sobre la misma raíz Gradle.
 
 ## Referencias y créditos
 
