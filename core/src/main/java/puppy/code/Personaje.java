@@ -7,7 +7,7 @@ import java.util.EnumMap;
 public class Personaje {
     public static final float ANCHO = 48;
     private final Rectangle area = new Rectangle(456, 42, ANCHO, 68);
-    private final ControlMovimiento control;
+    private ControlMovimiento control;
     private final EnumMap<TipoObjeto, Float> efectos = new EnumMap<>(TipoObjeto.class);
     private int vidas = 3;
     private int puntos;
@@ -24,9 +24,13 @@ public class Personaje {
     public Personaje(ControlMovimiento control, float anchoMundo) { this(control, anchoMundo, 3); }
     public Personaje(ControlMovimiento control, float anchoMundo, int vidas) {
         this.vidas = vidas;
-        this.control = control;
+        setControlMovimiento(control);
         this.anchoMundo = anchoMundo;
         area.x = (anchoMundo - ANCHO) / 2;
+    }
+
+    public void setControlMovimiento(ControlMovimiento control) {
+        this.control = java.util.Objects.requireNonNull(control, "control");
     }
 
     public void actualizar(float delta) {
@@ -119,6 +123,11 @@ public class Personaje {
     public boolean activo(TipoObjeto tipo) { return efectos.getOrDefault(tipo, 0f) > 0; }
     public float tiempoRestante(TipoObjeto tipo) { return efectos.getOrDefault(tipo, 0f); }
     public String getAviso() { return tiempoAviso > 0 ? aviso : ""; }
+    public boolean choca(float x, float y, float ancho, float alto) {
+        return area.x < x + ancho && area.x + area.width > x
+                && area.y < y + alto && area.y + area.height > y;
+    }
+
     public boolean choca(Rectangle otra) { return area.overlaps(otra); }
     public float getX() { return area.x; }
     public float getY() { return area.y; }

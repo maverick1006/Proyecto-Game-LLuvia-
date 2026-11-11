@@ -47,17 +47,26 @@ public class GameLluvia extends ApplicationAdapter {
         sonidoVictoria = Gdx.audio.newSound(Gdx.files.internal("victoria.wav"));
         Gdx.input.setCatchKey(Input.Keys.BACK, true);
     }
+    private ControlMovimiento crearControl() {
+        return tactil ? new ControlTactil(viewport) : new ControlTeclado();
+    }
+
+    private void alternarControlEnPartida() {
+        tactil = !tactil;
+        partida.getPersonaje().setControlMovimiento(crearControl());
+    }
+
     private void iniciar() {
         if (modoOculto) {
             versus = null;
-            partida = Partida.crearDesafioOculto(tactil ? new ControlTactil(viewport) : new ControlTeclado());
+            partida = Partida.crearDesafioOculto(crearControl());
         } else if (modoVersus) {
             versus = new PartidaVersus(new ControlTeclado(Input.Keys.A, Input.Keys.D),
                     new ControlTeclado(Input.Keys.LEFT, Input.Keys.RIGHT), dificultad, System.nanoTime());
             partida = versus.getUno();
         } else {
             versus = null;
-            partida = new Partida(tactil ? new ControlTactil(viewport) : new ControlTeclado(), dificultad);
+            partida = new Partida(crearControl(), dificultad);
         }
         resultadoGuardado = false;
         nuevoRecord = false;
@@ -122,6 +131,7 @@ public class GameLluvia extends ApplicationAdapter {
                     if (Gdx.input.isKeyPressed(Input.Keys.W)) disparar(versus.getUno());
                     if (Gdx.input.isKeyPressed(Input.Keys.UP)) disparar(versus.getDos());
                 } else {
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.T)) alternarControlEnPartida();
                     com.badlogic.gdx.math.Vector2 puntero = viewport.unproject(new com.badlogic.gdx.math.Vector2(Gdx.input.getX(), Gdx.input.getY()));
                     boolean clickJuego = Gdx.input.isButtonPressed(Input.Buttons.LEFT) && puntero.y > 32 && puntero.y < 510 && puntero.x >= 0 && puntero.x <= 960;
                     if (Gdx.input.isKeyPressed(Input.Keys.SPACE) || clickJuego) disparar(partida);
@@ -214,7 +224,8 @@ public class GameLluvia extends ApplicationAdapter {
         vista.panel(40, 65, 420, 430, "0C192C");
         vista.texto("UNA GOTA.", 75, 466, 2.2f, "E4EDF5");
         vista.texto("OTRA OPORTUNIDAD.", 75, 426, 1.6f, "67DCCE");
-        vista.texto("Recoge. Sobrevive. Desbloquea.", 75, 388, 1, "9BB0C2");
+        vista.texto("Un OVNI contamino la lluvia. Rescata el agua.", 75, 403, 0.95f, "9BB0C2");
+        vista.iconosHistoria(75, 369);
         if (vista.boton("COMENZAR PARTIDA", 75, 308, 350, 54, true)) { modoOculto = false; modoVersus = false; cambiarEstado(Estado.DIFICULTAD); return; }
         if (vista.boton("TIENDA Y PERSONAJES", 75, 240, 350, 52, false)) { cambiarEstado(Estado.TIENDA); return; }
         if (vista.boton("MEJORES PUNTUACIONES", 75, 174, 350, 52, false)) { cambiarEstado(Estado.PUNTUACIONES); return; }
@@ -336,6 +347,7 @@ public class GameLluvia extends ApplicationAdapter {
             if (vista.boton("PAUSA", 441, 0, 78, 30, false)) cambiarEstado(Estado.PAUSA);
         } else {
             dibujarMundo(partida, perfil.getEquipado(), "", false);
+            if (vista.boton(tactil ? "TACTIL [T]" : "TECLADO [T]", 635, 548, 175, 40, false)) alternarControlEnPartida();
             if (vista.boton("PAUSA", 825, 548, 110, 40, false)) cambiarEstado(Estado.PAUSA);
         }
     }
@@ -349,7 +361,7 @@ public class GameLluvia extends ApplicationAdapter {
             vista.ovni(jugador.getX() - 30, 438, reloj);
             vista.rayo(jugador.getX() + 24, juego.getAscenso());
             altura += juego.getAscenso() * 290;
-            vista.centrar("EL OVNI TE LLEVA AL ESPACIO", 0, ancho, 370, mini ? 1 : 1.5f, "102334");
+            vista.centrar("EL OVNI TE ATRAPO. PREPARA TU CHORRO", 0, ancho, 370, mini ? 1 : 1.5f, "102334");
         }
         if (juego.enJefe()) {
             JefeOvni jefe = juego.getJefe();
@@ -372,6 +384,15 @@ public class GameLluvia extends ApplicationAdapter {
         if (juego.esSecreto()) vista.centrar("SOLO MONEDAS / " + (int) Math.ceil(juego.getTiempoSecreto()) + " s", 0, ancho, 461, mini ? 1 : 1.3f, "102334");
         else if (juego.getAvisoNivel() > 0 && juego.getFase() == Partida.Fase.CAMPANA)
             vista.centrar("NIVEL " + juego.getNumeroNivel() + " / " + juego.getZona().getNombre(), 0, ancho, 350, mini ? 1.3f : 2, "102334");
+        if (!mini && juego.getAvisoNivel() > 0 && juego.getFase() == Partida.Fase.CAMPANA) {
+            String pista;
+            switch (juego.getZona()) {
+                case HIELO: pista = "El agua del sur se congela. Busca el termo."; break;
+                case DESIERTO: pista = "La sequia llego a Atacama. Busca el oasis."; break;
+                default: pista = "Azul: agua limpia. Esquiva la lluvia contaminada.";
+            }
+            vista.centrar(pista, 0, ancho, 318, 1, "102334");
+        }
         int fila = 0;
         for (TipoObjeto tipo : TipoObjeto.values()) if (jugador.activo(tipo)) {
             vista.panel(10, 437 - fila * 22, mini ? 210 : 240, 22, "20354A");
@@ -380,6 +401,7 @@ public class GameLluvia extends ApplicationAdapter {
         }
         String consejo = mini ? (etiqueta.equals("J1") ? "A/D: mover | W: disparar" : "Flechas: mover | Arriba: disparar")
                 : juego.enJefe() ? "ESPACIO o clic: chorro de agua | Recoge gotas para recargar"
+                : tactil ? "Manten pulsado para moverte | Recoge agua antes de 4 segundos"
                 : "A/D o flechas: mover | Recoge agua antes de 4 segundos";
         vista.centrar(consejo, 0, ancho, 22, mini ? 0.8f : 0.95f, "E4EDF5");
         if (!jugador.getAviso().isEmpty() && !mini) {

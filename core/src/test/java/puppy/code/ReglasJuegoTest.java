@@ -64,10 +64,51 @@ public class ReglasJuegoTest {
         assertEquals(3, jugador.getVidas());
     }
 
-    @Test public void elControlSePuedeSustituirSinModificarElPersonaje() {
-        Personaje jugador = new Personaje((t, delta) -> t.mover(100 * delta));
-        jugador.actualizar(0.5f);
-        assertEquals(506, jugador.getX(), 0.001f);
+    @Test public void unaPartidaCambiaDeControlSinPerderElProgreso() {
+        Partida partida = new Partida((p, dt) -> p.mover(100 * dt), Dificultad.NOOB, 12, 960);
+        Personaje jugador = partida.getPersonaje();
+        jugador.recogerAgua(10);
+        partida.actualizar(0.1f);
+        float antes = jugador.getX();
+
+        jugador.setControlMovimiento((p, dt) -> p.mover(-100 * dt));
+        partida.actualizar(0.1f);
+
+        assertSame(jugador, partida.getPersonaje());
+        assertEquals(antes - 10, jugador.getX(), 0.001f);
+        assertEquals(10, jugador.getPuntos());
+        assertEquals(1, jugador.getAgua());
+    }
+
+    @Test public void elBordeDeLaGotaContaminadaNoCuentaComoImpacto() {
+        Personaje jugador = personaje();
+        float x = jugador.getX() - 26;
+        Gota agua = new GotaBuena(x, jugador.getY(), 200);
+        Gota acido = new GotaMala(x, jugador.getY(), 200, TipoObjeto.ACIDO);
+
+        agua.actualizar(0, jugador);
+        acido.actualizar(0, jugador);
+
+        assertTrue(agua.estaTerminada());
+        assertFalse(acido.estaTerminada());
+        assertEquals(3, jugador.getVidas());
+        assertEquals(10, jugador.getPuntos());
+    }
+
+    @Test public void laGotaContaminadaCaeMasRapidoYAplicaElEfectoDeAcido() {
+        Personaje jugador = personaje();
+        Gota agua = new GotaBuena(jugador.getX(), 130, 200);
+        Gota acido = new GotaMala(jugador.getX(), 130, 200, TipoObjeto.ACIDO);
+        agua.actualizar(0.1f, jugador);
+        acido.actualizar(0.1f, jugador);
+        assertTrue(acido.getY() < agua.getY());
+        assertFalse(acido.estaTerminada());
+
+        jugador.sumarPuntos(40);
+        acido.actualizar(0.25f, jugador);
+        assertTrue(acido.estaTerminada());
+        assertEquals(2, jugador.getVidas());
+        assertEquals(10, jugador.getPuntos());
     }
 
     @Test(expected = IllegalArgumentException.class)

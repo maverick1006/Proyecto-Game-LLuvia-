@@ -6,6 +6,8 @@ public class ObjetoEspecial extends Gota {
         super(x, y, velocidad);
         this.tipo = tipo;
     }
+    @Override protected void calcularMovimiento(float delta) { caer(delta, 1); }
+    @Override protected boolean verificarColision(Personaje personaje) { return toca(personaje, 2); }
     @Override protected void aplicarEfecto(Personaje personaje) { personaje.atrapar(tipo); }
     @Override public boolean esBuena() { return tipo.esPositivo(); }
     public TipoObjeto getTipo() { return tipo; }

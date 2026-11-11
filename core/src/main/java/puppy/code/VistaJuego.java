@@ -11,6 +11,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class VistaJuego {
+    private final Texture tarroOriginal = new Texture(Gdx.files.internal("bucket.png"));
+    private final Texture aguaOriginal = new Texture(Gdx.files.internal("drop.png"));
+    private final Texture contaminadaOriginal = new Texture(Gdx.files.internal("dropBad.png"));
     private final SpriteBatch batch = new SpriteBatch();
     private final ShapeRenderer formas = new ShapeRenderer();
     private final BitmapFont fuente = new BitmapFont();
@@ -71,8 +74,16 @@ public class VistaJuego {
         new DibujoEscenario(formas).fondo(zona, ancho, reloj, secreto);
         formas.end();
     }
+    public void iconosHistoria(float x, float y) {
+        batch.begin();
+        batch.draw(tarroOriginal, x, y, 24, 24);
+        batch.draw(aguaOriginal, x + 32, y, 24, 24);
+        batch.draw(contaminadaOriginal, x + 64, y, 24, 24);
+        batch.end();
+    }
+
     public void gota(Gota gota) {
-        TipoObjeto tipo = gota instanceof ObjetoEspecial ? ((ObjetoEspecial) gota).getTipo() : gota.esBuena() ? null : TipoObjeto.SANGRE;
+        TipoObjeto tipo = gota instanceof ObjetoEspecial ? ((ObjetoEspecial) gota).getTipo() : gota instanceof GotaMala ? ((GotaMala) gota).getTipo() : null;
         objeto(tipo, gota.getX(), gota.getY());
     }
     public void objeto(TipoObjeto tipo, float x, float y) {
@@ -107,5 +118,5 @@ public class VistaJuego {
         }
         formas.end();
     }
-    public void dispose() { batch.dispose(); formas.dispose(); fuente.dispose(); }
+    public void dispose() { batch.dispose(); formas.dispose(); fuente.dispose(); tarroOriginal.dispose(); aguaOriginal.dispose(); contaminadaOriginal.dispose(); }
 }

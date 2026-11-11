@@ -18,6 +18,8 @@ public class PruebaVisual extends GameLluvia {
     private Input entradaSimulada;
     private final String carpeta;
     private float sedPausada;
+    private Personaje jugadorAntesDelCambio;
+    private float xAntesDelToque;
     private int monedasAntesSecreto, puntosAntesSecreto, nivelAntesSecreto;
     public PruebaVisual(String carpeta) { this.carpeta = carpeta; }
     @Override public void create() {
@@ -32,6 +34,7 @@ public class PruebaVisual extends GameLluvia {
                         int tecla = (Integer) argumentos[0];
                         return ((cuadro == 210 || cuadro == 230) && tecla == Input.Keys.P)
                                 || ((cuadro == 460 || cuadro == 490 || cuadro == 570 || cuadro == 640) && tecla == Input.Keys.ESCAPE)
+                                || (cuadro == 172 && tecla == Input.Keys.T)
                                 || ((cuadro == 510 || cuadro == 730) && tecla == Input.Keys.ENTER);
                     }
                     if (nombre.equals("isKeyPressed")) {
@@ -59,6 +62,8 @@ public class PruebaVisual extends GameLluvia {
             case 100: return new float[]{200, 335};
             case 120: return new float[]{470, 265};
             case 130: return new float[]{480, 130};
+            case 176: return new float[]{100, 220};
+            case 184: return new float[]{720, 568};
             case 470: return new float[]{200, 200};
             case 500: return new float[]{700, 125};
             case 580: return new float[]{200, 130};
@@ -73,6 +78,10 @@ public class PruebaVisual extends GameLluvia {
     }
     @Override public void render() {
         cuadro++; Gdx.input = entradaSimulada;
+        if (cuadro == 172) {
+            jugadorAntesDelCambio = partida().getPersonaje();
+            xAntesDelToque = jugadorAntesDelCambio.getX();
+        }
         if (cuadro == 240) puntos(400);
         if (cuadro == 270) poner(partida(), "tiempoSecreto", 0.001f);
         if (cuadro == 280) { poner(partida(), "ultimoSecreto", 6); puntos(1000); }
@@ -111,6 +120,15 @@ public class PruebaVisual extends GameLluvia {
         if (cuadro == 80) capturar("06-desbloqueos", "TIENDA");
         if (cuadro == 110) capturar("07-dificultad", "DIFICULTAD");
         if (cuadro == 170) comprobar(partida().getPersonaje().getX() > 456, "Movimiento con teclado");
+        if (cuadro == 172) comprobar(leer(jugadorAntesDelCambio, "control") instanceof ControlTactil,
+                "T cambia al control tactil en plena partida");
+        if (cuadro == 176) comprobar(jugadorAntesDelCambio.getX() < xAntesDelToque, "Toque mueve al jugador");
+        if (cuadro == 184) {
+            comprobar(partida().getPersonaje() == jugadorAntesDelCambio, "Se conserva el jugador");
+            comprobar(leer(jugadorAntesDelCambio, "control") instanceof ControlTeclado,
+                    "El boton del HUD vuelve al teclado");
+            capturar("26-control-en-partida", "JUGANDO");
+        }
         if (cuadro == 200) capturar("02-partida", "JUGANDO");
         if (cuadro == 210) sedPausada = partida().getPersonaje().getSinAgua();
         if (cuadro == 220) { comprobar(partida().getPersonaje().getSinAgua() == sedPausada, "Pausa congela la sed"); capturar("03-pausa", "PAUSA"); }

@@ -5,6 +5,10 @@ Proyecto de Programación Avanzada desarrollado en **Java y LibGDX**, a partir d
 **Integrantes:** Matías Santelices S., Rodrigo Escudero y Ariel Fuenzalida.
 **Entrega:** 23 de octubre de 2026.
 
+![Menú de GameLluvia](docs/capturas/01-menu.png)
+
+Un OVNI contaminó la lluvia sobre Chile. El guardián recoge agua limpia en la llanura, atraviesa el hielo del sur y busca un oasis en Atacama. Cuando la nave lo atrapa con su rayo, usa el agua acumulada para disparar en órbita. El menú muestra los tres sprites del juego original: el tarro, el agua limpia y la gota contaminada. El desafío oculto desbloquea el aspecto Alien sin alterar el progreso de la campaña.
+
 ## Documentos para revisar primero
 
 Los dos PDF finales están en esta misma carpeta, junto al README:
@@ -12,7 +16,7 @@ Los dos PDF finales están en esta misma carpeta, junto al README:
 1. **[Informe del proyecto](01-Informe-GameLluvia.pdf)**.
 2. **[Manual de usuario](02-Manual-de-Usuario-GameLluvia.pdf)**.
 
-Los PDF finales se encuentran en la raíz del repositorio.
+**[Reporte de correcciones y evidencia](docs/REPORTE.md)** · Los PDF de la raíz corresponden a la entrega original; las correcciones se documentan en el reporte enlazado.
 
 ## Descargar el trabajo completo
 
@@ -29,8 +33,7 @@ Los ejecutables se generan desde las fuentes siguiendo los pasos de este README.
 - [Ejecutar por consola](#ejecutar-por-consola)
 - [Generar y ejecutar el JAR](#generar-y-ejecutar-el-jar)
 - [Juego y controles](#juego-y-controles)
-- [Organización y patrones](#organización-y-patrones)
-- [Pruebas y plataformas](#pruebas-y-plataformas)
+- [Diagramas UML](#diagramas-uml)
 - [Documentos para revisar primero](#documentos-para-revisar-primero)
 
 ## Instalación y requisitos
@@ -149,9 +152,25 @@ La campaña recorre llanura (1–10), hielo (11–20) y Atacama (21–30). El ag
 | Pausar | P o Escape | P o Escape |
 | Iniciar/reintentar | Enter o botones | Enter o botones |
 | Sonido | M o botón | M o botón |
-| Control alternativo | Botón del menú o T, ratón/táctil | Dos controles de teclado |
+| Cambiar control durante la partida | T o botón del HUD: teclado ↔ táctil/ratón | Teclas fijas para los dos jugadores |
 
 Las monedas, skins y puntuaciones se guardan **localmente**, sin cuenta en línea. El launcher usa `../guardado` respecto al directorio de trabajo, si ejecutas desde otra carpeta, puede utilizar otro guardado. No incluyas guardados personales en la entrega.
+
+## Diagramas UML
+
+![UML maestro de core](docs/uml/00-uml-completo.png)
+
+### Vistas de dominio, sistemas y patrones
+
+![Dominio](docs/uml/01-dominio.png)
+![Sistemas](docs/uml/06-sistemas.png)
+![Singleton](docs/uml/02-singleton.png)
+![Strategy](docs/uml/03-strategy.png)
+![Template Method](docs/uml/04-template-method.png)
+![Builder](docs/uml/05-builder.png)
+
+![Versus local](docs/capturas/17-versus.png)
+
 
 ### Android e IDEs restantes
 

@@ -12,16 +12,26 @@ public abstract class Gota {
         this.velocidad = velocidad;
     }
 
-    // Todas siguen estos pasos; cada hija decide qué pasa al recogerla.
+    // El orden es el mismo, aunque cada gota se mueva y choque distinto.
     public final void actualizar(float delta, Personaje personaje) {
         if (terminada) return;
-        area.y -= velocidad * delta;
+        calcularMovimiento(delta);
         if (area.y + area.height < 0) {
             terminada = true;
-        } else if (personaje.choca(area)) {
+        } else if (verificarColision(personaje)) {
             aplicarEfecto(personaje);
             terminada = true;
         }
+    }
+
+    protected abstract void calcularMovimiento(float delta);
+    protected abstract boolean verificarColision(Personaje personaje);
+
+    protected final void caer(float delta, float factor) { area.y -= velocidad * delta * factor; }
+
+    protected final boolean toca(Personaje personaje, float margen) {
+        return personaje.choca(area.x + margen, area.y + margen,
+                area.width - 2 * margen, area.height - 2 * margen);
     }
 
     protected abstract void aplicarEfecto(Personaje personaje);
