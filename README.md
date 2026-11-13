@@ -4,7 +4,7 @@ Proyecto de Programación Avanzada en Java y LibGDX, basado en el juego entregad
 
 **Integrantes:** Matías Santelices S., Rodrigo Escudero y Ariel Fuenzalida.
 
-![Menú de GameLluvia](docs/capturas/01-menu.png)
+![Menú principal de Guardián de la Lluvia](docs/capturas/01-menu.png)
 
 ## Descargar y jugar
 
@@ -42,4 +42,5 @@ En campaña, **T** o el botón del HUD cambian entre teclado y control táctil e
 
 ## Documentos
 
-- [Informe en PDF](01-Informe-GameLluvia.pdf) y [manual en PDF](02-Manual-de-Usuario-GameLluvia.pdf) actualizados en Prism.
+- [Informe del proyecto (PDF)](01-Informe-GameLluvia.pdf), con los diagramas UML.
+- [Manual de usuario (PDF)](02-Manual-de-Usuario-GameLluvia.pdf).
