@@ -43,5 +43,3 @@ En campaña, **T** o el botón del HUD cambian entre teclado y control táctil e
 ## Documentos
 
 - [Informe en PDF](01-Informe-GameLluvia.pdf) y [manual en PDF](02-Manual-de-Usuario-GameLluvia.pdf) actualizados en Prism.
-- [Reporte de la revisión](docs/REPORTE.md) y [textos editables para Prism](docs/prism).
-- [UML completo](docs/uml/00-uml-completo.png), [dominio](docs/uml/01-dominio.png) y [sistemas](docs/uml/06-sistemas.png).
