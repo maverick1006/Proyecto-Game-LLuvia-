@@ -6,12 +6,6 @@ Proyecto de Programación Avanzada en Java y LibGDX, basado en el juego entregad
 
 ![Menú de GameLluvia](docs/capturas/01-menu.png)
 
-## De qué trata
-
-Luma nos advierte que un OVNI contaminó la lluvia. Atrapa agua limpia, supera 30 niveles y atraviesa la llanura, el hielo y Atacama. En cada zona puedes encontrar un arma especial. Durante el Ascenso también puede aparecer el cañón hidro-plasma.
-
-Recoge agua antes de que aparezca la fatiga. Tras 12 segundos sin agua empiezas a perder vidas. Las gotas dobles recuperan el movimiento y suman dos cargas. Con seis cargas, el próximo disparo del arma equipada es especial. Cuando el OVNI despliega sus drones, derríbalos primero para bajar su escudo y detener la curación. Las patrullas del OVNI atacan con ácido en la llanura, nieve en Hielo y fuego en Atacama. Durante el Ascenso hay una patrulla de ácido. Puedes dispararles con tu arma y gastar la carga especial antes del jefe. Luma aparece en el prólogo con un traje de agua y escudo, disponible también en la tienda por 240 monedas. También puedes jugar Versus local, comprar aspectos y buscar el encuentro secreto que desbloquea al Alien.
-
 ## Descargar y jugar
 
 En GitHub, selecciona la rama **mav/armas-biomas-jefe**, pulsa **Code > Download ZIP** y descomprime el archivo. Necesitas **JDK 17** e Internet en la primera ejecución. El proyecto incluye Gradle Wrapper.
@@ -34,7 +28,7 @@ Para ejecutar las pruebas, usa `.\gradlew.bat -Pandroid=false :core:test`. En Li
 
 ### Android Studio
 
-Abre la carpeta raíz, selecciona JDK 17 para Gradle y configura SDK Platform 35. Después de sincronizar, puedes compilar con `.\gradlew.bat -Pandroid=true :android:assembleDebug`. Esta revisión se probó en escritorio.
+Abre la carpeta raíz, selecciona JDK 17 para Gradle y configura SDK Platform 35. Después de sincronizar, puedes compilar con `.\gradlew.bat -Pandroid=true :android:assembleDebug`.
 
 ## Controles
 
