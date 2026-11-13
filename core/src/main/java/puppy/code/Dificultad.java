@@ -3,7 +3,7 @@ package puppy.code;
 public enum Dificultad {
     NOOB(5, 200, 0.62f, 0.16f, "Para aprender y juntar monedas"),
     PRO(3, 290, 0.48f, 0.25f, "Mas velocidad y mas peligros"),
-    HACKER(1, 370, 0.36f, 0.34f, "Reflejos rapidos, lluvia intensa");
+    HACKER(1, 370, 0.36f, 0.34f, "Reflejos rápidos, lluvia intensa");
     private final float velocidad, intervalo, peligro;
     private final String descripcion;
     private final int vidas;

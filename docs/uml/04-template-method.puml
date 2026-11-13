@@ -44,4 +44,12 @@ end note
 note bottom of ObjetoEspecial
 Caída normal, margen 2, efecto según tipo.
 end note
+note bottom of Gota
+  actualizar() llama a despuesDeAtrapar()
+  tras aplicar el efecto de la gota.
+end note
+note bottom of GotaBuena
+  Agua doble: caída al 90 %, margen 2,
+  +20 puntos y dos cargas de agua.
+end note
 @enduml

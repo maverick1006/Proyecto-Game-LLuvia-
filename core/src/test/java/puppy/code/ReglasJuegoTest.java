@@ -24,15 +24,15 @@ public class ReglasJuegoTest {
 
     @Test public void elDanioSeRecuperaPorTiempoYLasVidasNoSonNegativas() {
         Personaje jugador = personaje();
-        assertTrue(jugador.recibirDanio());
+        assertTrue(jugador.recibirDaño());
         jugador.actualizar(0.6f);
-        assertFalse(jugador.recibirDanio());
+        assertFalse(jugador.recibirDaño());
         jugador.actualizar(0.61f);
-        assertTrue(jugador.recibirDanio());
+        assertTrue(jugador.recibirDaño());
         jugador.actualizar(1.21f);
-        assertTrue(jugador.recibirDanio());
+        assertTrue(jugador.recibirDaño());
         jugador.actualizar(2);
-        assertFalse(jugador.recibirDanio());
+        assertFalse(jugador.recibirDaño());
         jugador.sumarPuntos(10);
         assertEquals(0, jugador.getVidas());
         assertEquals(0, jugador.getPuntos());

@@ -121,4 +121,10 @@ JefeOvni --> FaseOvni : delega ataque y trayectoria
 JefeOvni *-- "0..2" SubordinadoOvni
 ChorroAgua --> ArmaBioma : efecto de impacto
 Personaje --> ArmaBioma : arma equipada
+enum Hidratacion {
+ NORMAL
+ FATIGADA
+ ~ factor(segundos : float) : float
+}
+Personaje --> Hidratacion : cambia al beber o por sed
 @enduml

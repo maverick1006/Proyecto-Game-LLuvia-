@@ -21,6 +21,8 @@ public class VistaJuego {
     private final com.badlogic.gdx.math.Matrix4 proyeccion = new com.badlogic.gdx.math.Matrix4();
 
     public VistaJuego() {
+        // La fuente de LibGDX incluye los caracteres del español.
+        fuente.getData().spaceXadvance += 1;
         fuente.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
     }
     public void preparar(Viewport viewport) {
@@ -84,7 +86,7 @@ public class VistaJuego {
         formas.end();
     }
     public void gota(Gota gota) {
-        TipoObjeto tipo = gota instanceof ObjetoEspecial ? ((ObjetoEspecial) gota).getTipo() : gota instanceof GotaMala ? ((GotaMala) gota).getTipo() : null;
+        TipoObjeto tipo = gota instanceof GotaBuena && ((GotaBuena) gota).esDoble() ? TipoObjeto.AGUA_DOBLE : gota instanceof ObjetoEspecial ? ((ObjetoEspecial) gota).getTipo() : gota instanceof GotaMala ? ((GotaMala) gota).getTipo() : null;
         objeto(tipo, gota.getX(), gota.getY());
     }
     public void objeto(TipoObjeto tipo, float x, float y) {
@@ -92,7 +94,15 @@ public class VistaJuego {
         new DibujoObjetos(formas).dibujar(x, y, tipo);
         formas.end();
         if (tipo == TipoObjeto.AGUA_DOBLE || tipo == TipoObjeto.PUNTOS_DOBLES || tipo == TipoObjeto.MONEDAS_DOBLES)
-            centrar("x2", x, 28, y + 20, 0.85f, "102234");
+            texto("x2", x + 7, y + 21, 0.85f, "102234");
+    }
+    public void objetoReducido(TipoObjeto tipo, float x, float y, float escala) {
+        com.badlogic.gdx.math.Matrix4 matriz = new com.badlogic.gdx.math.Matrix4(formas.getProjectionMatrix());
+        formas.setProjectionMatrix(new com.badlogic.gdx.math.Matrix4(matriz).translate(x, y, 0).scale(escala, escala, 1));
+        formas.begin(ShapeRenderer.ShapeType.Filled);
+        new DibujoObjetos(formas).dibujar(0, 0, tipo);
+        formas.end();
+        formas.setProjectionMatrix(matriz);
     }
     public void ovni(float x, float y, float reloj) {
         formas.begin(ShapeRenderer.ShapeType.Filled);

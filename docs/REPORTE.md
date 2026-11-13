@@ -49,7 +49,7 @@ El código no está separado en capas estrictas: `GameLluvia` todavía reúne la
 
 ## GM-3. UML completo y vistas por subsistema
 
-El UML maestro muestra los **28 tipos principales** declarados en los archivos Java de `core`, incluidos enums e interfaz. También muestra los tipos anidados `GameLluvia.Estado`, `Partida.Fase`, `JefeOvni.Fase` y `Nivel.Builder`. `ApplicationAdapter` se incluye como referencia externa. El maestro omite miembros y dependencias secundarias para que se puedan seguir las relaciones principales; las vistas divididas muestran las firmas principales.
+El UML maestro muestra los **29 tipos principales** declarados en los archivos Java de `core`, incluidos enums e interfaz. También muestra los tipos anidados `GameLluvia.Estado`, `Partida.Fase`, `JefeOvni.Fase` y `Nivel.Builder`. `ApplicationAdapter` se incluye como referencia externa. El maestro omite miembros y dependencias secundarias para que se puedan seguir las relaciones principales; las vistas divididas muestran las firmas principales.
 
 ![UML maestro de core](uml/00-uml-completo.png)
 
@@ -69,7 +69,7 @@ Una línea con triángulo continuo indica herencia; con triángulo discontinuo, 
 
 La revisión incorpora tecnología recuperable. Cada gota generada fuera del tramo de monedas tiene un 4 % de probabilidad de ser una caja del bioma. En el Ascenso hay un 65 % de probabilidad de que caiga una caja hidro-plasma. `ObjetoEspecial.aplicarEfecto()` delega en `Personaje.atrapar()`, que equipa el arma. `JefeOvni.disparar()` delega la creación del proyectil al arma activa, y cada `ChorroAgua` conserva la que lo originó.
 
-`JefeOvni.recibirDanio()` cambia la fase al 70 % y al 30 % de vida. La fase normal lanza ácido; la furiosa cambia la trayectoria y acelera los ataques. En la tercera, dos drones sostienen un escudo que bloquea los impactos y permite recuperar una vida por segundo hasta la mitad del máximo. Al eliminar ambos, se interrumpe la curación y vuelve a ser vulnerable. El agua básica también derrota a los drones.
+`JefeOvni.recibirDaño()` cambia la fase al 65 % y al 35 % de vida. La fase normal lanza ácido; la furiosa cambia la trayectoria y acelera los ataques. En la tercera, dos drones sostienen un escudo que bloquea los impactos y permite recuperar una vida por segundo hasta la mitad del máximo. Al eliminar ambos, se interrumpe la curación y vuelve a ser vulnerable. El agua básica también derrota a los drones.
 
 El escudo del jugador dura ocho segundos o hasta absorber un impacto, y el botiquín recupera una vida sin superar el máximo de la dificultad. Café y fruta aumentan velocidad, el termo elimina y bloquea los efectos de frío, y las bonificaciones de puntos y monedas actúan al recoger los objetos correspondientes.
 
@@ -151,3 +151,8 @@ Las 38 pruebas de `CampanaTest`, `ProgresoTest` y `ReglasJuegoTest` se ejecutaro
 ## Cómo abrir esta revisión
 
 Importar la raíz del ZIP en Eclipse mediante **File > Import > Gradle > Existing Gradle Project**, con Buildship, Gradle Wrapper y JDK 17. Ejecutar **lwjgl3 > application > run** desde Gradle Tasks. La alternativa en PowerShell es `./gradlew.bat -Pandroid=false :lwjgl3:run`. El README explica cómo generar el JAR, el ZIP independiente para Eclipse y el APK. El ZIP de GitHub contiene las fuentes y requiere Internet para la primera descarga de dependencias.
+
+
+### Hidratación, carga y resistencia del jefe
+
+Tras 4 s sin agua, `Personaje.actualizar()` selecciona `Hidratacion.FATIGADA`. A los 12 s y después cada 4 s aplica daño. `recogerAgua()` vuelve a `NORMAL` y reinicia el tiempo. El agua simple suma una carga y la doble suma dos. Al llegar a seis, `JefeOvni.disparar()` consume la barra para potenciar el próximo chorro. La vida inicial del OVNI es 72, 90 o 108 según la dificultad. En furia lanza una segunda gota cada tercer ataque. El hook `despuesDeAtrapar()` comunica el efecto del agua doble tras aplicar la hidratación.

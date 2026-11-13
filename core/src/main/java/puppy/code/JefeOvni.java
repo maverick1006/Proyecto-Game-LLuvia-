@@ -51,7 +51,7 @@ public class JefeOvni {
 
     public JefeOvni(Dificultad dificultad, float ancho, long semilla) {
         this.dificultad = dificultad; this.ancho = ancho; azar = new Random(semilla);
-        vidaMaxima = 24 + dificultad.ordinal() * 8; vida = vidaMaxima;
+        vidaMaxima = 72 + dificultad.ordinal() * 18; vida = vidaMaxima;
         area.x = (ancho - area.width) / 2;
     }
 
@@ -65,7 +65,7 @@ public class JefeOvni {
         agua += delta;
         if (agua >= 1.2f) {
             agua -= 1.2f;
-            lluvia.lanzar(new GotaBuena(12 + azar.nextFloat() * (ancho - 52), 495, 240));
+            lluvia.lanzar(new GotaBuena(12 + azar.nextFloat() * (ancho - 52), 495, 240, azar.nextFloat() < 0.25f));
             if (azar.nextFloat() < 0.22f) {
                 TipoObjeto mejora = azar.nextBoolean() ? TipoObjeto.ESCUDO : TipoObjeto.BOTIQUIN;
                 lluvia.lanzar(new ObjetoEspecial(12 + azar.nextFloat() * (ancho - 52), 495, 225, mejora));
@@ -76,7 +76,7 @@ public class JefeOvni {
             while (pulsos > 0 && calor >= 0.5f) {
                 calor -= 0.5f;
                 pulsos--;
-                recibirDanio(1);
+                recibirDaño(1);
             }
         }
         for (int i = chorros.size() - 1; i >= 0 && !derrotado(); i--) {
@@ -84,10 +84,10 @@ public class JefeOvni {
             chorro.actualizar(delta);
             if (golpeaDron(chorro)) chorros.remove(i);
             else if (chorro.choca(area)) {
-                if (recibirDanio(chorro.getArma().danio()) && !tieneEscudo()) {
-                    frio = Math.max(frio, chorro.getArma().frio());
+                if (recibirDaño(chorro.daño()) && !tieneEscudo()) {
+                    frio = Math.max(frio, chorro.getArma().frio() * (chorro.esCargado() ? 2 : 1));
                     if (chorro.getArma().quemadura() > 0) {
-                        pulsos = Math.min(6, pulsos + chorro.getArma().quemadura());
+                        pulsos = Math.min(6, pulsos + chorro.getArma().quemadura() * (chorro.esCargado() ? 2 : 1));
                     }
                 }
                 chorros.remove(i);
@@ -108,7 +108,12 @@ public class JefeOvni {
             lluvia.lanzar(new GotaMala(x, area.y - 38, velocidad, TipoObjeto.ACIDO));
         } else {
             TipoObjeto[] peligros = Zona.ESPACIO.peligros();
-            lluvia.lanzar(new ObjetoEspecial(x, area.y - 38, velocidad + 50, peligros[azar.nextInt(peligros.length)]));
+            lluvia.lanzar(new GotaMala(x, area.y - 38, velocidad + 35, peligros[azar.nextInt(peligros.length)]));
+            if (ataques % 3 == 0) {
+                float lado = x < ancho / 2 ? 85 : -85;
+                lluvia.lanzar(new GotaMala(MathUtils.clamp(x + lado, 0, ancho - 28),
+                        area.y - 38, velocidad + 20, TipoObjeto.ACIDO));
+            }
         }
     }
 
@@ -123,13 +128,13 @@ public class JefeOvni {
         return false;
     }
 
-    boolean recibirDanio(int danio) {
-        if (derrotado() || tieneEscudo() || danio <= 0) return false;
-        vida = Math.max(0, vida - danio);
-        if (fase == Fase.NORMAL && vida <= vidaMaxima * 0.7f) {
+    boolean recibirDaño(int daño) {
+        if (derrotado() || tieneEscudo() || daño <= 0) return false;
+        vida = Math.max(0, vida - daño);
+        if (fase == Fase.NORMAL && vida <= vidaMaxima * 0.65f) {
             vida = Math.max(vida, 1);
             fase = Fase.FURIOSA;
-        } else if (fase == Fase.FURIOSA && vida <= vidaMaxima * 0.3f) {
+        } else if (fase == Fase.FURIOSA && vida <= vidaMaxima * 0.35f) {
             vida = Math.max(vida, 1);
             fase = Fase.SUBORDINADOS;
             subordinados.add(new SubordinadoOvni(ancho, true));
@@ -143,7 +148,7 @@ public class JefeOvni {
     public boolean disparar(Personaje jugador) {
         if (derrotado() || esperaDisparo > 0 || !jugador.gastarAgua()) return false;
         ArmaBioma arma = jugador.getArma();
-        arma.disparar(chorros, jugador.getX() + Personaje.ANCHO / 2 - 5, jugador.getY() + 68);
+        arma.disparar(chorros, jugador.getX() + Personaje.ANCHO / 2 - 5, jugador.getY() + 68, jugador.consumirCargaArma());
         esperaDisparo = arma.getCadencia();
         disparos++;
         return true;

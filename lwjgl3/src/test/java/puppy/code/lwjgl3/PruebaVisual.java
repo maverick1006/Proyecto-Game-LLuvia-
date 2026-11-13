@@ -98,7 +98,7 @@ public class PruebaVisual extends GameLluvia {
         }
         if (cuadro == 550) {
             Personaje p = versus().getUno().getPersonaje();
-            for (int i = 0; i < 3; i++) { p.actualizar(1.3f); p.recibirDanio(); }
+            for (int i = 0; i < 3; i++) { p.actualizar(1.3f); p.recibirDaño(); }
         }
         if (cuadro == 680) {
             monedasAntesSecreto = perfil().getMonedas();
@@ -107,7 +107,7 @@ public class PruebaVisual extends GameLluvia {
         }
         if (cuadro == 710) {
             Personaje p = partida().getPersonaje();
-            for (int i = 0; i < 3; i++) { p.actualizar(1.3f); p.recibirDanio(); }
+            for (int i = 0; i < 3; i++) { p.actualizar(1.3f); p.recibirDaño(); }
         }
         if (cuadro == 750) {
             JefeOvni jefe = partida().getJefe(); poner(jefe, "fase", JefeOvni.Fase.SUBORDINADOS); poner(jefe, "vida", 1); poner(jefe, "reloj", 0f);

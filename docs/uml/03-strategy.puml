@@ -53,4 +53,10 @@ enum MovimientoTerreno {
 }
 Personaje --> MovimientoTerreno : aplica desplazamiento
 Partida ..> MovimientoTerreno : selecciona segun zona o fase
+enum Hidratacion {
+ NORMAL
+ FATIGADA
+ ~ factor(segundos : float) : float
+}
+Personaje --> Hidratacion : cambia al beber o por sed
 @enduml

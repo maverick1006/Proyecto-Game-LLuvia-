@@ -14,14 +14,26 @@ public class DibujoObjetos {
     }
     public void dibujar(float x, float y, TipoObjeto tipo) {
         if (tipo == null || tipo == TipoObjeto.AGUA_DOBLE || tipo == TipoObjeto.SANGRE || tipo == TipoObjeto.PUNTOS_DOBLES) {
-            gota(x, y, tipo == TipoObjeto.SANGRE ? "B5394D" : tipo == TipoObjeto.PUNTOS_DOBLES ? "8099EF" : "218FCB"); return;
+            gota(x, y, tipo == TipoObjeto.AGUA_DOBLE ? "73E2F1" : tipo == TipoObjeto.SANGRE ? "B5394D" : tipo == TipoObjeto.PUNTOS_DOBLES ? "8099EF" : "218FCB"); return;
         }
         color(tipo.getColor());
         switch (tipo) {
-            case ARMA_LLANURA:
             case ARMA_HIELO:
+                formas.triangle(x + 11, y + 12, x + 23, y + 12, x + 17, y + 36);
+                color("FFFFFF"); formas.triangle(x + 16, y + 13, x + 21, y + 14, x + 17, y + 34);
+                color("31516B"); formas.rect(x + 8, y + 10, 18, 4);
+                formas.rect(x + 15, y + 3, 5, 8); break;
             case ARMA_SOLAR:
+                formas.rect(x + 2, y + 19, 24, 9);
+                color("43334D"); formas.rect(x + 5, y + 7, 7, 14);
+                color("FFF6AD"); formas.circle(x + 18, y + 23, 4); break;
             case ARMA_PLASMA:
+                formas.rect(x + 4, y + 10, 20, 14);
+                formas.rect(x + 4, y + 23, 4, 10);
+                formas.rect(x + 12, y + 23, 4, 14);
+                formas.rect(x + 20, y + 23, 4, 10);
+                color("452E64"); formas.rect(x + 11, y + 4, 6, 16); break;
+            case ARMA_LLANURA:
                 formas.rect(x + 3, y + 7, 22, 24);
                 color("24394B"); formas.rect(x + 7, y + 11, 14, 16);
                 color(tipo.getColor()); formas.rect(x + 11, y + 15, 6, 8); break;

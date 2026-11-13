@@ -13,7 +13,7 @@ public class CampanaTest {
             assertEquals(vidas[dificultad.ordinal()], versus.getUno().getPersonaje().getVidas());
             assertEquals(vidas[dificultad.ordinal()], versus.getDos().getPersonaje().getVidas());
             for (int i = 0; i < vidas[dificultad.ordinal()]; i++) {
-                juego.getPersonaje().actualizar(1.3f); juego.getPersonaje().recibirDanio();
+                juego.getPersonaje().actualizar(1.3f); juego.getPersonaje().recibirDaño();
             }
             assertTrue(juego.terminada());
         }
@@ -90,6 +90,21 @@ public class CampanaTest {
         assertEquals(MovimientoTerreno.ESPACIO, p.getMovimientoTerreno());
         assertSame(p, juego.getPersonaje());
     }
+    @Test public void aguaDobleRevierteFatigaYCargaArmaYLaSedPuedeMatar() {
+        Personaje p = new Personaje((jugador, dt) -> { }, 960, 2);
+        p.equiparArma(ArmaBioma.LANZA_HIELO);
+        p.actualizar(12);
+        assertEquals(Hidratacion.FATIGADA, p.getHidratacion());
+        assertEquals(1, p.getVidas());
+        new GotaBuena(p.getX(), p.getY(), 200, true).actualizar(0.01f, p);
+        assertEquals(Hidratacion.NORMAL, p.getHidratacion());
+        assertEquals(2, p.getAgua());
+        assertEquals(2, p.getCargaArma());
+        p.actualizar(11.9f);
+        assertEquals(1, p.getVidas());
+        p.actualizar(0.2f);
+        assertEquals(0, p.getVidas());
+    }
     @Test public void zonasTienenLimitesExactos() {
         assertEquals(Zona.LLANURA, Zona.delNivel(1)); assertEquals(Zona.LLANURA, Zona.delNivel(10));
         assertEquals(Zona.HIELO, Zona.delNivel(11)); assertEquals(Zona.HIELO, Zona.delNivel(20));
@@ -142,6 +157,7 @@ public class CampanaTest {
             JefeOvni jefe = juego.getJefe();
             float objetivo = jefe.tieneEscudo() ? jefe.getSubordinados().get(0).getX() : jefe.getX() + 32;
             juego.getPersonaje().colocar(objetivo);
+            if (i % 400 == 0) juego.getPersonaje().recogerAgua(10);
             juego.disparar(); juego.actualizar(0.01f); juego.getLluvia().limpiar();
         }
         assertTrue(juego.gano()); assertEquals(250, juego.getPremio());
@@ -152,14 +168,14 @@ public class CampanaTest {
         Partida juego = partida();
         JefeOvni jefe = new JefeOvni(Dificultad.NOOB, 960, 1);
         Personaje p = juego.getPersonaje();
-        assertTrue(jefe.recibirDanio(8));
+        assertTrue(jefe.recibirDaño(26));
         assertEquals(JefeOvni.Fase.FURIOSA, jefe.getFase());
-        assertTrue(jefe.recibirDanio(10));
+        assertTrue(jefe.recibirDaño(22));
         assertEquals(JefeOvni.Fase.SUBORDINADOS, jefe.getFase());
         assertEquals(2, jefe.getSubordinados().size());
-        assertFalse(jefe.recibirDanio(100));
+        assertFalse(jefe.recibirDaño(100));
         jefe.actualizar(1, p, juego.getLluvia());
-        assertEquals(7, jefe.getVida());
+        assertEquals(25, jefe.getVida());
         assertTrue(juego.getLluvia().getGotas().stream().anyMatch(g -> g instanceof GotaMala));
         p.atrapar(TipoObjeto.ARMA_SOLAR);
         p.cargarAgua(60);
@@ -173,7 +189,7 @@ public class CampanaTest {
         int vida = jefe.getVida();
         jefe.actualizar(1, p, juego.getLluvia());
         assertTrue(jefe.getVida() <= vida);
-        assertTrue(jefe.recibirDanio(100));
+        assertTrue(jefe.recibirDaño(100));
         assertTrue(jefe.derrotado());
     }
 
@@ -183,9 +199,10 @@ public class CampanaTest {
         caja.actualizar(0.01f, p);
         assertEquals(ArmaBioma.HIDRO_PLASMA, p.getArma());
         JefeOvni jefe = new JefeOvni(Dificultad.NOOB, 960, 1);
-        p.cargarAgua(1);
+        p.recogerAgua(60);
         assertTrue(jefe.disparar(p));
-        assertEquals(0, p.getAgua());
+        assertEquals(5, p.getAgua());
+        assertEquals(0, p.getCargaArma());
         assertEquals(3, jefe.getChorros().size());
     }
 
@@ -212,13 +229,13 @@ public class CampanaTest {
         Gota a = versus.getUno().getLluvia().getGotas().get(0), b = versus.getDos().getLluvia().getGotas().get(0);
         assertEquals(a.getClass(), b.getClass()); assertEquals(a.getX(), b.getX(), 0);
         assertFalse(versus.terminada());
-        for (int i = 0; i < 3; i++) { versus.getUno().getPersonaje().actualizar(1.3f); versus.getUno().getPersonaje().recibirDanio(); }
+        for (int i = 0; i < 3; i++) { versus.getUno().getPersonaje().actualizar(1.3f); versus.getUno().getPersonaje().recibirDaño(); }
         assertEquals(2, versus.getGanador());
     }
     @Test public void ambosMuertosEsEmpate() {
         PartidaVersus versus = new PartidaVersus((p, dt) -> { }, (p, dt) -> { }, Dificultad.NOOB, 1);
         for (Partida p : new Partida[]{versus.getUno(), versus.getDos()})
-            for (int i = 0; i < 5; i++) { p.getPersonaje().actualizar(1.3f); p.getPersonaje().recibirDanio(); }
+            for (int i = 0; i < 5; i++) { p.getPersonaje().actualizar(1.3f); p.getPersonaje().recibirDaño(); }
         assertEquals(0, versus.getGanador());
     }
 }

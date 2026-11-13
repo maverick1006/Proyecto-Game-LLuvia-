@@ -51,6 +51,7 @@ public class Lluvia {
             TipoObjeto[] mejoras = zona.mejoras();
             tipo = mejoras[azar.nextInt(mejoras.length)];
         } else return new GotaBuena(x, 495, velocidad);
+        if (tipo == TipoObjeto.AGUA_DOBLE) return new GotaBuena(x, 495, velocidad, true);
         if (tipo == TipoObjeto.ACIDO) return new GotaMala(x, 495, velocidad, tipo);
         return new ObjetoEspecial(x, 495, velocidad, tipo);
     }

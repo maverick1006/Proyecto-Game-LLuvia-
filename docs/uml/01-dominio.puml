@@ -157,4 +157,10 @@ Personaje --> ArmaBioma : arma equipada
 enum MovimientoTerreno
 Personaje --> MovimientoTerreno
 Partida ..> MovimientoTerreno
+enum Hidratacion {
+ NORMAL
+ FATIGADA
+ ~ factor(segundos : float) : float
+}
+Personaje --> Hidratacion : cambia al beber o por sed
 @enduml

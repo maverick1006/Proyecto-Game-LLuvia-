@@ -22,6 +22,10 @@ public class Personaje {
     private String aviso = "";
     private float tiempoAviso;
     private float sinAgua;
+    private float proximoDanioPorSed = 12;
+    private Hidratacion hidratacion = Hidratacion.NORMAL;
+    public static final int CARGA_MAXIMA = 6;
+    private int cargaArma;
     private int agua;
     private final float anchoMundo;
 
@@ -51,10 +55,16 @@ public class Personaje {
         actualizar(delta, true);
     }
     public void actualizar(float delta, boolean necesitaAgua) {
-        sinAgua = necesitaAgua ? sinAgua + delta : 0;
+        if (necesitaAgua) sinAgua += delta;
+        else hidratar();
         invulnerabilidad = Math.max(0, invulnerabilidad - delta);
         tiempoAviso = Math.max(0, tiempoAviso - delta);
         efectos.replaceAll((tipo, tiempo) -> Math.max(0, tiempo - delta));
+        hidratacion = sinAgua > 4 ? Hidratacion.FATIGADA : Hidratacion.NORMAL;
+        while (vidas > 0 && sinAgua >= proximoDanioPorSed) {
+            if (recibirDaño()) avisar("Deshidratación: recoge agua");
+            proximoDanioPorSed += 4;
+        }
         float anterior = area.x;
         if (vidas > 0 && delta > 0) {
             movimientoPedido = 0;
@@ -73,7 +83,7 @@ public class Personaje {
 
     public float getVelocidad() {
         if (activo(TipoObjeto.PAJARO) || activo(TipoObjeto.HIELO)) return 0;
-        float sed = 1 - Math.min(0.6f, Math.max(0, sinAgua - 4) * 0.15f);
+        float sed = hidratacion.factor(sinAgua);
         return 680 * sed * (activo(TipoObjeto.CAFE) || activo(TipoObjeto.FRUTA) ? 1.5f : 1)
                 * (activo(TipoObjeto.VENENO) || activo(TipoObjeto.NIEVE) ? 0.5f : 1);
     }
@@ -90,14 +100,29 @@ public class Personaje {
         if (vidas == 0) return;
         sumarPuntos(cantidad);
         agua += cantidad / 10;
-        sinAgua = 0;
+        hidratar();
+        if (arma != ArmaBioma.AGUA) cargaArma = Math.min(CARGA_MAXIMA, cargaArma + cantidad / 10);
     }
+    private void hidratar() {
+        sinAgua = 0;
+        proximoDanioPorSed = 12;
+        hidratacion = Hidratacion.NORMAL;
+    }
+    public Hidratacion getHidratacion() { return hidratacion; }
+    public int getCargaArma() { return cargaArma; }
+    boolean consumirCargaArma() {
+        if (cargaArma < CARGA_MAXIMA) return false;
+        cargaArma = 0;
+        avisar("Disparo especial");
+        return true;
+    }
+    void avisar(String texto) { aviso = texto; tiempoAviso = 2.5f; }
     public void quitarPuntos(int cantidad) { puntos = Math.max(0, puntos - Math.max(0, cantidad)); }
     public void cargarAgua(int cantidad) { agua += Math.max(0, cantidad); }
     public boolean gastarAgua() { if (agua == 0 || vidas == 0) return false; agua--; return true; }
     public int getAgua() { return agua; }
     public float getSinAgua() { return sinAgua; }
-    public boolean recibirDanio() {
+    public boolean recibirDaño() {
         if (vidas == 0 || invulnerabilidad > 0) return false;
         if (activo(TipoObjeto.ESCUDO)) {
             efectos.remove(TipoObjeto.ESCUDO);
@@ -136,7 +161,7 @@ public class Personaje {
                 break;
             case FUEGO:
             case CACTUS:
-                if (recibirDanio()) quitarPuntos(tipo == TipoObjeto.FUEGO ? 40 : 25);
+                if (recibirDaño()) quitarPuntos(tipo == TipoObjeto.FUEGO ? 40 : 25);
                 break;
             case VENENO:
                 quitarPuntos(10); efectos.put(tipo, tipo.getDuracion()); break;
@@ -144,7 +169,7 @@ public class Personaje {
                 if (!activo(TipoObjeto.BOLSA_ROTA)) monedas += activo(TipoObjeto.MONEDAS_DOBLES) ? 2 : 1;
                 break;
             case ACIDO:
-                if (recibirDanio()) puntos = Math.max(0, puntos - 30);
+                if (recibirDaño()) puntos = Math.max(0, puntos - 30);
                 break;
             case TINTA:
                 puntos = Math.max(0, puntos - 50);
@@ -156,9 +181,13 @@ public class Personaje {
             default:
                 efectos.put(tipo, tipo.getDuracion());
         }
-        if (tipo != TipoObjeto.MONEDA) { aviso = tipo.getDescripcion(); tiempoAviso = 2.5f; }
+        if (tipo != TipoObjeto.MONEDA) avisar(tipo.getDescripcion());
     }
-    public void equiparArma(ArmaBioma arma) { this.arma = java.util.Objects.requireNonNull(arma); }
+    public void equiparArma(ArmaBioma arma) {
+        java.util.Objects.requireNonNull(arma);
+        if (this.arma != arma) cargaArma = 0;
+        this.arma = arma;
+    }
     public ArmaBioma getArma() { return arma; }
     void colocarAltura(float y) { area.y = y; }
     public boolean activo(TipoObjeto tipo) { return efectos.getOrDefault(tipo, 0f) > 0; }

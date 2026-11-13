@@ -36,7 +36,10 @@ public class ProgresoTest {
         perfil.registrarDesafioOculto(juego);
         assertFalse(perfil.tiene(Aspecto.ALIEN));
         for (int i = 0; i < 20000 && !juego.terminada(); i++) {
-            juego.getPersonaje().colocar(juego.getJefe().getX() + 40);
+            JefeOvni jefe = juego.getJefe();
+            float objetivo = jefe.tieneEscudo() ? jefe.getSubordinados().get(0).getX() : jefe.getX() + 32;
+            juego.getPersonaje().colocar(objetivo);
+            if (i % 400 == 0) juego.getPersonaje().recogerAgua(10);
             juego.getPersonaje().cargarAgua(1);
             juego.disparar(); juego.actualizar(0.01f); juego.getLluvia().limpiar();
         }

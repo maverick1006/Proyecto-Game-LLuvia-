@@ -1,4 +1,4 @@
-# GameLluvia — Guardián de la lluvia
+# Guardián de la Lluvia
 
 Proyecto de Programación Avanzada en Java y LibGDX, basado en el juego entregado por el profesor.
 
@@ -10,7 +10,7 @@ Proyecto de Programación Avanzada en Java y LibGDX, basado en el juego entregad
 
 Luma nos advierte que un OVNI contaminó la lluvia. Atrapa agua limpia, supera 30 niveles y atraviesa la llanura, el hielo y Atacama. En cada zona puedes encontrar un arma especial. Durante el Ascenso también puede aparecer el cañón hidro-plasma.
 
-El agua que juntas se usa como munición. Cuando el OVNI despliega sus drones, derríbalos primero para bajar su escudo y detener la curación. También puedes jugar Versus local, comprar aspectos y buscar el encuentro secreto que desbloquea al Alien.
+Recoge agua antes de que aparezca la fatiga. Tras 12 segundos sin agua empiezas a perder vidas. Las gotas dobles recuperan el movimiento y suman dos cargas. Con seis cargas, el próximo disparo del arma equipada es especial. Cuando el OVNI despliega sus drones, derríbalos primero para bajar su escudo y detener la curación. También puedes jugar Versus local, comprar aspectos y buscar el encuentro secreto que desbloquea al Alien.
 
 ## Descargar y jugar
 

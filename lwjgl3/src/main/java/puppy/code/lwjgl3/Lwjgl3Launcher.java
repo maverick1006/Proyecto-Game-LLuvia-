@@ -7,7 +7,7 @@ import puppy.code.GameLluvia;
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setTitle("GameLluvia | Guardian de la lluvia");
+        config.setTitle(GameLluvia.TITULO);
         config.setWindowedMode(960, 600);
         config.useVsync(true);
         config.setForegroundFPS(60);

@@ -20,6 +20,7 @@ public abstract class Gota {
             terminada = true;
         } else if (verificarColision(personaje)) {
             aplicarEfecto(personaje);
+            despuesDeAtrapar(personaje);
             terminada = true;
         }
     }
@@ -35,6 +36,7 @@ public abstract class Gota {
     }
 
     protected abstract void aplicarEfecto(Personaje personaje);
+    protected void despuesDeAtrapar(Personaje personaje) { }
     public abstract boolean esBuena();
     public boolean estaTerminada() { return terminada; }
     public float getX() { return area.x; }

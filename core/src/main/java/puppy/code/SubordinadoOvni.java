@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class SubordinadoOvni {
     private final Rectangle area;
     private final float centro, direccion;
-    private int vida = 3;
+    private int vida = 8;
     private float reloj, espera = 1;
 
     SubordinadoOvni(float ancho, boolean izquierdo) {
@@ -27,7 +27,7 @@ public class SubordinadoOvni {
 
     boolean recibir(ChorroAgua chorro) {
         if (!chorro.choca(area)) return false;
-        vida -= chorro.getArma().danio() + chorro.getArma().quemadura();
+        vida -= chorro.daño() + chorro.getArma().quemadura();
         return true;
     }
 

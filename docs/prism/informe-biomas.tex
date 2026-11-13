@@ -2,9 +2,9 @@
 \section{Perspectiva del jugador (GM-1)}
 Luma, guardiana de la llanura, descubre que la nave nodriza está contaminando la lluvia. El tarro del juego original (\texttt{bucket.png}) representa el recolector que lleva el protagonista. Las gotas azules (\texttt{drop.png}) representan agua pura y las contaminadas (\texttt{dropBad.png}) representan el peligro que introdujo la nave.
 
-En la llanura aparece el primer módulo, el Pulso. En el sur helado, el protagonista puede recuperar una lanza que ralentiza a la nave. En el oasis de Atacama puede encontrar el Rayo Solar, que sigue causando daño después del impacto. Durante el Ascenso, el rayo del OVNI puede arrastrar una caja de hidro-plasma que dispara tres chorros por carga. La aparición depende del azar y el agua recogida alimenta cualquiera de estas armas. El protagonista puede completar la campaña con su chorro inicial.
+En la llanura aparece el primer módulo, el Pulso. En el sur helado, el protagonista puede recuperar una espada que ralentiza a la nave. En el oasis de Atacama puede encontrar el Láser Solar, que sigue causando daño después del impacto. Durante el Ascenso, el rayo del OVNI puede arrastrar una caja de hidro-plasma que dispara tres chorros cuando la barra está llena. La aparición depende del azar y el agua recogida alimenta cualquiera de estas armas. El protagonista puede completar la campaña con su chorro inicial.
 
-El combate tiene tres fases. Primero la nave lanza ácido mientras se mueve horizontalmente. Al 70\,\% de vida, se enfurece y cambia su trayectoria y cadencia. Al 30\,\%, despliega dos drones y levanta un escudo. El jugador debe derribar a ambos drones mientras la nave se repara. Después del último dron, la nave vuelve a recibir daño. El aspecto Alien se desbloquea al ganar el encuentro oculto.
+El combate tiene tres fases. Primero la nave lanza ácido mientras se mueve horizontalmente. Al 65\,\% de vida, se enfurece y cambia su trayectoria y cadencia. Al 35\,\%, despliega dos drones y levanta un escudo. El jugador debe derribar a ambos drones mientras la nave se repara. Después del último dron, la nave vuelve a recibir daño. El aspecto Alien se desbloquea al ganar el encuentro oculto.
 
 \section{Análisis de software (GM-2)}
 El juego original movía un tarro y organizaba la información de la lluvia en arreglos separados. Eso obligaba a mantener sincronizados los índices de las gotas. Primero se introdujo una lista de objetos \texttt{Gota} y se delegó la detección de contacto y el efecto en cada variante. Luego \texttt{Partida} pasó a coordinar los niveles, las zonas y el combate. Así se pudo agregar un objeto especial sin replicar el ciclo de actualización de la lluvia.
@@ -43,7 +43,7 @@ El primer diagrama muestra el conjunto de tipos de \texttt{core} y la clase base
 \subsection{Strategy dinámico}
 \textbf{Problema.} El dispositivo de entrada, la superficie, el arma equipada y el comportamiento del jefe cambian durante el juego.
 \textbf{Solución.} \texttt{Personaje} delega la entrada en \texttt{ControlMovimiento}, el desplazamiento en \texttt{MovimientoTerreno} y conserva una variante de \texttt{ArmaBioma}. Cada valor de \texttt{JefeOvni.Fase} define su trayectoria y acción.
-\textbf{Aplicación.} T o el botón del HUD llaman a \texttt{setControlMovimiento()}. Al cambiar de tramo, \texttt{Partida.actualizarMovimientoTerreno()} llama a \texttt{setMovimientoTerreno()}. Una caja llama a \texttt{equiparArma()} mediante \texttt{atrapar()}. Al disparar, \texttt{JefeOvni.disparar()} usa el arma equipada para crear los chorros. \texttt{recibirDanio()} cambia la fase del jefe y \texttt{actualizar()} delega en la fase activa.
+\textbf{Aplicación.} T o el botón del HUD llaman a \texttt{setControlMovimiento()}. Al cambiar de tramo, \texttt{Partida.actualizarMovimientoTerreno()} llama a \texttt{setMovimientoTerreno()}. Una caja llama a \texttt{equiparArma()} mediante \texttt{atrapar()}. Al disparar, \texttt{JefeOvni.disparar()} usa el arma equipada para crear los chorros. \texttt{recibirDaño()} cambia la fase del jefe y \texttt{actualizar()} delega en la fase activa.
 \textbf{Ventaja y utilidad.} Los cambios ocurren con los mismos objetos y mantienen su progreso. Los umbrales y las transiciones pertenecen al jefe, mientras que las variantes de trayectoria y ataque quedan en su fase. La curación se detiene al caer el último dron.
 
 \subsection{Template Method}
@@ -57,3 +57,12 @@ El primer diagrama muestra el conjunto de tipos de \texttt{core} y la clase base
 \textbf{Solución.} \texttt{Nivel.Builder} permite nombrar cada ajuste antes de construir un \texttt{Nivel}.
 \textbf{Aplicación.} \texttt{Dificultad.crearNivel()} configura el objetivo, la velocidad, el intervalo y la probabilidad de peligro. \texttt{Partida} lo invoca al cambiar de nivel.
 \textbf{Ventaja y utilidad.} La configuración se puede leer en el orden en que se define, y la lluvia recibe un nivel construido con sus parámetros explícitos.
+
+
+\section{Hidratación y carga del arma}
+Tras cuatro segundos sin recoger agua, el Guardián empieza a perder velocidad. A los doce segundos recibe daño y luego vuelve a recibirlo cada cuatro segundos, hasta poder perder la partida. La pausa y el tramo de monedas detienen el desgaste. Una gota azul restablece el movimiento. La variante doble, identificada con x2, aporta dos cargas de munición y dos puntos a la barra del arma equipada.
+
+La barra llega a seis con agua recogida después de equipar el arma. El siguiente disparo activa automáticamente el poder especial, consume la barra y gasta una carga de munición. La espada prolonga la ralentización, el láser aplica más pulsos de calor y el cañón lanza tres chorros. El jefe tiene 72, 90 o 108 puntos de vida según la dificultad.
+
+\subsection{Evidencia de la recorrección}
+\texttt{Personaje.actualizar()} selecciona la estrategia \texttt{Hidratacion.FATIGADA} y \texttt{recogerAgua()} restaura \texttt{NORMAL}. La estrategia de terreno y el control de entrada siguen funcionando al mismo tiempo. \texttt{JefeOvni.disparar()} lee el arma equipada y consume la carga cuando está lista. El proyectil conserva el arma y el estado de carga. El método final \texttt{Gota.actualizar()} ejecuta movimiento, colisión y efecto, y después llama al hook \texttt{despuesDeAtrapar()}. \texttt{GotaBuena} lo usa para avisar que el agua doble eliminó la fatiga y dio dos cargas.

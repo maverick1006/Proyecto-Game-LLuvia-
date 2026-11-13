@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.List;
 
 public class GameLluvia extends ApplicationAdapter {
+    public static final String TITULO = "Guardián de la Lluvia";
     private enum Estado { MENU, DIFICULTAD, PROLOGO, TIENDA, PUNTUACIONES, AYUDA, JUGANDO, PAUSA, DERROTA, VICTORIA, RESULTADO_VERSUS }
     private Estado estado = Estado.MENU;
     private final FitViewport viewport = new FitViewport(960, 600, new OrthographicCamera());
@@ -59,13 +60,13 @@ public class GameLluvia extends ApplicationAdapter {
     }
 
     private static final String[][] PROLOGO = {
-        {"01 / LA LLUVIA CAMBIO",
+        {"01 / LA LLUVIA CAMBIÓ",
             "Soy Luma, guardiana de la llanura.",
-            "La nave nodriza lanzo lluvia toxica sobre la llanura.",
-            "Usa tu recolector: guarda el agua azul y esquiva la toxica."},
+            "La nave nodriza lanzó lluvia tóxica sobre la llanura.",
+            "Recoge agua azul: sin hidratarte perderás velocidad y vidas."},
         {"02 / LA RUTA DEL AGUA",
             "Sigue el agua desde la llanura hasta el hielo del sur.",
-            "Busca la lanza de hielo y el rayo solar de Atacama.",
+            "Busca la espada de hielo y el láser solar de Atacama.",
             "Cada 100 puntos de agua avanzas un nivel."},
         {"03 / LA NAVE ESTA CERCA",
             "Si el OVNI te atrapa con su rayo, conserva la calma.",
@@ -128,7 +129,7 @@ public class GameLluvia extends ApplicationAdapter {
         }
         if (partida.gano()) {
             Aspecto premio = perfil.registrarVictoria(partida.getDificultad());
-            avisar("Recompensa de campana: " + premio.getNombre());
+            avisar("Recompensa de campaña: " + premio.getNombre());
         }
         Personaje jugador = partida.getPersonaje();
         perfil.registrarNivel(partida.getDificultad(), partida.getMaximoNivel());
@@ -252,31 +253,31 @@ public class GameLluvia extends ApplicationAdapter {
     }
     private void cabecera(String titulo, String subtitulo) {
         vista.panel(0, 530, 960, 70, "0A1526");
-        vista.texto(titulo, 32, 579, 1.55f, "E4EDF5");
-        vista.texto(subtitulo, 32, 551, 0.95f, "8FA8BC");
+        vista.textoAcotado(titulo, 32, 579, 650, 1.4f, "E4EDF5");
+        vista.textoAcotado(subtitulo, 32, 551, 650, 0.95f, "8FA8BC");
         vista.centrar("MONEDAS  " + perfil.getMonedas(), 712, 224, 574, 1.1f, "FFD36A");
     }
     private void menu() {
-        cabecera("GAME / LLUVIA", "ARCADE DE SUPERVIVENCIA");
+        cabecera(TITULO, "Proyecto de Programación Avanzada");
         if (vista.botonOculto(3, 570)) {
             modoVersus = false; modoOculto = true; iniciar(); return;
         }
         vista.panel(40, 65, 420, 430, "0C192C");
-        vista.texto("UNA GOTA.", 75, 466, 2.2f, "E4EDF5");
-        vista.texto("OTRA OPORTUNIDAD.", 75, 426, 1.6f, "67DCCE");
-        vista.texto("Un OVNI contamino la lluvia. Rescata el agua.", 75, 403, 0.95f, "9BB0C2");
+        vista.texto("Una gota, otra oportunidad", 75, 458, 1.35f, "E4EDF5");
+        vista.texto("Recoge agua para seguir con vida.", 75, 429, 1.05f, "67DCCE");
+        vista.texto("Un OVNI contaminó la lluvia. Rescata el agua.", 75, 403, 0.95f, "9BB0C2");
         if (vista.boton("COMENZAR PARTIDA", 75, 308, 350, 54, true)) { modoOculto = false; modoVersus = false; cambiarEstado(Estado.DIFICULTAD); return; }
         if (vista.boton("TIENDA Y PERSONAJES", 75, 240, 350, 52, false)) { cambiarEstado(Estado.TIENDA); return; }
         if (vista.boton("MEJORES PUNTUACIONES", 75, 174, 350, 52, false)) { cambiarEstado(Estado.PUNTUACIONES); return; }
-        if (vista.boton("GUIA DE OBJETOS", 75, 108, 350, 48, false)) { cambiarEstado(Estado.AYUDA); return; }
+        if (vista.boton("GUÍA DE OBJETOS", 75, 108, 350, 48, false)) { cambiarEstado(Estado.AYUDA); return; }
         if (vista.boton("VERSUS LOCAL / 2 JUGADORES", 500, 107, 420, 40, true)) { modoOculto = false; modoVersus = true; cambiarEstado(Estado.DIFICULTAD); return; }
         vista.panel(500, 160, 420, 335, "16273C");
         vista.centrar("TU PERSONAJE", 500, 420, 466, 1, "91A9BC");
         vista.personaje(perfil.getEquipado(), 660, 252, 6, reloj, true, false);
         vista.centrar(perfil.getEquipado().getNombre(), 500, 420, 221, 1.3f, "E4EDF5");
-        vista.centrar("Aspectos cosmeticos, mismas habilidades", 500, 420, 189, 0.95f, "91A9BC");
-        if (vista.boton(tactil ? "CONTROL: TACTIL / RATON" : "CONTROL: TECLADO", 500, 61, 420, 36, false)) tactil = !tactil;
-        if (vista.boton(configuracion.tieneSonido() ? "SONIDO: SI" : "SONIDO: NO", 630, 17, 160, 34, false)) configuracion.alternarSonido();
+        vista.centrar("Aspectos cosméticos, mismas habilidades", 500, 420, 189, 0.95f, "91A9BC");
+        if (vista.boton(tactil ? "CONTROL: TÁCTIL / RATÓN" : "CONTROL: TECLADO", 500, 61, 420, 36, false)) tactil = !tactil;
+        if (vista.boton(configuracion.tieneSonido() ? "SONIDO: SÍ" : "SONIDO: NO", 630, 17, 160, 34, false)) configuracion.alternarSonido();
     }
     private void dificultades() {
         cabecera(modoVersus ? "VERSUS / ELIGE DIFICULTAD" : "ELIGE TU DIFICULTAD", "Cada 100 puntos de agua subes de nivel. Los peligros pueden hacerte retroceder.");
@@ -285,7 +286,7 @@ public class GameLluvia extends ApplicationAdapter {
             vista.panel(x, 218, 276, 252, opcion == dificultad ? "21473F" : "13253A");
             vista.texto("0" + (i + 1), x + 24, 444, 1.2f, "67DCCE");
             vista.texto(opcion.name(), x + 24, 404, 2, "E4EDF5");
-            vista.texto(i == 0 ? "Ritmo suave" : i == 1 ? "Lluvia rapida" : "Peligro constante", x + 24, 359, 1.1f, "A3B8C8");
+            vista.texto(i == 0 ? "Ritmo suave" : i == 1 ? "Lluvia rápida" : "Peligro constante", x + 24, 359, 1.1f, "A3B8C8");
             vista.texto(opcion.getVidas() + " vidas / Mejor nivel: " + perfil.getNivelMaximo(opcion), x + 24, 321, 1, "A3B8C8");
             if (vista.boton(opcion == dificultad ? "SELECCIONADO" : "ELEGIR", x + 20, 242, 236, 48, opcion == dificultad)) dificultad = opcion;
         }
@@ -295,7 +296,7 @@ public class GameLluvia extends ApplicationAdapter {
     }
     private void prologo() {
         String[] escena = PROLOGO[paginaPrologo];
-        cabecera("ANTES DE LA LLUVIA", "PROLOGO / " + (paginaPrologo + 1) + " DE " + PROLOGO.length);
+        cabecera("ANTES DE LA LLUVIA", "PRÓLOGO / " + (paginaPrologo + 1) + " DE " + PROLOGO.length);
         vista.panel(48, 150, 864, 350, "0C192C");
         vista.panel(70, 179, 245, 286, "16273C");
         vista.centrar("LUMA", 70, 245, 439, 1.2f, "67DCCE");
@@ -318,7 +319,7 @@ public class GameLluvia extends ApplicationAdapter {
         vista.personaje(perfil.getEquipado(), 83, 318, 5, reloj, false, false);
         vista.centrar(perfil.getEquipado().getNombre(), 24, 204, 280, 0.95f, "E4EDF5");
         vista.centrar("Solo cambia la apariencia.", 24, 204, 241, 0.85f, "91A9BC");
-        vista.centrar("Vidas segun dificultad.", 24, 204, 219, 0.85f, "91A9BC");
+        vista.centrar("Vidas según dificultad.", 24, 204, 219, 0.85f, "91A9BC");
         vista.centrar("Tus compras se guardan", 24, 204, 158, 0.85f, "91A9BC");
         vista.centrar("en este dispositivo.", 24, 204, 138, 0.85f, "91A9BC");
         Aspecto[] catalogo = java.util.Arrays.stream(Aspecto.values())
@@ -354,8 +355,8 @@ public class GameLluvia extends ApplicationAdapter {
             if (vista.boton(opcion.name(), 150 + opcion.ordinal() * 225, 448, 210, 46, dificultad == opcion)) dificultad = opcion;
         }
         vista.panel(150, 125, 660, 300, "0C192C");
-        vista.texto("POSICION", 185, 398, 1, "91A9BC");
-        vista.texto("PUNTUACION", 602, 398, 1, "91A9BC");
+        vista.texto("POSICIÓN", 185, 398, 1, "91A9BC");
+        vista.texto("PUNTUACIÓN", 602, 398, 1, "91A9BC");
         int[] top = perfil.getPuntuaciones(dificultad);
         for (int i = 0; i < top.length; i++) {
             float y = 357 - i * 45;
@@ -368,18 +369,19 @@ public class GameLluvia extends ApplicationAdapter {
         if (vista.boton("VOLVER", 32, 40, 170, 40, false)) cambiarEstado(Estado.MENU);
     }
     private void ayuda() {
-        cabecera("GUIA / AGUA Y SUPERVIVENCIA", "Cuatro segundos sin agua: pierdes velocidad. Recoger agua te recupera y carga tu arma.");
+        cabecera("GUÍA / AGUA Y SUPERVIVENCIA", "Tras 4 s pierdes velocidad. A los 12 s empieza el daño por sed.");
         vista.panel(20, 61, 920, 400, "13283C");
         for (Zona zona : new Zona[]{Zona.LLANURA, Zona.HIELO, Zona.DESIERTO, Zona.ESPACIO}) {
             if (vista.boton(zona.getNombre(), 32 + zona.ordinal() * 228, 468, 216, 38, zonaGuia == zona)) zonaGuia = zona;
         }
-        vista.texto("Agua: +10 puntos y 1 carga. Cada 100 puntos, otro nivel. Los peligros restan progreso.", 32, 450, 0.95f, "E4EDF5");
+        vista.texto("Agua doble: quita la fatiga y suma 2 cargas de agua y de arma.", 32, 450, 0.95f, "E4EDF5");
         java.util.LinkedHashSet<TipoObjeto> tipos = new java.util.LinkedHashSet<>();
         java.util.Collections.addAll(tipos, zonaGuia.peligros());
         java.util.Collections.addAll(tipos, zonaGuia.mejoras());
+        tipos.add(zonaGuia.arma());
         int i = 0;
         for (TipoObjeto tipo : tipos) {
-            float y = 401 - i * 34;
+            float y = 412 - i * 30;
             vista.objeto(tipo, 40, y - 22);
             vista.textoAcotado(tipo.getNombre(), 95, y, 200, 0.95f, "E4EDF5");
             vista.textoAcotado(tipo.getDescripcion(), 310, y, 600, 0.95f, "E4EDF5");
@@ -404,7 +406,7 @@ public class GameLluvia extends ApplicationAdapter {
             if (vista.boton("PAUSA", 430, 12, 100, 28, false)) cambiarEstado(Estado.PAUSA);
         } else {
             dibujarMundo(partida, perfil.getEquipado(), "", false);
-            if (vista.boton(tactil ? "TACTIL [T]" : "TECLADO [T]", 635, 548, 175, 40, false)) alternarControlEnPartida();
+            if (vista.boton(tactil ? "TÁCTIL [T]" : "TECLADO [T]", 635, 548, 175, 40, false)) alternarControlEnPartida();
             if (vista.boton("PAUSA", 825, 548, 110, 40, false)) cambiarEstado(Estado.PAUSA);
         }
     }
@@ -418,7 +420,7 @@ public class GameLluvia extends ApplicationAdapter {
             vista.ovni(jugador.getX() - 30, 438, reloj);
             vista.rayo(jugador.getX() + 24, juego.getAscenso());
             vista.centrar("Recupera el hidro-plasma si aparece", 0, ancho, 342, 0.95f, "102334");
-            vista.centrar("EL OVNI TE ATRAPO. USA EL AGUA RECOLECTADA", 0, ancho, 370, mini ? 1 : 1.5f, "102334");
+            vista.centrar("EL OVNI TE ATRAPÓ. USA EL AGUA RECOLECTADA", 0, ancho, 370, mini ? 1 : 1.5f, "102334");
         }
         if (juego.enJefe()) {
             JefeOvni jefe = juego.getJefe();
@@ -426,6 +428,7 @@ public class GameLluvia extends ApplicationAdapter {
             for (SubordinadoOvni dron : jefe.getSubordinados()) vista.dron(dron.getX(), dron.getY());
             for (ChorroAgua chorro : jefe.getChorros()) {
                 vista.panel(chorro.getX(), chorro.getY(), 10, 24, chorro.getArma().getColor());
+                if (chorro.esCargado()) vista.panel(chorro.getX() - 2, chorro.getY(), 14, 24, chorro.getArma().getColor());
                 vista.panel(chorro.getX() + 3, chorro.getY() + 4, 3, 18, "E6FAFF");
             }
             vista.panel(20, 493, ancho - 40, 12, "34415E");
@@ -440,19 +443,29 @@ public class GameLluvia extends ApplicationAdapter {
         vista.panel(0, 528, ancho, 72, "0A1526");
         float anchoHud = mini ? ancho - 32 : 595;
         vista.textoAcotado(etiqueta + " " + juego.getDificultad() + " / " + juego.getZona().getNombre(), 16, 586, anchoHud, mini ? 1 : 1.25f, "67DCCE");
-        vista.textoAcotado(juego.esDesafioOculto() ? "DESAFIO OCULTO / VIDAS " + jugador.getVidas() : "NIVEL " + juego.getNumeroNivel() + "/30    " + jugador.getPuntos() + "/" + juego.getObjetivo() + " pts    VIDAS " + jugador.getVidas(), 16, 570, anchoHud, mini ? 0.94f : 1.05f, "E4EDF5");
-        vista.textoAcotado("MONEDAS " + jugador.getMonedas() + "    AGUA " + jugador.getAgua() + (jugador.getSinAgua() > 4 ? "    SED: recoge agua!" : ""), 16, 554, anchoHud, mini ? 0.85f : 0.95f, jugador.getSinAgua() > 4 ? "FFB77C" : "FFD36A");
-        vista.textoAcotado("ARMA: " + jugador.getArma().getNombre(), 16, 538, anchoHud, 0.85f, jugador.getArma().getColor());
+        vista.textoAcotado(juego.esDesafioOculto() ? "DESAFÍO OCULTO / VIDAS " + jugador.getVidas() : "NIVEL " + juego.getNumeroNivel() + "/30    " + jugador.getPuntos() + "/" + juego.getObjetivo() + " pts    VIDAS " + jugador.getVidas(), 16, 570, anchoHud, mini ? 0.94f : 1.05f, "E4EDF5");
+        vista.textoAcotado("MONEDAS " + jugador.getMonedas() + "    AGUA " + jugador.getAgua() + (jugador.getSinAgua() > 4 ? "    SED: recoge agua" : ""), 16, 554, anchoHud, mini ? 0.85f : 0.95f, jugador.getSinAgua() > 4 ? "FFB77C" : "FFD36A");
+        TipoObjeto iconoArma = jugador.getArma().getIcono();
+        if (iconoArma != null) vista.objetoReducido(iconoArma, 16, 530, 0.38f);
+        vista.textoAcotado("ARMA: " + jugador.getArma().getNombre(), 34, 540, mini ? 180 : 300, 0.85f, jugador.getArma().getColor());
+        if (jugador.getArma() != ArmaBioma.AGUA) {
+            float carga = jugador.getCargaArma() / (float) Personaje.CARGA_MAXIMA;
+            float xCarga = mini ? 225 : 365;
+            vista.panel(xCarga, 532, 65, 6, "34415E");
+            if (carga > 0) vista.panel(xCarga, 532, 65 * carga, 6, jugador.getArma().getColor());
+            vista.textoAcotado(carga == 1 ? "LISTA" : "CARGA " + jugador.getCargaArma() + "/6",
+                    xCarga + 75, 540, 100, 0.85f, "E4EDF5");
+        }
         vista.panel(16, 516, ancho - 32, 5, "23354E");
         vista.panel(16, 516, (ancho - 32) * juego.getProgreso(), 5, "67DCCE");
         if (juego.esSecreto()) vista.centrar("SOLO MONEDAS / " + (int) Math.ceil(juego.getTiempoSecreto()) + " s", 0, ancho, 461, mini ? 1 : 1.3f, "102334");
         else if (juego.getAvisoNivel() > 0 && juego.getFase() == Partida.Fase.CAMPANA)
             vista.centrar("NIVEL " + juego.getNumeroNivel() + " / " + juego.getZona().getNombre(), 0, ancho, 350, mini ? 1.3f : 2, "102334");
-        if (!mini && juego.getAvisoNivel() > 0 && juego.getFase() == Partida.Fase.CAMPANA) {
+        if (!mini && !juego.esSecreto() && juego.getAvisoNivel() > 0 && juego.getFase() == Partida.Fase.CAMPANA) {
             String pista;
             switch (juego.getZona()) {
-                case HIELO: pista = "La lanza de hielo ralentiza a la nave. Cuidado al deslizarte."; break;
-                case DESIERTO: pista = "Busca el rayo solar del oasis. Compensa el viento."; break;
+                case HIELO: pista = "La espada de hielo ralentiza a la nave. Cuidado al deslizarte."; break;
+                case DESIERTO: pista = "Busca el láser solar del oasis. Compensa el viento."; break;
                 default: pista = "Azul: agua limpia. Esquiva la lluvia contaminada.";
             }
             vista.centrar(pista, 0, ancho, 318, 1, "102334");
@@ -467,7 +480,7 @@ public class GameLluvia extends ApplicationAdapter {
             fila++;
         }
         String consejo = mini ? (etiqueta.equals("J1") ? "A/D: mover | W: disparar" : "Flechas: mover | Arriba: disparar")
-                : juego.enJefe() ? "ESPACIO o clic: chorro de agua | Recoge gotas para recargar"
+                : juego.enJefe() ? "Espacio o clic: dispara | Carga llena: próximo disparo especial"
                 : tactil ? "Manten pulsado para moverte | Recoge agua antes de 4 segundos"
                 : "A/D o flechas: mover | Recoge agua antes de 4 segundos";
         int xPie = mini && etiqueta.equals("J2") ? 60 : 16;
@@ -477,7 +490,7 @@ public class GameLluvia extends ApplicationAdapter {
         if (!mini && avisoControl > 0) {
             float y = juego.enJefe() ? 431 : 468;
             vista.panel(635, y, 300, 26, "20354A");
-            vista.centrar(tactil ? "Control activo: tactil / raton" : "Control activo: teclado",
+            vista.centrar(tactil ? "Control activo: táctil / ratón" : "Control activo: teclado",
                     635, 300, y + 18, 0.95f, "FFE1A1");
         }
         if (!jugador.getAviso().isEmpty() && !mini) {
@@ -491,31 +504,31 @@ public class GameLluvia extends ApplicationAdapter {
         vista.centrar(ganador, 210, 540, 452, 1.8f, "FFD36A");
         vista.centrar("J1: " + versus.getUno().getPersonaje().getPuntos() + " puntos / nivel " + versus.getUno().getNumeroNivel(), 210, 540, 401, 1.1f, "E4EDF5");
         vista.centrar("J2: " + versus.getDos().getPersonaje().getPuntos() + " puntos / nivel " + versus.getDos().getNumeroNivel(), 210, 540, 363, 1.1f, "E4EDF5");
-        vista.centrar("Partida local: no modifica el progreso de campana.", 210, 540, 323, 0.95f, "91A9BC");
+        vista.centrar("Partida local: no modifica el progreso de campaña.", 210, 540, 323, 0.95f, "91A9BC");
         if (vista.boton("REVANCHA", 300, 235, 360, 52, true)) { iniciar(); return; }
-        if (vista.boton("VOLVER AL MENU", 300, 165, 360, 48, false)) cambiarEstado(Estado.MENU);
+        if (vista.boton("VOLVER AL MENÚ", 300, 165, 360, 48, false)) cambiarEstado(Estado.MENU);
     }
     private void pausa() {
         vista.panel(210, 120, 540, 370, "0C192C");
         vista.centrar("UN RESPIRO", 210, 540, 446, 2, "E4EDF5");
         vista.centrar("El tiempo y los efectos estan detenidos.", 210, 540, 399, 1, "91A9BC");
         if (vista.boton("CONTINUAR", 300, 305, 360, 54, true)) { cambiarEstado(Estado.JUGANDO); return; }
-        if (vista.boton(modoOculto ? "SALIR DEL DESAFIO" : modoVersus ? "ABANDONAR VERSUS" : "GUARDAR MONEDAS Y SALIR", 300, 237, 360, 50, false)) { abandonar(); return; }
-        if (vista.boton(configuracion.tieneSonido() ? "SONIDO: SI" : "SONIDO: NO", 300, 169, 360, 48, false)) configuracion.alternarSonido();
-        vista.centrar(modoOculto ? "El desafio solo desbloquea un aspecto al ganar." : modoVersus ? "Versus no modifica monedas ni ranking de campana." : "Salir no registra puntuacion en el ranking.", 210, 540, 145, 0.9f, "91A9BC");
+        if (vista.boton(modoOculto ? "SALIR DEL DESAFÍO" : modoVersus ? "ABANDONAR VERSUS" : "GUARDAR MONEDAS Y SALIR", 300, 237, 360, 50, false)) { abandonar(); return; }
+        if (vista.boton(configuracion.tieneSonido() ? "SONIDO: SÍ" : "SONIDO: NO", 300, 169, 360, 48, false)) configuracion.alternarSonido();
+        vista.centrar(modoOculto ? "El desafío solo desbloquea un aspecto al ganar." : modoVersus ? "Versus no modifica monedas ni ranking de campaña." : "Salir no registra puntuación en el ranking.", 210, 540, 145, 0.9f, "91A9BC");
     }
     private void derrota() {
         if (nuevoRecord && tiempoRecord < 6) vista.confeti(tiempoRecord);
         vista.panel(230, 115, 500, 380, "0C192C");
         float escala = nuevoRecord && tiempoRecord < 6 ? 1.8f + 0.1f * (float) Math.sin(tiempoRecord * 6) : 1.8f;
-        vista.centrar(partida.gano() ? "VICTORIA / OVNI DERROTADO" : nuevoRecord ? "NUEVO RECORD" : "FIN DE LA PARTIDA", 230, 500, 451, partida.gano() ? 1.5f : escala, nuevoRecord ? "FFD36A" : "E4EDF5");
+        vista.centrar(partida.gano() ? "VICTORIA / OVNI DERROTADO" : nuevoRecord ? "NUEVO RÉCORD" : "FIN DE LA PARTIDA", 230, 500, 451, partida.gano() ? 1.5f : escala, nuevoRecord ? "FFD36A" : "E4EDF5");
         Personaje jugador = partida.getPersonaje();
         vista.centrar(partida.esDesafioOculto() ? "ENCUENTRO SECRETO" : partida.getDificultad() + " / NIVEL " + partida.getNumeroNivel(), 230, 500, 405, 1.2f, "67DCCE");
         vista.centrar(jugador.getPuntos() + " puntos", 230, 500, 366, 1.5f, "E4EDF5");
         vista.centrar(partida.esDesafioOculto() ? (partida.gano() ? "ALIEN DESBLOQUEADO EN LA TIENDA" : "Vence al OVNI para revelar su secreto") : "+" + partida.getMonedasFinales() + " monedas guardadas", 230, 500, 326, 1.1f, "FFD36A");
         if (partida.gano() && !partida.esDesafioOculto()) vista.centrar("Bolsa del jefe: " + partida.getPremio() + " monedas", 230, 500, 309, 0.9f, "FFD36A");
         if (vista.boton("OTRA PARTIDA", 300, 240, 360, 52, true)) { iniciar(); return; }
-        if (vista.boton("VOLVER AL MENU", 300, 173, 360, 48, false)) cambiarEstado(Estado.MENU);
+        if (vista.boton("VOLVER AL MENÚ", 300, 173, 360, 48, false)) cambiarEstado(Estado.MENU);
     }
     @Override public void resize(int width, int height) { viewport.update(width, height, true); }
     @Override public void pause() { if (estado == Estado.JUGANDO) cambiarEstado(Estado.PAUSA); }
