@@ -18,6 +18,19 @@ public class DibujoObjetos {
         }
         color(tipo.getColor());
         switch (tipo) {
+            case ARMA_LLANURA:
+            case ARMA_HIELO:
+            case ARMA_SOLAR:
+            case ARMA_PLASMA:
+                formas.rect(x + 3, y + 7, 22, 24);
+                color("24394B"); formas.rect(x + 7, y + 11, 14, 16);
+                color(tipo.getColor()); formas.rect(x + 11, y + 15, 6, 8); break;
+            case ESCUDO:
+            case BOTIQUIN:
+                formas.rect(x + 3, y + 7, 22, 24);
+                color("24394B"); formas.rect(x + 7, y + 17, 14, 4);
+                if (tipo == TipoObjeto.BOTIQUIN) formas.rect(x + 12, y + 12, 4, 14);
+                break;
             case FUEGO:
                 formas.circle(x + 14, y + 11, 13);
                 formas.triangle(x, y + 12, x + 9, y + 34, x + 17, y + 10);

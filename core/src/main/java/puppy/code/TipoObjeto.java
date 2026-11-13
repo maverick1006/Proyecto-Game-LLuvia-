@@ -1,6 +1,12 @@
 package puppy.code;
 
 public enum TipoObjeto {
+    ARMA_LLANURA("", "7CE5A6", "Pulso de llanura", "Disparo de dos puntos de danio", 0, true),
+    ARMA_HIELO("", "B9DAFF", "Lanza de hielo", "Danio doble y ralentiza al OVNI", 0, true),
+    ARMA_SOLAR("", "FFD36A", "Rayo solar", "Impacto fuerte y dos pulsos de calor", 0, true),
+    ARMA_PLASMA("", "EF9FF2", "Canon hidro-plasma", "Tres chorros por una carga de agua", 0, true),
+    ESCUDO("", "77D8DD", "Escudo", "Absorbe un golpe durante 8 s", 8, true),
+    BOTIQUIN("", "F4C5C5", "Botiquin", "Recupera una vida hasta el maximo", 0, true),
     AGUA_DOBLE("2", "6BDBF2", "Agua doble", "+20 puntos y dos cargas de agua", 0, true),
     SANGRE("", "B5394D", "Sangre", "Pierdes 20 puntos", 0, false),
     NIEVE("", "EDF9FF", "Nieve", "-20 puntos y lentitud por 4 s", 4, false),

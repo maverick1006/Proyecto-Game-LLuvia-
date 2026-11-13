@@ -30,6 +30,7 @@ public class Partida {
         juego.fase = Fase.JEFE;
         juego.jefe = new JefeOvni(Dificultad.PRO, juego.ancho, juego.semilla);
         juego.personaje.cargarAgua(40);
+        juego.actualizarMovimientoTerreno();
         return juego;
     }
     public boolean esDesafioOculto() { return desafioOculto; }
@@ -38,7 +39,16 @@ public class Partida {
         avisoNivel = Math.max(0, avisoNivel - delta);
         if (fase == Fase.ASCENSO) {
             tiempoAscenso += delta;
-            if (tiempoAscenso >= 3) { fase = Fase.JEFE; jefe = new JefeOvni(dificultad, ancho, semilla); }
+            personaje.actualizar(delta, false);
+            personaje.colocarAltura(42 + getAscenso() * 290);
+            lluvia.mover(delta, personaje);
+            if (tiempoAscenso >= 3) {
+                personaje.colocarAltura(42);
+                lluvia.limpiar();
+                fase = Fase.JEFE;
+                jefe = new JefeOvni(dificultad, ancho, semilla);
+                actualizarMovimientoTerreno();
+            }
             return;
         }
         personaje.actualizar(delta, !esSecreto());
@@ -54,12 +64,20 @@ public class Partida {
         if (personaje.getVidas() == 0) { fase = Fase.DERROTA; return; }
         if (secreto) {
             tiempoSecreto = Math.max(0, tiempoSecreto - delta);
-            if (!esSecreto()) { lluvia.limpiar(); avisoNivel = 2; }
+            if (!esSecreto()) { lluvia.limpiar(); avisoNivel = 2; actualizarMovimientoTerreno(); }
             return;
         }
         if (personaje.getPuntos() >= TOTAL_NIVELES * PUNTOS_POR_NIVEL) {
             numeroNivel = TOTAL_NIVELES; maximoNivel = TOTAL_NIVELES;
-            fase = Fase.ASCENSO; lluvia.limpiar(); return;
+            fase = Fase.ASCENSO;
+            lluvia.limpiar();
+            java.util.Random suerte = new java.util.Random(semilla ^ 0xA5CE50L);
+            if (suerte.nextFloat() < 0.65f) {
+                float x = ancho * (0.25f + suerte.nextFloat() * 0.5f);
+                lluvia.lanzar(new ObjetoEspecial(x, 495, 175, Zona.ESPACIO.arma()));
+            }
+            actualizarMovimientoTerreno();
+            return;
         }
         int siguiente = Math.min(TOTAL_NIVELES, 1 + personaje.getPuntos() / PUNTOS_POR_NIVEL);
         if (siguiente != numeroNivel) {
@@ -67,8 +85,19 @@ public class Partida {
             nivel = dificultad.crearNivel(numeroNivel); lluvia.limpiar(); avisoNivel = 2;
             int hito = numeroNivel / 5;
             if (hito > ultimoSecreto) { ultimoSecreto = hito; tiempoSecreto = DURACION_SECRETO; }
+            actualizarMovimientoTerreno();
         }
     }
+    private void actualizarMovimientoTerreno() {
+        MovimientoTerreno terreno = MovimientoTerreno.NORMAL;
+        if (fase == Fase.JEFE) terreno = MovimientoTerreno.ESPACIO;
+        else if (fase == Fase.CAMPANA && !esSecreto()) {
+            if (getZona() == Zona.HIELO) terreno = MovimientoTerreno.HIELO;
+            if (getZona() == Zona.DESIERTO) terreno = MovimientoTerreno.ATACAMA;
+        }
+        personaje.setMovimientoTerreno(terreno);
+    }
+
     public void disparar() { if (fase == Fase.JEFE) jefe.disparar(personaje); }
     public boolean terminada() { return fase == Fase.VICTORIA || fase == Fase.DERROTA || personaje.getVidas() == 0; }
     public boolean gano() { return fase == Fase.VICTORIA; }

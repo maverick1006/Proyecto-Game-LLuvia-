@@ -91,7 +91,7 @@ public class PruebaVisual extends GameLluvia {
         if (cuadro == 360) poner(partida(), "tiempoAscenso", 3f);
         if (cuadro == 440) {
             JefeOvni jefe = partida().getJefe();
-            poner(jefe, "vida", 1); poner(jefe, "reloj", 0f);
+            poner(jefe, "fase", JefeOvni.Fase.SUBORDINADOS); poner(jefe, "vida", 1); poner(jefe, "reloj", 0f);
             @SuppressWarnings("unchecked") List<ChorroAgua> tiros = (List<ChorroAgua>) leer(jefe, "chorros");
             tiros.add(new ChorroAgua(465, jefe.getY()));
             partida().getLluvia().limpiar();
@@ -110,7 +110,7 @@ public class PruebaVisual extends GameLluvia {
             for (int i = 0; i < 3; i++) { p.actualizar(1.3f); p.recibirDanio(); }
         }
         if (cuadro == 750) {
-            JefeOvni jefe = partida().getJefe(); poner(jefe, "vida", 1); poner(jefe, "reloj", 0f);
+            JefeOvni jefe = partida().getJefe(); poner(jefe, "fase", JefeOvni.Fase.SUBORDINADOS); poner(jefe, "vida", 1); poner(jefe, "reloj", 0f);
             @SuppressWarnings("unchecked") List<ChorroAgua> tiros = (List<ChorroAgua>) leer(jefe, "chorros");
             tiros.add(new ChorroAgua(465, jefe.getY()));
         }

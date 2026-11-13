@@ -41,6 +41,7 @@ public class Lluvia {
         float velocidad = secreto ? 240 : nivel.getVelocidad();
         if (secreto) return new ObjetoEspecial(x, 495, velocidad, TipoObjeto.MONEDA);
         float valor = azar.nextFloat();
+        if (valor >= 0.96f) return new ObjetoEspecial(x, 495, velocidad, zona.arma());
         TipoObjeto tipo;
         if (valor < nivel.getProbabilidadMala()) {
             TipoObjeto[] peligros = zona.peligros();

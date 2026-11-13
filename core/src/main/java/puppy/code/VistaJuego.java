@@ -11,9 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class VistaJuego {
-    private final Texture tarroOriginal = new Texture(Gdx.files.internal("bucket.png"));
-    private final Texture aguaOriginal = new Texture(Gdx.files.internal("drop.png"));
-    private final Texture contaminadaOriginal = new Texture(Gdx.files.internal("dropBad.png"));
     private final SpriteBatch batch = new SpriteBatch();
     private final ShapeRenderer formas = new ShapeRenderer();
     private final BitmapFont fuente = new BitmapFont();
@@ -46,9 +43,21 @@ public class VistaJuego {
         batch.begin(); fuente.draw(batch, valor, x, y); batch.end();
     }
     public void centrar(String valor, float x, float w, float y, float escala, String color) {
+        escala = ajustarEscala(valor, w - 24, escala);
+        texto(valor, x + (w - medida.width) / 2, y, escala, color);
+    }
+    public void textoAcotado(String valor, float x, float y, float ancho, float escala, String color) {
+        texto(valor, x, y, ajustarEscala(valor, ancho, escala), color);
+    }
+    private float ajustarEscala(String valor, float ancho, float escala) {
         fuente.getData().setScale(escala);
         medida.setText(fuente, valor);
-        texto(valor, x + (w - medida.width) / 2, y, escala, color);
+        if (medida.width > ancho) {
+            escala *= ancho / medida.width;
+            fuente.getData().setScale(escala);
+            medida.setText(fuente, valor);
+        }
+        return escala;
     }
     public boolean botonOculto(float x, float y) {
         boolean encima = puntero.x >= x && puntero.x <= x + 24 && puntero.y >= y && puntero.y <= y + 24;
@@ -74,14 +83,6 @@ public class VistaJuego {
         new DibujoEscenario(formas).fondo(zona, ancho, reloj, secreto);
         formas.end();
     }
-    public void iconosHistoria(float x, float y) {
-        batch.begin();
-        batch.draw(tarroOriginal, x, y, 24, 24);
-        batch.draw(aguaOriginal, x + 32, y, 24, 24);
-        batch.draw(contaminadaOriginal, x + 64, y, 24, 24);
-        batch.end();
-    }
-
     public void gota(Gota gota) {
         TipoObjeto tipo = gota instanceof ObjetoEspecial ? ((ObjetoEspecial) gota).getTipo() : gota instanceof GotaMala ? ((GotaMala) gota).getTipo() : null;
         objeto(tipo, gota.getX(), gota.getY());
@@ -96,6 +97,14 @@ public class VistaJuego {
     public void ovni(float x, float y, float reloj) {
         formas.begin(ShapeRenderer.ShapeType.Filled);
         new DibujoEscenario(formas).ovni(x, y, reloj);
+        formas.end();
+    }
+    public void dron(float x, float y) {
+        formas.begin(ShapeRenderer.ShapeType.Filled);
+        formas.setColor(Color.valueOf("AB679C"));
+        formas.ellipse(x, y, 48, 24);
+        formas.setColor(Color.valueOf("F1B8D7"));
+        formas.rect(x + 11, y + 9, 26, 4);
         formas.end();
     }
     public void rayo(float centro, float avance) {
@@ -118,5 +127,5 @@ public class VistaJuego {
         }
         formas.end();
     }
-    public void dispose() { batch.dispose(); formas.dispose(); fuente.dispose(); tarroOriginal.dispose(); aguaOriginal.dispose(); contaminadaOriginal.dispose(); }
+    public void dispose() { batch.dispose(); formas.dispose(); fuente.dispose(); }
 }

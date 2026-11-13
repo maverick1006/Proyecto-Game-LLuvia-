@@ -94,4 +94,31 @@ Aspecto --> Dificultad
 Zona ..> TipoObjeto
 Dificultad ..> Builder
 Builder ..> Nivel : construye
+enum MovimientoTerreno {
+  NORMAL
+  HIELO
+  ATACAMA
+  ESPACIO
+  ~ calcular(pedido : float, anterior : float, delta : float) : float
+}
+Personaje --> MovimientoTerreno : aplica desplazamiento
+Partida ..> MovimientoTerreno : selecciona segun zona o fase
+
+enum ArmaBioma {
+ AGUA
+ PULSO
+ LANZA_HIELO
+ RAYO_SOLAR
+ HIDRO_PLASMA
+}
+class SubordinadoOvni
+enum "JefeOvni.Fase" as FaseOvni {
+ NORMAL
+ FURIOSA
+ SUBORDINADOS
+}
+JefeOvni --> FaseOvni : delega ataque y trayectoria
+JefeOvni *-- "0..2" SubordinadoOvni
+ChorroAgua --> ArmaBioma : efecto de impacto
+Personaje --> ArmaBioma : arma equipada
 @enduml

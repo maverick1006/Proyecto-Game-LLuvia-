@@ -1,0 +1,59 @@
+% Fragmento para el informe existente. Requiere graphicx.
+\section{Perspectiva del jugador (GM-1)}
+Luma, guardiana de la llanura, descubre que la nave nodriza está contaminando la lluvia. El tarro del juego original (\texttt{bucket.png}) representa el recolector que lleva el protagonista. Las gotas azules (\texttt{drop.png}) representan agua pura y las contaminadas (\texttt{dropBad.png}) representan el peligro que introdujo la nave.
+
+En la llanura aparece el primer módulo, el Pulso. En el sur helado, el protagonista puede recuperar una lanza que ralentiza a la nave. En el oasis de Atacama puede encontrar el Rayo Solar, que sigue causando daño después del impacto. Durante el Ascenso, el rayo del OVNI puede arrastrar una caja de hidro-plasma que dispara tres chorros por carga. La aparición depende del azar y el agua recogida alimenta cualquiera de estas armas. El protagonista puede completar la campaña con su chorro inicial.
+
+El combate tiene tres fases. Primero la nave lanza ácido mientras se mueve horizontalmente. Al 70\,\% de vida, se enfurece y cambia su trayectoria y cadencia. Al 30\,\%, despliega dos drones y levanta un escudo. El jugador debe derribar a ambos drones mientras la nave se repara. Después del último dron, la nave vuelve a recibir daño. El aspecto Alien se desbloquea al ganar el encuentro oculto.
+
+\section{Análisis de software (GM-2)}
+El juego original movía un tarro y organizaba la información de la lluvia en arreglos separados. Eso obligaba a mantener sincronizados los índices de las gotas. Primero se introdujo una lista de objetos \texttt{Gota} y se delegó la detección de contacto y el efecto en cada variante. Luego \texttt{Partida} pasó a coordinar los niveles, las zonas y el combate. Así se pudo agregar un objeto especial sin replicar el ciclo de actualización de la lluvia.
+
+Las armas terrestres se sortean con un 4\,\% por aparición normal, fuera del tramo de monedas. El Ascenso ofrece un único sorteo con 65\,\% de probabilidad. El último módulo recogido queda equipado. \texttt{ChorroAgua} conserva el arma usada al disparar, de modo que un cambio posterior no modifica un disparo en vuelo. Durante el combate siguen cayendo gotas de agua, escudos y botiquines. El escudo absorbe un golpe y el botiquín respeta el máximo de vidas de la dificultad.
+
+\section{Diagramas de clases (GM-3)}
+El primer diagrama muestra el conjunto de tipos de \texttt{core} y la clase base de LibGDX. Las dos figuras siguientes amplían las relaciones del dominio y de los sistemas que coordinan la interfaz, el combate y la persistencia.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=.72\textheight,keepaspectratio]{images/00-uml-completo.png}
+\caption{UML maestro de GameLluvia.}
+\end{figure}
+\clearpage
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=.72\textheight,keepaspectratio]{images/01-dominio.png}
+\caption{Partida, controles, lluvia y reglas del dominio.}
+\end{figure}
+\clearpage
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=.72\textheight,keepaspectratio]{images/06-sistemas.png}
+\caption{Presentación, combate, Versus y perfil.}
+\end{figure}
+\clearpage
+
+\section{Patrones de diseño (GM-6 a GM-9)}
+\subsection{Singleton}
+\textbf{Problema.} El menú y la partida necesitan consultar el mismo ajuste de sonido y el mismo perfil.
+\textbf{Solución.} \texttt{ConfiguracionJuego} usa un constructor privado y \texttt{getInstancia()} crea la instancia al solicitarla por primera vez.
+\textbf{Aplicación.} \texttt{GameLluvia.create()} obtiene esa configuración. El menú modifica el sonido y la partida consulta el ajuste para reproducir música y efectos.
+\textbf{Ventaja y utilidad.} El cambio se refleja entre pantallas y el perfil se inicializa desde un punto común.
+
+\subsection{Strategy dinámico}
+\textbf{Problema.} El dispositivo de entrada, la superficie, el arma equipada y el comportamiento del jefe cambian durante el juego.
+\textbf{Solución.} \texttt{Personaje} delega la entrada en \texttt{ControlMovimiento}, el desplazamiento en \texttt{MovimientoTerreno} y conserva una variante de \texttt{ArmaBioma}. Cada valor de \texttt{JefeOvni.Fase} define su trayectoria y acción.
+\textbf{Aplicación.} T o el botón del HUD llaman a \texttt{setControlMovimiento()}. Al cambiar de tramo, \texttt{Partida.actualizarMovimientoTerreno()} llama a \texttt{setMovimientoTerreno()}. Una caja llama a \texttt{equiparArma()} mediante \texttt{atrapar()}. Al disparar, \texttt{JefeOvni.disparar()} usa el arma equipada para crear los chorros. \texttt{recibirDanio()} cambia la fase del jefe y \texttt{actualizar()} delega en la fase activa.
+\textbf{Ventaja y utilidad.} Los cambios ocurren con los mismos objetos y mantienen su progreso. Los umbrales y las transiciones pertenecen al jefe, mientras que las variantes de trayectoria y ataque quedan en su fase. La curación se detiene al caer el último dron.
+
+\subsection{Template Method}
+\textbf{Problema.} Todas las gotas deben moverse, descartarse al salir y resolver el contacto una sola vez.
+\textbf{Solución.} \texttt{Gota.actualizar()} es final y fija el orden. Llama a \texttt{calcularMovimiento()}, \texttt{verificarColision()} y \texttt{aplicarEfecto()}.
+\textbf{Aplicación.} El agua cae a velocidad normal, usa el área completa y recarga al jugador. El ácido cae 15\,\% más rápido y reduce el área de contacto. \texttt{ObjetoEspecial} ajusta la velocidad según su tipo, usa un margen propio y delega el efecto a \texttt{Personaje.atrapar()}. Así se aplica tanto una mejora como la instalación de un arma.
+\textbf{Ventaja y utilidad.} \texttt{Lluvia.mover()} actualiza la misma lista de gotas y elimina las terminadas. Cada subtipo personaliza varias etapas y el ciclo de vida permanece en la clase base.
+
+\subsection{Builder}
+\textbf{Problema.} Cada dificultad calcula varios parámetros por nivel y sus valores cambian a lo largo de la campaña.
+\textbf{Solución.} \texttt{Nivel.Builder} permite nombrar cada ajuste antes de construir un \texttt{Nivel}.
+\textbf{Aplicación.} \texttt{Dificultad.crearNivel()} configura el objetivo, la velocidad, el intervalo y la probabilidad de peligro. \texttt{Partida} lo invoca al cambiar de nivel.
+\textbf{Ventaja y utilidad.} La configuración se puede leer en el orden en que se define, y la lluvia recibe un nivel construido con sus parámetros explícitos.

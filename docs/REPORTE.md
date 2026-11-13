@@ -12,7 +12,11 @@
 
 Una nave altera la lluvia sobre Chile. En la llanura aún quedan gotas de agua limpia, pero junto a ellas caen gotas contaminadas que obligan al guardián a moverse con cuidado. El menú muestra el tarro, la gota azul y la gota oscura del juego base: son el equipo y las señales con que empezó el rescate. Durante la partida, los escenarios y las variantes de gotas se dibujan con LibGDX.
 
-Antes de la campaña, Luma aparece con un retrato y los tres sprites originales. En el primer diálogo explica qué gotas recoger; en el segundo relaciona el termo y el oasis con el viaje; en el tercero anticipa el rayo del OVNI y el uso del agua como munición. La conversación es por escrito y avanza con Enter o el botón Continuar. Se puede saltar o volver a elegir dificultad. Mientras se lee, el juego está en `PROLOGO` y no se simulan gotas ni se consume agua. Los reintentos, el versus y el desafío oculto entran directamente.
+![Prólogo de Luma con la interfaz actualizada](capturas/27-prologo-luma.png)
+
+Luma explica que la nave nodriza del Jefe OVNI está contaminando la lluvia. En los sprites originales, `bucket.png` representa el recolector del protagonista, `drop.png` el agua pura y `dropBad.png` la lluvia tóxica. Esos archivos se conservan como referencia del juego base. En la partida, `Personaje` recoge el agua de `GotaBuena` y esquiva el ácido de `GotaMala`. La misión pasa de la llanura al hielo del sur y al oasis de Atacama. Al completar la campaña, el rayo de la nave inicia el Ascenso. En el espacio, cada carga de agua alimenta un `ChorroAgua` con el que podemos derribar al Jefe OVNI. El aspecto Alien es un recuerdo del encuentro secreto y se desbloquea al vencer al OVNI de ese desafío.
+
+El prólogo de Luma avanza con Enter o Continuar. Se puede saltar o volver a elegir dificultad. Durante la lectura, el estado es `PROLOGO` y la partida todavía no se actualiza.
 
 La contaminación cambia con el paisaje. En el sur, el agua se congela: la nieve ralentiza, el hielo puede inmovilizar y el termo ayuda a atravesar la zona. En Atacama, la sequía y el calor vuelven escasa el agua; una gota de oasis repone cargas para el combate. Las alertas de nivel dan una pista distinta en cada escenario. Al llegar a 3000 puntos, el OVNI activa su rayo y se lleva al guardián. En órbita, el agua que venía recogiendo pasa de ser un recurso de supervivencia a ser la munición del chorro. El encuentro oculto permite desbloquear el aspecto Alien: es una recompensa cosmética y no afecta al progreso de la campaña.
 
@@ -23,7 +27,7 @@ La contaminación cambia con el paisaje. En el sur, el agua se congela: la nieve
 - **Dificultad:** Noob tiene cinco vidas, Pro tres y Hacker una; también varían el intervalo, la velocidad y los peligros.
 - **Versus:** J1 se mueve con A/D y dispara con W. J2 usa flechas y dispara con Arriba.
 
-![Luma presenta la misión antes de la campaña](capturas/27-prologo-luma.png)
+
 ![Menú de GameLluvia](capturas/01-menu.png)
 ![Partida versus local](capturas/17-versus.png)
 ![Cambio de control durante la partida](capturas/26-control-en-partida.png)
@@ -45,7 +49,7 @@ El código no está separado en capas estrictas: `GameLluvia` todavía reúne la
 
 ## GM-3. UML completo y vistas por subsistema
 
-El UML maestro muestra los **25 tipos principales** declarados en los archivos Java de `core`, incluidos enums e interfaz. También muestra los tipos anidados `GameLluvia.Estado`, `Partida.Fase` y `Nivel.Builder`. `ApplicationAdapter` se incluye como referencia externa. El maestro omite miembros y dependencias secundarias para que se puedan seguir las relaciones principales; las vistas divididas muestran las firmas principales.
+El UML maestro muestra los **28 tipos principales** declarados en los archivos Java de `core`, incluidos enums e interfaz. También muestra los tipos anidados `GameLluvia.Estado`, `Partida.Fase`, `JefeOvni.Fase` y `Nivel.Builder`. `ApplicationAdapter` se incluye como referencia externa. El maestro omite miembros y dependencias secundarias para que se puedan seguir las relaciones principales; las vistas divididas muestran las firmas principales.
 
 ![UML maestro de core](uml/00-uml-completo.png)
 
@@ -62,6 +66,12 @@ Desde `Partida` se sigue a `Lluvia`, las gotas y `Personaje`. Las reglas de nive
 ![Vista de sistemas](uml/06-sistemas.png)
 
 Una línea con triángulo continuo indica herencia; con triángulo discontinuo, implementación de una interfaz. La flecha discontinua sin triángulo indica dependencia. El rombo lleno señala composición.
+
+La revisión incorpora tecnología recuperable. Cada gota generada fuera del tramo de monedas tiene un 4 % de probabilidad de ser una caja del bioma. En el Ascenso hay un 65 % de probabilidad de que caiga una caja hidro-plasma. `ObjetoEspecial.aplicarEfecto()` delega en `Personaje.atrapar()`, que equipa el arma. `JefeOvni.disparar()` delega la creación del proyectil al arma activa, y cada `ChorroAgua` conserva la que lo originó.
+
+`JefeOvni.recibirDanio()` cambia la fase al 70 % y al 30 % de vida. La fase normal lanza ácido; la furiosa cambia la trayectoria y acelera los ataques. En la tercera, dos drones sostienen un escudo que bloquea los impactos y permite recuperar una vida por segundo hasta la mitad del máximo. Al eliminar ambos, se interrumpe la curación y vuelve a ser vulnerable. El agua básica también derrota a los drones.
+
+El escudo del jugador dura ocho segundos o hasta absorber un impacto, y el botiquín recupera una vida sin superar el máximo de la dificultad. Café y fruta aumentan velocidad, el termo elimina y bloquea los efectos de frío, y las bonificaciones de puntos y monedas actúan al recoger los objetos correspondientes.
 
 ## GM-4. Clase abstracta e interfaz
 
@@ -87,7 +97,14 @@ Una línea con triángulo continuo indica herencia; con triángulo discontinuo, 
 - **Ventaja:** el cambio funciona en ambas direcciones sin reconstruir la partida, perder progreso ni volver al menú. `ReglasJuegoTest` verifica la dirección del movimiento después del cambio, conservando identidad, puntos y agua.
 - **Utilidad y límite:** la elección se hace en la pantalla, y el personaje usa la interfaz sin saber si la entrada viene de teclas o de coordenadas táctiles. Así se evita un condicional de dispositivos en el movimiento del jugador. El versus mantiene sus dos controles de teclado y no ofrece esta alternancia.
 
-**Evidencia:** [evento T](../core/src/main/java/puppy/code/GameLluvia.java#L168), [botón del HUD](../core/src/main/java/puppy/code/GameLluvia.java#L404), [cambio de instancia](../core/src/main/java/puppy/code/GameLluvia.java#L54) y [setter](../core/src/main/java/puppy/code/Personaje.java#L32).
+**Cambio automático durante la partida**
+
+1. `Partida.actualizar()` llama a `actualizarMovimientoTerreno()` al cambiar de nivel, entrar o salir del tramo de monedas, iniciar el Ascenso o pasar al jefe. El desafío oculto también lo llama al inicializar el combate.
+2. `Partida.actualizarMovimientoTerreno()` elige `HIELO`, `ATACAMA`, `ESPACIO` o `NORMAL` y llama a `personaje.setMovimientoTerreno(terreno)`. La llanura, el tramo de monedas y el Ascenso usan `NORMAL`. El setter reinicia la inercia al cambiar la estrategia.
+3. `Personaje.actualizar(float, boolean)` pide el movimiento al teclado o al control táctil. Luego `MovimientoTerreno.calcular()` transforma ese desplazamiento. El hielo conserva parte de la velocidad anterior, Atacama añade viento lateral y el espacio aumenta un 20 % la distancia solicitada. Los efectos que inmovilizan al jugador siguen bloqueando el desplazamiento.
+4. `GameLluvia.alternarControlEnPartida()` llama por separado a `Personaje.setControlMovimiento()` y muestra durante dos segundos el modo activo en el HUD. Así el cambio de entrada conserva el terreno y el cambio de terreno conserva la entrada. En Versus cada jugador conserva su teclado y recibe el terreno de su propia partida.
+
+**Evidencia:** [Partida.java](../core/src/main/java/puppy/code/Partida.java), [Personaje.java](../core/src/main/java/puppy/code/Personaje.java), [MovimientoTerreno.java](../core/src/main/java/puppy/code/MovimientoTerreno.java), [GameLluvia.java](../core/src/main/java/puppy/code/GameLluvia.java) y [CampanaTest.java](../core/src/test/java/puppy/code/CampanaTest.java).
 
 ![UML de Strategy](uml/03-strategy.png)
 
@@ -95,7 +112,7 @@ Una línea con triángulo continuo indica herencia; con triángulo discontinuo, 
 
 - **Problema:** mover, descartar y resolver cada gota requiere un orden común. Antes solo cambiaba el efecto final, por lo que la clase base también imponía la caída y la misma área de contacto.
 - **Solución y aplicación:** `Gota.actualizar(float, Personaje)` es final. Si la gota sigue activa, llama a `calcularMovimiento(float)`, descarta las que salen por abajo, llama a `verificarColision(Personaje)` y, si toca al jugador, llama a `aplicarEfecto(Personaje)` y la marca terminada. `Lluvia.mover()` ejecuta ese ciclo y retira las gotas terminadas.
-- **Ventaja:** las tres operaciones son primitivas que cada hija implementa. El agua cae a velocidad normal, usa toda su área y suma agua. El ácido cae un 15 % más rápido, aplica un margen de cuatro unidades al contacto y conserva su penalización de ácido. `ObjetoEspecial` usa la caída normal, un margen de dos unidades y el efecto de su tipo. La regla de retirar y aplicar una sola vez sigue en la clase base.
+- **Ventaja:** las tres operaciones son primitivas que cada hija implementa. El agua cae a velocidad normal, usa toda su área y suma agua. El ácido cae un 15 % más rápido, aplica un margen de cuatro unidades al contacto y conserva su penalización de ácido. `ObjetoEspecial` cae al 90 % si es positivo o al 105 % si es perjudicial, usa un margen de dos unidades y aplica el efecto de su tipo. La regla de retirar y aplicar una sola vez sigue en la clase base.
 - **Utilidad y límite:** la lista de lluvia no necesita un `switch` de colisión por subclase, y una hija no puede saltarse el descarte. El audio sigue en `GameLluvia`, que detecta cambios en vidas, puntos y monedas; así las reglas pueden probarse sin un sistema de audio.
 
 **Evidencia:** [ciclo fijo de Gota](../core/src/main/java/puppy/code/Gota.java#L16), [recorrido de Lluvia](../core/src/main/java/puppy/code/Lluvia.java#L29) y [variación de ácido](../core/src/main/java/puppy/code/GotaMala.java).

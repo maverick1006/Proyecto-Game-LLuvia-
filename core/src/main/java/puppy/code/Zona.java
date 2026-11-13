@@ -6,6 +6,14 @@ public enum Zona {
     Zona(String nombre) { this.nombre = nombre; }
     public String getNombre() { return nombre; }
     public static Zona delNivel(int nivel) { return nivel <= 10 ? LLANURA : nivel <= 20 ? HIELO : DESIERTO; }
+    public TipoObjeto arma() {
+        switch (this) {
+            case LLANURA: return TipoObjeto.ARMA_LLANURA;
+            case HIELO: return TipoObjeto.ARMA_HIELO;
+            case DESIERTO: return TipoObjeto.ARMA_SOLAR;
+            default: return TipoObjeto.ARMA_PLASMA;
+        }
+    }
     public TipoObjeto[] peligros() {
         switch (this) {
             case LLANURA: return new TipoObjeto[]{TipoObjeto.SANGRE, TipoObjeto.VENENO, TipoObjeto.ACIDO, TipoObjeto.PAJARO};
@@ -16,9 +24,9 @@ public enum Zona {
     }
     public TipoObjeto[] mejoras() {
         switch (this) {
-            case HIELO: return new TipoObjeto[]{TipoObjeto.CAFE, TipoObjeto.TERMO, TipoObjeto.AGUA_DOBLE, TipoObjeto.PUNTOS_DOBLES};
-            case DESIERTO: return new TipoObjeto[]{TipoObjeto.OASIS, TipoObjeto.FRUTA, TipoObjeto.AGUA_DOBLE, TipoObjeto.MONEDAS_DOBLES};
-            default: return new TipoObjeto[]{TipoObjeto.AGUA_DOBLE, TipoObjeto.PUNTOS_DOBLES, TipoObjeto.MONEDAS_DOBLES};
+            case HIELO: return new TipoObjeto[]{TipoObjeto.ESCUDO, TipoObjeto.CAFE, TipoObjeto.TERMO, TipoObjeto.AGUA_DOBLE, TipoObjeto.PUNTOS_DOBLES};
+            case DESIERTO: return new TipoObjeto[]{TipoObjeto.BOTIQUIN, TipoObjeto.OASIS, TipoObjeto.FRUTA, TipoObjeto.AGUA_DOBLE, TipoObjeto.MONEDAS_DOBLES};
+            default: return new TipoObjeto[]{TipoObjeto.ESCUDO, TipoObjeto.AGUA_DOBLE, TipoObjeto.PUNTOS_DOBLES, TipoObjeto.MONEDAS_DOBLES};
         }
     }
 }

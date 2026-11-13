@@ -12,7 +12,7 @@ public abstract class Gota {
         this.velocidad = velocidad;
     }
 
-    // El orden es el mismo, aunque cada gota se mueva y choque distinto.
+    // Cada tipo decide cómo cae y qué pasa al tocar al jugador.
     public final void actualizar(float delta, Personaje personaje) {
         if (terminada) return;
         calcularMovimiento(delta);

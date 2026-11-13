@@ -114,4 +114,23 @@ VistaJuego *-- DibujoPersonaje
 VistaJuego ..> DibujoEscenario
 VistaJuego ..> DibujoObjetos
 DibujoPersonaje ..> Aspecto
+
+enum ArmaBioma {
+ AGUA
+ PULSO
+ LANZA_HIELO
+ RAYO_SOLAR
+ HIDRO_PLASMA
+}
+class SubordinadoOvni
+enum "JefeOvni.Fase" as FaseOvni {
+ NORMAL
+ FURIOSA
+ SUBORDINADOS
+}
+JefeOvni --> FaseOvni : delega ataque y trayectoria
+JefeOvni *-- "0..2" SubordinadoOvni
+ChorroAgua --> ArmaBioma : efecto de impacto
+Personaje --> ArmaBioma : arma equipada
+VistaJuego ..> SubordinadoOvni
 @enduml

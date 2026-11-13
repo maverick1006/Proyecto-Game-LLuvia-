@@ -28,6 +28,7 @@ class Partida {
 class Personaje {
 - control : ControlMovimiento
 + setControlMovimiento(control : ControlMovimiento) : void
++ setMovimientoTerreno(terreno : MovimientoTerreno) : void
 + actualizar(delta : float, necesitaAgua : boolean) : void
 }
 interface ControlMovimiento {
@@ -43,4 +44,13 @@ ControlMovimiento <|.. ControlTeclado
 ControlMovimiento <|.. ControlTactil
 GameLluvia ..> ControlTeclado : crea
 GameLluvia ..> ControlTactil : crea
+enum MovimientoTerreno {
+  NORMAL
+  HIELO
+  ATACAMA
+  ESPACIO
+  ~ calcular(pedido : float, anterior : float, delta : float) : float
+}
+Personaje --> MovimientoTerreno : aplica desplazamiento
+Partida ..> MovimientoTerreno : selecciona segun zona o fase
 @enduml

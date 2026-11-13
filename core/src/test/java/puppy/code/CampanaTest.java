@@ -45,6 +45,51 @@ public class CampanaTest {
         p.recogerAgua(10); assertEquals(680, p.getVelocidad(), 0);
         assertEquals(1, p.getAgua());
     }
+    @Test public void terrenoCambiaEnLaMismaPartidaYSinReemplazarLaEntrada() {
+        boolean[] pulsado = {true};
+        Partida juego = new Partida((p, dt) -> {
+            if (pulsado[0]) p.mover(100 * dt);
+        }, Dificultad.NOOB, 12, 960);
+        Personaje p = juego.getPersonaje();
+        p.recogerAgua(1000);
+        juego.actualizar(0.01f);
+        for (int i = 0; i < 32 && juego.esSecreto(); i++) {
+            juego.getLluvia().limpiar();
+            juego.actualizar(0.25f);
+        }
+        assertEquals(MovimientoTerreno.HIELO, p.getMovimientoTerreno());
+        p.colocar(400);
+        juego.actualizar(0.1f);
+        float anterior = p.getX();
+        pulsado[0] = false;
+        juego.actualizar(0.1f);
+        assertTrue(p.getX() > anterior);
+
+        p.quitarPuntos(10);
+        juego.actualizar(0.01f);
+        assertEquals(MovimientoTerreno.NORMAL, p.getMovimientoTerreno());
+        anterior = p.getX();
+        juego.actualizar(0.1f);
+        assertEquals(anterior, p.getX(), 0);
+
+        p.recogerAgua(1010);
+        juego.actualizar(0.01f);
+        for (int i = 0; i < 32 && juego.esSecreto(); i++) {
+            juego.getLluvia().limpiar();
+            juego.actualizar(0.25f);
+        }
+        assertEquals(MovimientoTerreno.ATACAMA, p.getMovimientoTerreno());
+        anterior = p.getX();
+        juego.actualizar(0.1f);
+        assertTrue(p.getX() > anterior);
+
+        p.recogerAgua(1000);
+        juego.actualizar(0.01f);
+        assertEquals(MovimientoTerreno.NORMAL, p.getMovimientoTerreno());
+        juego.actualizar(3);
+        assertEquals(MovimientoTerreno.ESPACIO, p.getMovimientoTerreno());
+        assertSame(p, juego.getPersonaje());
+    }
     @Test public void zonasTienenLimitesExactos() {
         assertEquals(Zona.LLANURA, Zona.delNivel(1)); assertEquals(Zona.LLANURA, Zona.delNivel(10));
         assertEquals(Zona.HIELO, Zona.delNivel(11)); assertEquals(Zona.HIELO, Zona.delNivel(20));
@@ -89,19 +134,76 @@ public class CampanaTest {
         Personaje p = partida().getPersonaje(); JefeOvni jefe = new JefeOvni(Dificultad.HACKER, 960, 1);
         Lluvia lluvia = new Lluvia(); jefe.actualizar(1.3f, p, lluvia);
         assertTrue(lluvia.getGotas().stream().anyMatch(g -> g instanceof GotaBuena));
-        assertTrue(lluvia.getGotas().stream().anyMatch(g -> g instanceof ObjetoEspecial));
+        assertTrue(lluvia.getGotas().stream().anyMatch(g -> g instanceof GotaMala));
     }
     @Test public void jefeSePuedeVencerConChorrosRealesYBolsaSeEntregaUnaVez() {
         Partida juego = partida(); juego.getPersonaje().recogerAgua(3000); juego.actualizar(0.01f); juego.actualizar(3);
         for (int i = 0; i < 20000 && !juego.terminada(); i++) {
             JefeOvni jefe = juego.getJefe();
-            juego.getPersonaje().colocar(jefe.getX() + 40);
+            float objetivo = jefe.tieneEscudo() ? jefe.getSubordinados().get(0).getX() : jefe.getX() + 32;
+            juego.getPersonaje().colocar(objetivo);
             juego.disparar(); juego.actualizar(0.01f); juego.getLluvia().limpiar();
         }
         assertTrue(juego.gano()); assertEquals(250, juego.getPremio());
         int monedas = juego.getMonedasFinales(); juego.actualizar(100);
         assertEquals(monedas, juego.getMonedasFinales());
     }
+    @Test public void jefeSeCuraConDronesYVuelveAVulnerarseAlEliminarlos() {
+        Partida juego = partida();
+        JefeOvni jefe = new JefeOvni(Dificultad.NOOB, 960, 1);
+        Personaje p = juego.getPersonaje();
+        assertTrue(jefe.recibirDanio(8));
+        assertEquals(JefeOvni.Fase.FURIOSA, jefe.getFase());
+        assertTrue(jefe.recibirDanio(10));
+        assertEquals(JefeOvni.Fase.SUBORDINADOS, jefe.getFase());
+        assertEquals(2, jefe.getSubordinados().size());
+        assertFalse(jefe.recibirDanio(100));
+        jefe.actualizar(1, p, juego.getLluvia());
+        assertEquals(7, jefe.getVida());
+        assertTrue(juego.getLluvia().getGotas().stream().anyMatch(g -> g instanceof GotaMala));
+        p.atrapar(TipoObjeto.ARMA_SOLAR);
+        p.cargarAgua(60);
+        for (int i = 0; i < 2500 && jefe.tieneEscudo(); i++) {
+            p.colocar(jefe.getSubordinados().get(0).getX());
+            jefe.disparar(p);
+            jefe.actualizar(0.02f, p, juego.getLluvia());
+            juego.getLluvia().limpiar();
+        }
+        assertFalse(jefe.tieneEscudo());
+        int vida = jefe.getVida();
+        jefe.actualizar(1, p, juego.getLluvia());
+        assertTrue(jefe.getVida() <= vida);
+        assertTrue(jefe.recibirDanio(100));
+        assertTrue(jefe.derrotado());
+    }
+
+    @Test public void recogeTecnologiaYDisparaTresChorrosConUnaCarga() {
+        Personaje p = partida().getPersonaje();
+        Gota caja = new ObjetoEspecial(p.getX(), p.getY(), 200, TipoObjeto.ARMA_PLASMA);
+        caja.actualizar(0.01f, p);
+        assertEquals(ArmaBioma.HIDRO_PLASMA, p.getArma());
+        JefeOvni jefe = new JefeOvni(Dificultad.NOOB, 960, 1);
+        p.cargarAgua(1);
+        assertTrue(jefe.disparar(p));
+        assertEquals(0, p.getAgua());
+        assertEquals(3, jefe.getChorros().size());
+    }
+
+    @Test public void escudoAbsorbeAcidoYBotiquinRespetaElMaximo() {
+        Personaje p = partida().getPersonaje();
+        p.sumarPuntos(100);
+        p.atrapar(TipoObjeto.ESCUDO);
+        p.atrapar(TipoObjeto.ACIDO);
+        assertEquals(5, p.getVidas());
+        assertEquals(100, p.getPuntos());
+        assertFalse(p.activo(TipoObjeto.ESCUDO));
+        p.atrapar(TipoObjeto.ACIDO);
+        assertEquals(4, p.getVidas());
+        p.atrapar(TipoObjeto.BOTIQUIN);
+        p.atrapar(TipoObjeto.BOTIQUIN);
+        assertEquals(5, p.getVidas());
+    }
+
     @Test public void versusTieneMundosSeparadosYLluviaInicialIgual() {
         PartidaVersus versus = new PartidaVersus((p, dt) -> p.mover(-5000), (p, dt) -> p.mover(5000), Dificultad.PRO, 77);
         versus.actualizar(0.5f);

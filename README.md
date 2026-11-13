@@ -5,11 +5,32 @@ Proyecto de Programación Avanzada desarrollado en **Java y LibGDX**, a partir d
 **Integrantes:** Matías Santelices S., Rodrigo Escudero y Ariel Fuenzalida.
 **Entrega:** 23 de octubre de 2026.
 
-![Luma presenta la misión en el prólogo](docs/capturas/27-prologo-luma.png)
+
 
 ![Menú de GameLluvia](docs/capturas/01-menu.png)
 
 Un OVNI contaminó la lluvia sobre Chile. El guardián recoge agua limpia en la llanura, atraviesa el hielo del sur y busca un oasis en Atacama. Cuando la nave lo atrapa con su rayo, usa el agua acumulada para disparar en órbita. Antes de empezar la campaña, Luma presenta la misión en tres diálogos. Usa **Enter** o **Continuar** para avanzar, **Saltar historia** para jugar de inmediato o **Esc** para volver a dificultad. La lluvia no empieza hasta entrar a la partida.
+
+![Prólogo de Luma con la interfaz actualizada](docs/capturas/27-prologo-luma.png)
+
+Luma explica que la nave nodriza del Jefe OVNI está contaminando la lluvia. En los sprites originales, `bucket.png` representa el recolector del protagonista, `drop.png` el agua pura y `dropBad.png` la lluvia tóxica. Esos archivos se conservan como referencia del juego base. En la partida, `Personaje` recoge el agua de `GotaBuena` y esquiva el ácido de `GotaMala`. La misión pasa de la llanura al hielo del sur y al oasis de Atacama. Al completar la campaña, el rayo de la nave inicia el Ascenso. En el espacio, cada carga de agua alimenta un `ChorroAgua` con el que podemos derribar al Jefe OVNI. El aspecto Alien es un recuerdo del encuentro secreto y se desbloquea al vencer al OVNI de ese desafío.
+
+### Armas y combate final
+
+| Tramo | Tecnología | Efecto |
+| --- | --- | --- |
+| Llanura | Pulso de llanura | 2 puntos de daño por impacto |
+| Hielo | Lanza de hielo | 2 puntos y ralentiza al OVNI |
+| Atacama | Rayo solar | 3 puntos y dos pulsos de daño posterior contra la nave |
+| Ascenso | Cañón hidro-plasma | Tres chorros por carga, con menor espera entre disparos |
+
+Las cajas terrestres tienen un 4 % de probabilidad por aparición normal. En el Ascenso hay un 65 % de probabilidad de que aparezca la caja de hidro-plasma. Atrapar una caja equipa el arma y el HUD indica su nombre. Todas consumen una carga de agua por disparo. El tramo secreto conserva solo monedas.
+
+La nave pasa de normal a furiosa al 70 % de vida y despliega dos drones al 30 %. Mientras quede un dron, el escudo bloquea disparos contra la nave y esta recupera vida hasta la mitad. Derriba primero los drones y luego termina el combate. Puedes vencer con el chorro básico. El escudo del jugador absorbe un golpe y el botiquín recupera una vida hasta el máximo de tu dificultad.
+
+Los textos LaTeX de esta revisión están en [docs/prism](docs/prism). Los PDF de la raíz corresponden a la revisión anterior.
+
+Durante la partida individual, **T** o el botón de control del HUD alternan entre teclado y táctil. El hielo añade inercia, Atacama empuja con el viento y en el espacio el movimiento responde con más amplitud. El tramo de monedas usa movimiento normal.
 
 El menú muestra los tres sprites del juego original: el tarro, el agua limpia y la gota contaminada. El desafío oculto desbloquea el aspecto Alien sin alterar el progreso de la campaña.
 

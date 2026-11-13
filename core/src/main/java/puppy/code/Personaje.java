@@ -8,8 +8,13 @@ public class Personaje {
     public static final float ANCHO = 48;
     private final Rectangle area = new Rectangle(456, 42, ANCHO, 68);
     private ControlMovimiento control;
+    private MovimientoTerreno terreno = MovimientoTerreno.NORMAL;
+    private float movimientoPedido, velocidadTerreno;
+    private boolean leyendoControl;
     private final EnumMap<TipoObjeto, Float> efectos = new EnumMap<>(TipoObjeto.class);
-    private int vidas = 3;
+    private final int vidasMaximas;
+    private int vidas;
+    private ArmaBioma arma = ArmaBioma.AGUA;
     private int puntos;
     private int monedas;
     private float invulnerabilidad;
@@ -24,6 +29,7 @@ public class Personaje {
     public Personaje(ControlMovimiento control, float anchoMundo) { this(control, anchoMundo, 3); }
     public Personaje(ControlMovimiento control, float anchoMundo, int vidas) {
         this.vidas = vidas;
+        vidasMaximas = vidas;
         setControlMovimiento(control);
         this.anchoMundo = anchoMundo;
         area.x = (anchoMundo - ANCHO) / 2;
@@ -32,6 +38,14 @@ public class Personaje {
     public void setControlMovimiento(ControlMovimiento control) {
         this.control = java.util.Objects.requireNonNull(control, "control");
     }
+
+    public void setMovimientoTerreno(MovimientoTerreno terreno) {
+        if (this.terreno == terreno) return;
+        this.terreno = terreno;
+        velocidadTerreno = 0;
+    }
+
+    public MovimientoTerreno getMovimientoTerreno() { return terreno; }
 
     public void actualizar(float delta) {
         actualizar(delta, true);
@@ -42,7 +56,18 @@ public class Personaje {
         tiempoAviso = Math.max(0, tiempoAviso - delta);
         efectos.replaceAll((tipo, tiempo) -> Math.max(0, tiempo - delta));
         float anterior = area.x;
-        if (vidas > 0) control.actualizar(this, delta);
+        if (vidas > 0 && delta > 0) {
+            movimientoPedido = 0;
+            leyendoControl = true;
+            try {
+                control.actualizar(this, delta);
+            } finally {
+                leyendoControl = false;
+            }
+            float distancia = terreno.calcular(movimientoPedido, velocidadTerreno * delta, delta);
+            mover(distancia);
+            velocidadTerreno = (area.x - anterior) / delta;
+        }
         desplazamiento = area.x - anterior;
     }
 
@@ -53,7 +78,9 @@ public class Personaje {
                 * (activo(TipoObjeto.VENENO) || activo(TipoObjeto.NIEVE) ? 0.5f : 1);
     }
     public void mover(float distancia) {
-        if (!activo(TipoObjeto.PAJARO) && !activo(TipoObjeto.HIELO)) colocar(area.x + distancia);
+        if (activo(TipoObjeto.PAJARO) || activo(TipoObjeto.HIELO)) return;
+        if (leyendoControl) movimientoPedido += distancia;
+        else colocar(area.x + distancia);
     }
     public void moverHacia(float destino, float delta) {
         mover(MathUtils.clamp(destino - area.x, -getVelocidad() * delta, getVelocidad() * delta));
@@ -72,6 +99,12 @@ public class Personaje {
     public float getSinAgua() { return sinAgua; }
     public boolean recibirDanio() {
         if (vidas == 0 || invulnerabilidad > 0) return false;
+        if (activo(TipoObjeto.ESCUDO)) {
+            efectos.remove(TipoObjeto.ESCUDO);
+            aviso = "El escudo absorbio el golpe";
+            tiempoAviso = 2.5f;
+            return false;
+        }
         vidas--;
         invulnerabilidad = 1.2f;
         return true;
@@ -82,6 +115,11 @@ public class Personaje {
     public void atrapar(TipoObjeto tipo) {
         if (vidas == 0) return;
         switch (tipo) {
+            case ARMA_LLANURA: equiparArma(ArmaBioma.PULSO); break;
+            case ARMA_HIELO: equiparArma(ArmaBioma.LANZA_HIELO); break;
+            case ARMA_SOLAR: equiparArma(ArmaBioma.RAYO_SOLAR); break;
+            case ARMA_PLASMA: equiparArma(ArmaBioma.HIDRO_PLASMA); break;
+            case BOTIQUIN: vidas = Math.min(vidasMaximas, vidas + 1); break;
             case AGUA_DOBLE: recogerAgua(20); break;
             case OASIS: recogerAgua(30); break;
             case SANGRE: quitarPuntos(20); break;
@@ -120,6 +158,9 @@ public class Personaje {
         }
         if (tipo != TipoObjeto.MONEDA) { aviso = tipo.getDescripcion(); tiempoAviso = 2.5f; }
     }
+    public void equiparArma(ArmaBioma arma) { this.arma = java.util.Objects.requireNonNull(arma); }
+    public ArmaBioma getArma() { return arma; }
+    void colocarAltura(float y) { area.y = y; }
     public boolean activo(TipoObjeto tipo) { return efectos.getOrDefault(tipo, 0f) > 0; }
     public float tiempoRestante(TipoObjeto tipo) { return efectos.getOrDefault(tipo, 0f); }
     public String getAviso() { return tiempoAviso > 0 ? aviso : ""; }
