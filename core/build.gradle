@@ -3,5 +3,4 @@ java { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaV
 tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
 dependencies {
     api "com.badlogicgames.gdx:gdx:$gdxVersion"
-    testImplementation 'junit:junit:4.13.2'
 }

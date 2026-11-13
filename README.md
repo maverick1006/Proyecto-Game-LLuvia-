@@ -25,7 +25,7 @@ Si falta la tarea o hay errores de dependencias, usa **clic derecho en el proyec
 
 ### Revisar el código en Eclipse
 
-En **Project Explorer**, abre **core > src/main/java > puppy.code**. Ahí están las reglas del juego. **lwjgl3** contiene el lanzador de escritorio y **core > src/test/java > puppy.code** contiene las pruebas JUnit.
+En **Project Explorer**, abre **core > src/main/java > puppy.code**. Ahí están las reglas del juego. **lwjgl3** contiene el lanzador de escritorio.
 
 | Qué revisar | Dónde empezar |
 | --- | --- |
@@ -47,7 +47,7 @@ Abre PowerShell en la carpeta que contiene `gradlew.bat`. Comprueba que `java -v
 .\gradlew.bat -Pandroid=false :lwjgl3:run
 ```
 
-Para ejecutar las pruebas, usa `.\gradlew.bat -Pandroid=false :core:test`. En Linux o macOS, usa `./gradlew` con las mismas opciones.
+En Linux o macOS, usa `./gradlew` con las mismas opciones.
 
 ### Android Studio
 
