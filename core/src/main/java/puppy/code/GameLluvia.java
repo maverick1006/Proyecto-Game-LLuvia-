@@ -189,10 +189,7 @@ public class GameLluvia extends ApplicationAdapter {
         }
     }
     private void disparar(Partida juego) {
-        if (!juego.enJefe()) return;
-        int antes = juego.getJefe().getDisparos();
-        juego.disparar();
-        if (juego.getJefe().getDisparos() > antes && configuracion.tieneSonido()) sonidoChorro.play(0.4f);
+        if (juego.disparar() && configuracion.tieneSonido()) sonidoChorro.play(0.4f);
     }
     @Override public void render() {
         float delta = Math.min(Gdx.graphics.getDeltaTime(), 0.05f);
@@ -300,7 +297,7 @@ public class GameLluvia extends ApplicationAdapter {
         vista.panel(48, 150, 864, 350, "0C192C");
         vista.panel(70, 179, 245, 286, "16273C");
         vista.centrar("LUMA", 70, 245, 439, 1.2f, "67DCCE");
-        vista.personaje(Aspecto.EXPLORADOR, 146, 252, 6, reloj, false, false);
+        vista.personaje(Aspecto.LUMA, 146, 252, 6, reloj, false, false);
         vista.texto(escena[0], 344, 437, 1.55f, "67DCCE");
         for (int i = 1; i < escena.length; i++) {
             vista.textoAcotado(escena[i], 344, 385 - (i - 1) * 42, 536, 1.13f, "E4EDF5");
@@ -387,7 +384,7 @@ public class GameLluvia extends ApplicationAdapter {
             vista.textoAcotado(tipo.getDescripcion(), 310, y, 600, 0.95f, "E4EDF5");
             i++;
         }
-        vista.texto("Jefe: espacio o clic para disparar. Versus: J1 A/D y W; J2 izquierda/derecha y arriba.", 32, 72, 0.95f, "E4EDF5");
+        vista.texto("Espacio o clic: dispara a patrullas y al jefe. Versus: J1 A/D y W; J2 izquierda/derecha y arriba.", 32, 72, 0.95f, "E4EDF5");
         if (vista.boton("VOLVER", 32, 20, 170, 36, false)) cambiarEstado(Estado.MENU);
     }
     private void dibujarPartida() {
@@ -422,15 +419,16 @@ public class GameLluvia extends ApplicationAdapter {
             vista.centrar("Recupera el hidro-plasma si aparece", 0, ancho, 342, 0.95f, "102334");
             vista.centrar("EL OVNI TE ATRAPÓ. USA EL AGUA RECOLECTADA", 0, ancho, 370, mini ? 1 : 1.5f, "102334");
         }
+        SubordinadoOvni patrulla = juego.getPatrulla();
+        if (patrulla != null) vista.dron(patrulla.getX(), patrulla.getY(), patrulla.getAtaque());
+        for (ChorroAgua chorro : juego.getChorros()) {
+            float anchoChorro = chorro.esCargado() ? 14 : 10;
+            vista.panel(chorro.getX(), chorro.getY(), anchoChorro, 24, chorro.getArma().getColor());
+        }
         if (juego.enJefe()) {
             JefeOvni jefe = juego.getJefe();
             vista.ovni(jefe.getX(), jefe.getY(), reloj);
-            for (SubordinadoOvni dron : jefe.getSubordinados()) vista.dron(dron.getX(), dron.getY());
-            for (ChorroAgua chorro : jefe.getChorros()) {
-                vista.panel(chorro.getX(), chorro.getY(), 10, 24, chorro.getArma().getColor());
-                if (chorro.esCargado()) vista.panel(chorro.getX() - 2, chorro.getY(), 14, 24, chorro.getArma().getColor());
-                vista.panel(chorro.getX() + 3, chorro.getY() + 4, 3, 18, "E6FAFF");
-            }
+            for (SubordinadoOvni dron : jefe.getSubordinados()) vista.dron(dron.getX(), dron.getY(), dron.getAtaque());
             vista.panel(20, 493, ancho - 40, 12, "34415E");
             vista.panel(20, 493, (ancho - 40) * jefe.getVida() / jefe.getVidaMaxima(), 12, "C779BE");
             String fase = jefe.tieneEscudo() ? "ESCUDO / DRONES " + jefe.getSubordinados().size()
@@ -480,7 +478,7 @@ public class GameLluvia extends ApplicationAdapter {
             fila++;
         }
         String consejo = mini ? (etiqueta.equals("J1") ? "A/D: mover | W: disparar" : "Flechas: mover | Arriba: disparar")
-                : juego.enJefe() ? "Espacio o clic: dispara | Carga llena: próximo disparo especial"
+                : (juego.enJefe() || patrulla != null) ? "Espacio o clic: dispara | Carga llena: próximo disparo especial"
                 : tactil ? "Manten pulsado para moverte | Recoge agua antes de 4 segundos"
                 : "A/D o flechas: mover | Recoge agua antes de 4 segundos";
         int xPie = mini && etiqueta.equals("J2") ? 60 : 16;

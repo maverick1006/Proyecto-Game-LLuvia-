@@ -5,10 +5,17 @@ import com.badlogic.gdx.math.Rectangle;
 public class SubordinadoOvni {
     private final Rectangle area;
     private final float centro, direccion;
-    private int vida = 8;
+    private final TipoObjeto ataque;
+    private int vida;
     private float reloj, espera = 1;
 
     SubordinadoOvni(float ancho, boolean izquierdo) {
+        this(ancho, izquierdo, TipoObjeto.ACIDO, 8);
+    }
+
+    SubordinadoOvni(float ancho, boolean izquierdo, TipoObjeto ataque, int vida) {
+        this.ataque = ataque;
+        this.vida = vida;
         centro = ancho * (izquierdo ? 0.27f : 0.73f);
         direccion = izquierdo ? 1 : -1;
         area = new Rectangle(centro - 24, 410, 48, 24);
@@ -21,7 +28,7 @@ public class SubordinadoOvni {
         espera -= delta;
         if (espera <= 0) {
             espera += 1.65f;
-            lluvia.lanzar(new GotaMala(area.x + 10, area.y - 38, 265, TipoObjeto.ACIDO));
+            lluvia.lanzar(new GotaMala(area.x + 10, area.y - 38, 265, ataque));
         }
     }
 
@@ -32,6 +39,7 @@ public class SubordinadoOvni {
     }
 
     boolean derrotado() { return vida <= 0; }
+    public TipoObjeto getAtaque() { return ataque; }
     public float getX() { return area.x; }
     public float getY() { return area.y; }
 }

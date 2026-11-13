@@ -1,5 +1,9 @@
 package puppy.code;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class Partida {
     public static final int TOTAL_NIVELES = 30;
     public static final int PUNTOS_POR_NIVEL = 100;
@@ -17,6 +21,10 @@ public class Partida {
     private float tiempoSecreto, avisoNivel = 2, tiempoAscenso;
     private Fase fase = Fase.CAMPANA;
     private JefeOvni jefe;
+    private final List<ChorroAgua> chorros = new ArrayList<>();
+    private SubordinadoOvni patrulla;
+    private Zona zonaPatrulla;
+    private float esperaPatrulla = 6, esperaDisparo;
     private boolean desafioOculto;
     public Partida(ControlMovimiento control, Dificultad dificultad) { this(control, dificultad, System.nanoTime(), 960); }
     public Partida(ControlMovimiento control, Dificultad dificultad, long semilla, float ancho) {
@@ -36,16 +44,20 @@ public class Partida {
     public boolean esDesafioOculto() { return desafioOculto; }
     public void actualizar(float delta) {
         if (terminada()) return;
+        esperaDisparo = Math.max(0, esperaDisparo - delta);
         avisoNivel = Math.max(0, avisoNivel - delta);
         if (fase == Fase.ASCENSO) {
             tiempoAscenso += delta;
             personaje.actualizar(delta, false);
             personaje.colocarAltura(42 + getAscenso() * 290);
+            actualizarPatrulla(delta, Zona.ESPACIO);
             lluvia.mover(delta, personaje);
             if (tiempoAscenso >= 3) {
                 personaje.colocarAltura(42);
                 lluvia.limpiar();
                 fase = Fase.JEFE;
+                patrulla = null;
+                chorros.clear();
                 jefe = new JefeOvni(dificultad, ancho, semilla);
                 actualizarMovimientoTerreno();
             }
@@ -60,6 +72,7 @@ public class Partida {
             return;
         }
         boolean secreto = esSecreto();
+        if (!secreto) actualizarPatrulla(delta, getZona());
         lluvia.actualizar(delta, personaje, nivel, secreto, getZona());
         if (personaje.getVidas() == 0) { fase = Fase.DERROTA; return; }
         if (secreto) {
@@ -70,6 +83,9 @@ public class Partida {
         if (personaje.getPuntos() >= TOTAL_NIVELES * PUNTOS_POR_NIVEL) {
             numeroNivel = TOTAL_NIVELES; maximoNivel = TOTAL_NIVELES;
             fase = Fase.ASCENSO;
+            patrulla = new SubordinadoOvni(ancho, true, TipoObjeto.ACIDO, 4);
+            zonaPatrulla = Zona.ESPACIO;
+            chorros.clear();
             lluvia.limpiar();
             java.util.Random suerte = new java.util.Random(semilla ^ 0xA5CE50L);
             if (suerte.nextFloat() < 0.65f) {
@@ -85,6 +101,10 @@ public class Partida {
             nivel = dificultad.crearNivel(numeroNivel); lluvia.limpiar(); avisoNivel = 2;
             int hito = numeroNivel / 5;
             if (hito > ultimoSecreto) { ultimoSecreto = hito; tiempoSecreto = DURACION_SECRETO; }
+            if (esSecreto()) {
+                patrulla = null;
+                chorros.clear();
+            }
             actualizarMovimientoTerreno();
         }
     }
@@ -98,7 +118,50 @@ public class Partida {
         personaje.setMovimientoTerreno(terreno);
     }
 
-    public void disparar() { if (fase == Fase.JEFE) jefe.disparar(personaje); }
+    private void actualizarPatrulla(float delta, Zona zona) {
+        if (zonaPatrulla != zona) {
+            zonaPatrulla = zona;
+            patrulla = null;
+            chorros.clear();
+            esperaPatrulla = 6;
+        }
+        if (patrulla == null) {
+            esperaPatrulla -= delta;
+            if (esperaPatrulla <= 0) {
+                TipoObjeto ataque = zona == Zona.HIELO ? TipoObjeto.NIEVE
+                        : zona == Zona.DESIERTO ? TipoObjeto.FUEGO : TipoObjeto.ACIDO;
+                patrulla = new SubordinadoOvni(ancho, numeroNivel % 2 == 1, ataque, 4);
+                esperaPatrulla = 10;
+            }
+        }
+        if (patrulla != null) patrulla.actualizar(delta, ancho, lluvia);
+        for (int i = chorros.size() - 1; i >= 0; i--) {
+            ChorroAgua chorro = chorros.get(i);
+            chorro.actualizar(delta);
+            if (patrulla != null && patrulla.recibir(chorro)) {
+                chorros.remove(i);
+                if (patrulla.derrotado()) {
+                    patrulla = null;
+                    personaje.avisar("Patrulla derribada");
+                }
+            } else if (chorro.fuera()) chorros.remove(i);
+        }
+    }
+
+    public boolean disparar() {
+        if (terminada() || esSecreto()) return false;
+        if (enJefe()) return jefe.disparar(personaje);
+        if (patrulla == null || esperaDisparo > 0 || !personaje.gastarAgua()) return false;
+        ArmaBioma arma = personaje.getArma();
+        arma.disparar(chorros, personaje.getX() + Personaje.ANCHO / 2 - 5, personaje.getY() + 68,
+                personaje.consumirCargaArma());
+        esperaDisparo = arma.getCadencia();
+        return true;
+    }
+    public SubordinadoOvni getPatrulla() { return patrulla; }
+    public List<ChorroAgua> getChorros() {
+        return enJefe() ? jefe.getChorros() : Collections.unmodifiableList(chorros);
+    }
     public boolean terminada() { return fase == Fase.VICTORIA || fase == Fase.DERROTA || personaje.getVidas() == 0; }
     public boolean gano() { return fase == Fase.VICTORIA; }
     public int getPremio() { return gano() && !desafioOculto ? 250 + dificultad.ordinal() * 150 : 0; }

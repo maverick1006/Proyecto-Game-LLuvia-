@@ -31,7 +31,16 @@ public class DibujoPersonaje {
         bloque(x, y, escala, 8, 15, 2, 2, "172338");
         bloque(x, y, escala, 6, 12, 2, 1, "BC7B70");
         bloque(x, y, escala, 2, 5, 10, 1, detalle);
-        if (estilo == 1) {
+        if (estilo == 17) {
+            bloque(x, y, escala, 2, 17, 10, 4, "255F82");
+            bloque(x, y, escala, 3, 18, 8, 2, ropa);
+            bloque(x, y, escala, 10, 5, 5, 8, "E0F7FC");
+            bloque(x, y, escala, 11, 6, 3, 6, "255F82");
+            formas.setColor(Color.valueOf("63DDE6"));
+            formas.circle(x + 12.5f * escala, y + 8 * escala, escala);
+            formas.triangle(x + 11.5f * escala, y + 8 * escala,
+                    x + 13.5f * escala, y + 8 * escala, x + 12.5f * escala, y + 11 * escala);
+        } else if (estilo == 1) {
             bloque(x, y, escala, 2, 18, 10, 3, ropa);
             bloque(x, y, escala, 2, 18, 13, 1, ropa);
             bloque(x, y, escala, 4, 6, 2, 6, detalle);

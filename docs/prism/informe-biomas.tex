@@ -66,3 +66,9 @@ La barra llega a seis con agua recogida después de equipar el arma. El siguient
 
 \subsection{Evidencia de la recorrección}
 \texttt{Personaje.actualizar()} selecciona la estrategia \texttt{Hidratacion.FATIGADA} y \texttt{recogerAgua()} restaura \texttt{NORMAL}. La estrategia de terreno y el control de entrada siguen funcionando al mismo tiempo. \texttt{JefeOvni.disparar()} lee el arma equipada y consume la carga cuando está lista. El proyectil conserva el arma y el estado de carga. El método final \texttt{Gota.actualizar()} ejecuta movimiento, colisión y efecto, y después llama al hook \texttt{despuesDeAtrapar()}. \texttt{GotaBuena} lo usa para avisar que el agua doble eliminó la fatiga y dio dos cargas.
+
+
+\section{Luma y las patrullas del OVNI}
+Luma aparece en el prólogo con un traje turquesa y un escudo con una gota. El traje cuesta 240 monedas en la tienda y cambia la apariencia. Las patrullas del OVNI lanzan ácido en la llanura, nieve en Hielo y fuego en Atacama. En el Ascenso aparece una patrulla de ácido. Puedes esquivarlas o dispararles con Espacio, clic o toque. Cada disparo gasta una unidad de agua y activa el especial si la barra está llena. En el tramo secreto caen solo monedas.
+
+\texttt{Partida.actualizarPatrulla()} reutiliza \texttt{SubordinadoOvni} con el ataque de la zona y resuelve sus colisiones con los chorros. \texttt{Partida.disparar()} usa el arma activa contra las patrullas y delega en \texttt{JefeOvni.disparar()} durante el combate final. Derrotar una patrulla es opcional y el progreso de campaña depende de los puntos.

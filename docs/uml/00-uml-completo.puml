@@ -111,7 +111,14 @@ enum ArmaBioma {
  RAYO_SOLAR
  HIDRO_PLASMA
 }
-class SubordinadoOvni
+class SubordinadoOvni {
+  - ataque : TipoObjeto
+  - vida : int
+  ~ recibir(chorro : ChorroAgua) : boolean
+}
+Partida *-- "0..1" SubordinadoOvni : patrulla
+SubordinadoOvni --> TipoObjeto : ataque de la zona
+Partida --> ChorroAgua : disparos contra patrulla
 enum "JefeOvni.Fase" as FaseOvni {
  NORMAL
  FURIOSA

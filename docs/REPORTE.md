@@ -156,3 +156,10 @@ Importar la raíz del ZIP en Eclipse mediante **File > Import > Gradle > Existin
 ### Hidratación, carga y resistencia del jefe
 
 Tras 4 s sin agua, `Personaje.actualizar()` selecciona `Hidratacion.FATIGADA`. A los 12 s y después cada 4 s aplica daño. `recogerAgua()` vuelve a `NORMAL` y reinicia el tiempo. El agua simple suma una carga y la doble suma dos. Al llegar a seis, `JefeOvni.disparar()` consume la barra para potenciar el próximo chorro. La vida inicial del OVNI es 72, 90 o 108 según la dificultad. En furia lanza una segunda gota cada tercer ataque. El hook `despuesDeAtrapar()` comunica el efecto del agua doble tras aplicar la hidratación.
+
+
+### Patrullas y traje de Luma
+
+Luma lleva un traje turquesa con capucha y escudo con una gota. Su aspecto cuesta 240 monedas y es cosmético. Las patrullas de la nave aparecen durante la campaña y el Ascenso. En la llanura usan ácido, en Hielo nieve y en Atacama fuego. La patrulla del Ascenso usa ácido. Derribarlas es opcional y el avance sigue dependiendo de los puntos. No aparecen en el tramo de monedas.
+
+`Partida.actualizarPatrulla()` actualiza la nave y resuelve las colisiones con los chorros. `Partida.disparar()` usa el arma equipada tanto contra la patrulla como contra el jefe. Un disparo consume agua y, cuando la barra está llena, activa el especial. `SubordinadoOvni` comparte el movimiento de las naves y recibe el tipo de ataque al crearse.

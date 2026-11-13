@@ -105,6 +105,26 @@ public class CampanaTest {
         p.actualizar(0.2f);
         assertEquals(0, p.getVidas());
     }
+    @Test public void patrullaDeLlanuraSePuedeDerribarConArmaCargada() {
+        Partida juego = partida();
+        Personaje p = juego.getPersonaje();
+        for (int i = 0; i < 301; i++) {
+            juego.actualizar(0.02f);
+            juego.getLluvia().limpiar();
+        }
+        assertEquals(TipoObjeto.ACIDO, juego.getPatrulla().getAtaque());
+        p.atrapar(TipoObjeto.ARMA_SOLAR);
+        p.recogerAgua(60);
+        for (int i = 0; i < 200 && juego.getPatrulla() != null; i++) {
+            p.colocar(juego.getPatrulla().getX());
+            juego.disparar();
+            juego.actualizar(0.02f);
+            juego.getLluvia().limpiar();
+        }
+        assertNull(juego.getPatrulla());
+        assertEquals(0, p.getCargaArma());
+        assertTrue(p.getAgua() < 6);
+    }
     @Test public void zonasTienenLimitesExactos() {
         assertEquals(Zona.LLANURA, Zona.delNivel(1)); assertEquals(Zona.LLANURA, Zona.delNivel(10));
         assertEquals(Zona.HIELO, Zona.delNivel(11)); assertEquals(Zona.HIELO, Zona.delNivel(20));

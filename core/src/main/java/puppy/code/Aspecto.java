@@ -29,6 +29,7 @@ public enum Aspecto {
     GOKU_ULTRA("Goku Ultra Instinto", "E69B54", "5075BC", 0, Dificultad.NOOB, 31, 19),
     GOJO_DESPERTADO("Gojo Despertado", "F1F1EA", "313849", 0, Dificultad.PRO, 31, 12),
     SONIC_SUPER("Super Sonic", "F3D957", "D95654", 0, Dificultad.HACKER, 31, 2),
+    LUMA("Luma", "63DDE6", "255F82", 240, null, 0, 17),
     ALIEN("Alien", "94D588", "536095", 0, null, 0, 16);
 
     private final String nombre, color, secundario;

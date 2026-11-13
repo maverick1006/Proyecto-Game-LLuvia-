@@ -109,9 +109,9 @@ public class VistaJuego {
         new DibujoEscenario(formas).ovni(x, y, reloj);
         formas.end();
     }
-    public void dron(float x, float y) {
+    public void dron(float x, float y, TipoObjeto ataque) {
         formas.begin(ShapeRenderer.ShapeType.Filled);
-        formas.setColor(Color.valueOf("AB679C"));
+        formas.setColor(Color.valueOf(ataque == TipoObjeto.NIEVE ? "8DD9F1" : ataque == TipoObjeto.FUEGO ? "F8A056" : "AB679C"));
         formas.ellipse(x, y, 48, 24);
         formas.setColor(Color.valueOf("F1B8D7"));
         formas.rect(x + 11, y + 9, 26, 4);
