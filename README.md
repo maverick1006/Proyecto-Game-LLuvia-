@@ -8,7 +8,7 @@ Proyecto de Programación Avanzada en Java y LibGDX, basado en el juego entregad
 
 ## Descargar y jugar
 
-1. Abre la [rama mav/armas-biomas-jefe](https://github.com/maverick1006/Proyecto-Game-LLuvia-/tree/mav/armas-biomas-jefe) y pulsa **Code > Download ZIP**.
+1. Abre la rama para entregar es entrega-final. En GitHub selecciona esa rama y pulsa Code > Download ZIP. Descomprime el archivo antes de abrir el proyecto
 2. Descomprime el ZIP completo. La carpeta que debes seleccionar en Eclipse es la que contiene juntos `settings.gradle`, `gradlew.bat`, `core`, `lwjgl3` y `assets`.
 3. Ten instalado **JDK 17** y **Eclipse IDE for Java Developers** con **Buildship (Gradle Integration)**. La primera importación requiere Internet para descargar Gradle y LibGDX. Para jugar en escritorio no necesitas Android SDK.
 
