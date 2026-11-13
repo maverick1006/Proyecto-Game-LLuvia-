@@ -37,8 +37,6 @@ En **Project Explorer**, abre **core > src/main/java > puppy.code**. Ahí están
 | Hidratación, armas y jefe | `Personaje.recogerAgua()`, `ArmaBioma` y `JefeOvni.recibirDaño()`. |
 | Singleton y Builder | `ConfiguracionJuego.getInstancia()` y `Dificultad.crearNivel()`, que usa `Nivel.Builder`. |
 
-Usa **Ctrl+Shift+T** para buscar una clase por nombre, **Ctrl+O** para buscar un método dentro de la clase abierta y **F3** para saltar a la declaración del elemento seleccionado.
-
 ### PowerShell
 
 Abre PowerShell en la carpeta que contiene `gradlew.bat`. Comprueba que `java -version` muestre Java 17. Si tienes varias versiones, configura `JAVA_HOME` con la ruta de tu JDK 17 antes de ejecutar:
